@@ -2,7 +2,7 @@
 
 _realname=kicad
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}-git"
-pkgver=r6887.91c0868
+pkgver=r6982.bd199b8
 pkgrel=1
 pkgdesc="Software for the creation of electronic schematic diagrams and printed circuit board artwork"
 arch=('any')
@@ -21,8 +21,6 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-cmake"
              "${MINGW_PACKAGE_PREFIX}-python2"
              "${MINGW_PACKAGE_PREFIX}-pkg-config"
              "${MINGW_PACKAGE_PREFIX}-swig"
-             "bzr"
-             "git"
              "doxygen")
 source=("${_realname}"::"git+https://github.com/KiCad/kicad-source-mirror.git"
         "${_realname}-docs"::"bzr+https://code.launchpad.net/~kicad-developers/kicad/doc"
