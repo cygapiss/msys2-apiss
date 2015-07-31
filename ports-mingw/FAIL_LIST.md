@@ -23,8 +23,6 @@ List of packages that currently fail to build
 
 - ldns
 
-- libodfgen
-
 - librescl
 
 - librocket-git
@@ -38,8 +36,6 @@ List of packages that currently fail to build
 - octave-hg
 
 - ogre3d
-
-- openocd-git
 
 - openshadinglanguage (Needs a legacy LLVM < 3.6 package due to JIT changes)
 
