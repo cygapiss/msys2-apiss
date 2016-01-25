@@ -15,10 +15,6 @@ optdepends=("${MINGW_PACKAGE_PREFIX}-openssl: SSL support")
 source=("${_realname}-src-${pkgver}.tar.gz::https://www.fossil-scm.org/index.html/tarball/${_realname}-src-${pkgver}.tar.gz?uuid=ec3dd27f97571cd66a2ac129fce0d0a738d58182")
 sha1sums=('464b3d4d1995bd4a1fed81f06a9beb0b54a9eafd')
 
-#prepare() {
-#  cd "${srcdir}/${_realname}-src-${pkgver}"
-#}
-
 build() {
   mkdir -p build-${MINGW_CHOST}
   cd build-${MINGW_CHOST}
