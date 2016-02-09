@@ -58,7 +58,7 @@ source=("ftp://gcc.gnu.org/pub/gcc/releases/${_realname}-${pkgver}/${_realname}-
         '955-4.9.2-apply-hack-so-gcc_s-isnt-stripped.patch'
         '0022-clone_function_name_1-Retain-any-stdcall-suffix.patch')
 md5sums=('c9616fd448f980259c31de613e575719'
-         'd3c4c61a1c64961f0182ea0d45c9674d'
+         '41635a40493dc79416db6627b2826b21'
          'f6b5fb08ff06a7d60ee3280e14240bb2'
          '71cdb550528efcf2a5c9112464bfbabc'
          'c9967332940eb2b23820faeb48db6e72'
@@ -126,7 +126,7 @@ prepare() {
   patch -p1 -i ${srcdir}/230-build-more-gnattools.mingw.patch
 
   patch -p1 -i ${srcdir}/240-prettify-linking-no-undefined.mingw.patch
-  
+
   patch -p1 -i ${srcdir}/310-gcc-make-xmmintrin-header-cplusplus-compatible.patch
 
   if [ "${CARCH}" = "i686" ]; then
@@ -274,6 +274,7 @@ package_mingw-w64-gcc() {
   cd ${srcdir}${MINGW_PREFIX}
   cp bin/cpp.exe                                        ${pkgdir}${MINGW_PREFIX}/bin/
   cp bin/gcc.exe                                        ${pkgdir}${MINGW_PREFIX}/bin/
+  cp bin/gcc.exe                                        ${pkgdir}${MINGW_PREFIX}/bin/cc.exe
   cp bin/gcc-ar.exe                                     ${pkgdir}${MINGW_PREFIX}/bin/
   cp bin/gcc-nm.exe                                     ${pkgdir}${MINGW_PREFIX}/bin/
   cp bin/gcc-ranlib.exe                                 ${pkgdir}${MINGW_PREFIX}/bin/
