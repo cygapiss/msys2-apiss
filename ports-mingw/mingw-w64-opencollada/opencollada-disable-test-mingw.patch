@@ -1,7 +1,5 @@
-Index: DAEValidator/CMakeLists.txt
-===================================================================
---- DAEValidator/CMakeLists.txt.orig
-+++ DAEValidator/CMakeLists.txt
+--- opencollada/DAEValidator/CMakeLists.txt.orig	2016-10-14 12:42:00.737418400 +0300
++++ opencollada/DAEValidator/CMakeLists.txt	2016-10-14 12:44:02.532358500 +0300
 @@ -91,16 +91,16 @@
  target_link_libraries(DAEValidatorExecutable ${Libraries})
  set_target_properties(DAEValidatorExecutable PROPERTIES OUTPUT_NAME DAEValidator)

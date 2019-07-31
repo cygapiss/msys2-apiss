@@ -1,5 +1,5 @@
---- Externals/MathMLSolver/include/MathMLPlatform.h.orig	2013-12-31 00:26:36.296400000 +0400
-+++ Externals/MathMLSolver/include/MathMLPlatform.h	2013-12-31 00:27:33.751200000 +0400
+--- opencollada/Externals/MathMLSolver/include/MathMLPlatform.h.orig	2013-12-31 00:26:36.296400000 +0400
++++ opencollada/Externals/MathMLSolver/include/MathMLPlatform.h	2013-12-31 00:27:33.751200000 +0400
 @@ -127,19 +127,7 @@
  #       undef MML_DEBUG_MODE
  #   endif
