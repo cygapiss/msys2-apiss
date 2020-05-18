@@ -1,30 +1,28 @@
-# Maintainer: Sarah Ottinger
+# Maintainer: Konstantin Podsvirov <konstantin@podsvirov.pro>
 
 _realname=unidecode
 pkgbase=mingw-w64-python-${_realname}
 pkgname=("${MINGW_PACKAGE_PREFIX}-python-${_realname}")
-provides=("${MINGW_PACKAGE_PREFIX}-python3-${_realname}")
-conflicts=("${MINGW_PACKAGE_PREFIX}-python3-${_realname}")
-replaces=("${MINGW_PACKAGE_PREFIX}-python3-${_realname}")
 pkgver=1.1.1
 pkgrel=1
 pkgdesc='ASCII transliterations of Unicode text (mingw-w64)'
 arch=('any')
-url="https://github.com/avian2/unidecode"
+url='https://github.com/avian2/unidecode'
 license=('GPL')
 depends=("${MINGW_PACKAGE_PREFIX}-python")
-makedepends=("git" "${MINGW_PACKAGE_PREFIX}-python-setuptools")
-source=(git+https://github.com/avian2/unidecode.git#tag=unidecode-${pkgver})
-sha256sums=(SKIP)
+makedepends=("${MINGW_PACKAGE_PREFIX}-python-setuptools")
+source=("unidecode-unidecode-${pkgver}.tar.gz"::"https://github.com/avian2/unidecode/archive/unidecode-${pkgver}.tar.gz")
+install=${_realname}-${CARCH}.install
+sha256sums=('79a65293aacd2a7b9e956d71d49207883920950a8d352ad0b6211587993c892e')
 
-prepare() {  
-  cd "$srcdir"
-  rm -rf python-build-${CARCH} | true
-  cp -r "${_realname}" "python-build-${CARCH}"
+prepare() {
+  cd "${srcdir}"
+  rm -rf "python-build-${CARCH}" | true
+  cp -r "unidecode-unidecode-${pkgver}" "python-build-${CARCH}"
 }
 
 build() {
-  msg "Python build for ${CARCH}"  
+  msg "Python build for ${CARCH}"
   cd "${srcdir}/python-build-${CARCH}"
   ${MINGW_PREFIX}/bin/python setup.py build
 }
@@ -32,6 +30,13 @@ build() {
 package() {
   cd "${srcdir}/python-build-${CARCH}"
   MSYS2_ARG_CONV_EXCL="--prefix=;--install-scripts=;--install-platlib=" \
-  ${MINGW_PREFIX}/bin/python setup.py install --prefix=${MINGW_PREFIX} \
-    --root="${pkgdir}" --optimize=1 --skip-build
+    ${MINGW_PREFIX}/bin/python setup.py install --prefix=${MINGW_PREFIX} --root="${pkgdir}" -O1 --skip-build
+  local PREFIX_WIN=$(cygpath -wm ${MINGW_PREFIX})
+  # fix python command in files
+  for _ff in ${pkgdir}${MINGW_PREFIX}/bin/*.py; do
+    sed -e "s|${PREFIX_WIN}|${MINGW_PREFIX}|g" -i ${_ff}
+  done
+  install -Dm644 LICENSE "${pkgdir}${MINGW_PREFIX}/share/licenses/python-${_realname}/LICENSE"
 }
+
+# vim: ts=2 sw=2 et:
