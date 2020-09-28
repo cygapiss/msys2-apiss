@@ -1,26 +1,27 @@
 # Maintainer: Sarah Ottinger <schalaalexiazeal@gmail.com>
 
-_realname=fire
+_realname=google-auth
 pkgbase=mingw-w64-python-${_realname}
 pkgname=("${MINGW_PACKAGE_PREFIX}-python-${_realname}")
 provides=("${MINGW_PACKAGE_PREFIX}-python3-${_realname}")
 conflicts=("${MINGW_PACKAGE_PREFIX}-python3-${_realname}")
 replaces=("${MINGW_PACKAGE_PREFIX}-python3-${_realname}")
-pkgver=0.3.1
+pkgver=1.21.2
 pkgrel=1
-pkgdesc='Python Fire is a library for automatically generating command line interfaces (CLIs) from absolutely any Python object. (mingw-w64)'
+pkgdesc='Google Authentication Library (mingw-w64)'
 arch=('any')
-url="https://github.com/google/python-fire"
-license=('Apache 2.0')
-depends=("${MINGW_PACKAGE_PREFIX}-python-termcolor")
+url="https://github.com/GoogleCloudPlatform/google-auth-library-python"
+license=('Apache')
+depends=("${MINGW_PACKAGE_PREFIX}-ca-certificates" "${MINGW_PACKAGE_PREFIX}-python-cachetools" "${MINGW_PACKAGE_PREFIX}-python-pyasn1-modules" "${MINGW_PACKAGE_PREFIX}-python-rsa")
 makedepends=("${MINGW_PACKAGE_PREFIX}-python-setuptools")
-source=("https://github.com/google/python-fire/archive/v$pkgver.tar.gz")
-sha256sums=('b0728c4a59f48ff6d1a535ceff893ec1a79a7d68257fc0e6e3a40e1bef5773a0')
+options=('!emptydirs')
+source=("${_realname}-$pkgver.tar.gz::https://github.com/GoogleCloudPlatform/google-auth-library-python/archive/v$pkgver.tar.gz")
+sha256sums=('968956bd7a4a6b0001cea2ba8160594611d5b0940c1000ec2248eea36d6965bf')
 
 prepare() {  
   cd "$srcdir"
   rm -rf python-build-${CARCH} | true
-  cp -r "python-fire-${pkgver}" "python-build-${CARCH}"
+  cp -r "${_realname}-library-python-${pkgver}" "python-build-${CARCH}"
 }
 
 build() {
@@ -34,6 +35,5 @@ package() {
   MSYS2_ARG_CONV_EXCL="--prefix=;--install-scripts=;--install-platlib=" \
   ${MINGW_PREFIX}/bin/python setup.py install --prefix=${MINGW_PREFIX} \
     --root="${pkgdir}" --optimize=1 --skip-build
-
-  install -Dm644 LICENSE "${pkgdir}${MINGW_PREFIX}/share/licenses/python-${_realname}/COPYING"
+  install -Dm644 LICENSE "${pkgdir}${MINGW_PREFIX}/share/licenses/python-${_realname}/LICENSE"
 }
