@@ -5,9 +5,9 @@ _realname=qt-creator
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
 __pre=
-_base_ver=5.0.2
+_base_ver=5.0.0
 pkgver=${_base_ver}${_pre}
-pkgrel=1
+pkgrel=2
 pkgdesc='Cross-platform IDE (mingw-w64)'
 url='https://www.qt.io/'
 install=qt-creator-${MSYSTEM}.install
@@ -35,7 +35,9 @@ optdepends=("${MINGW_PACKAGE_PREFIX}-gdb: for the debugger"
 makedepends=("${MINGW_PACKAGE_PREFIX}-cmake"
              "${MINGW_PACKAGE_PREFIX}-ninja"
              "${MINGW_PACKAGE_PREFIX}-clang"
+             "${MINGW_PACKAGE_PREFIX}-clang-analyzer"
              "${MINGW_PACKAGE_PREFIX}-clang-tools-extra"
+             "${MINGW_PACKAGE_PREFIX}-mlir"
              "${MINGW_PACKAGE_PREFIX}-polly"
              "${MINGW_PACKAGE_PREFIX}-python"
              "${MINGW_PACKAGE_PREFIX}-qt5-doc")
@@ -43,12 +45,10 @@ options=('docs' 'staticlibs') # 'debug' '!strip')
 _pkgfqn="${_realname}-opensource-src-${_base_ver}${__pre}"
 source=(#https://download.qt.io/development_releases/qtcreator/${_base_ver%.*}/${_base_ver}${__pre}/${_pkgfqn}.tar.xz
         https://download.qt.io/official_releases/qtcreator/${pkgver%.*}/${pkgver}/${_pkgfqn}.tar.xz
-        qt-creator-3.2.0-Allow-iOS-plugin-on-any-platform.patch
-        qt-creator-5.0.1-fix-library-archive-path.patch)
+        qt-creator-3.2.0-Allow-iOS-plugin-on-any-platform.patch)
 noextract=(${_pkgfqn}.tar.xz)
-sha256sums=('1bf07150226da46237f26f5eaa9f090ce81ed79b9bc75e0dfa6328043e360103'
-            '96c14f54577bf6cadf5c12018745666a9e99cd8d6a876c29a28b13599a8cb368'
-            '4daf74e55e9b5cae9f05704a98fb832688edf958481cfb2246aecf6b54156e53')
+sha256sums=('b24b194a2e96f07baf55815264cd898fa0399673bfedd500575098fdf8d70475'
+            '96c14f54577bf6cadf5c12018745666a9e99cd8d6a876c29a28b13599a8cb368')
 
 prepare() {
   [[ -d ${srcdir}/${_pkgfqn} ]] && rm -rf ${srcdir}/${_pkgfqn}
@@ -57,7 +57,6 @@ prepare() {
   cd ${srcdir}/${_pkgfqn}
 
   patch -p1 -i "${srcdir}"/qt-creator-3.2.0-Allow-iOS-plugin-on-any-platform.patch
-  patch -p1 -i "${srcdir}"/qt-creator-5.0.1-fix-library-archive-path.patch
 }
 
 build() {
@@ -88,7 +87,6 @@ package() {
   cd ${srcdir}/build-${MSYSTEM}
 
   DESTDIR="${pkgdir}" cmake --install .
-  DESTDIR="${pkgdir}" cmake --install . --component Devel
   DESTDIR="${pkgdir}" cmake --install . --component qch_docs
   DESTDIR="${pkgdir}" cmake --install . --component html_docs
 
