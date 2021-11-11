@@ -11,7 +11,7 @@ pkgrel=1
 pkgdesc="An open source solution for working with MIME messages and Internet messaging services like IMAP, POP or SMTP (mingw-w64)"
 url="https://www.vmime.org/"
 arch=('any')
-mingw_arch=('mingw32' 'mingw64' 'ucrt64' 'clang64')
+mingw_arch=('mingw32' 'mingw64' 'ucrt64' 'clang64' 'clang32')
 license=('GPL3')
 options=('strip' 'staticlibs')
 makedepends=("${MINGW_PACKAGE_PREFIX}-boost"
@@ -32,7 +32,7 @@ sha256sums=('SKIP'
 
 pkgver() {
   cd "${srcdir}/${_realname}"
-  printf "r%s.%s" "$(git rev-list --count $_commit)" "$(git rev-parse --short $_commit)"
+  printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
 }
 
 prepare() {
