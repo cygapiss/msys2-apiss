@@ -21,21 +21,6 @@ pacman --noconfirm -Fy
 # Detect
 list_packages || failure 'Could not detect changed files'
 message 'Processing changes'
-
-declare -a skipped_packages=()
-for package in "${packages[@]}"; do
-    cd "${package}"
-    . PKGBUILD
-    if [[ ! " ${mingw_arch[*]} " =~ " ${MSYSTEM,,} " ]]; then
-        skipped_packages+=("${package}")
-    fi
-    cd - > /dev/null
-done
-
-for package in "${skipped_packages}"; do
-    packages=(${packages[@]/"${package}"})
-done
-
 test -z "${packages}" && success 'No changes in package recipes'
 
 # Build
@@ -46,6 +31,9 @@ message 'Adding an empty local repository'
 repo-add $PWD/artifacts/ci.db.tar.gz
 sed -i '1s|^|[ci]\nServer = file://'"$PWD"'/artifacts/\nSigLevel = Never\n|' /etc/pacman.conf
 pacman -Sy
+
+# Remove git and python
+pacman -R --recursive --unneeded --noconfirm --noprogressbar git python
 
 message 'Building packages'
 for package in "${packages[@]}"; do
