@@ -66,9 +66,14 @@ for package in "${packages[@]}"; do
     echo "::endgroup::"
 
     cd "$package"
-    repo-add $PWD/../artifacts/ci.db.tar.gz $PWD/*.pkg.tar.*
-    pacman -Sy
-    cp $PWD/*.pkg.tar.* $PWD/../artifacts
+
+    for pkg in *.pkg.tar.*; do
+        pkgname="$(echo "$pkg" | rev | cut -d- -f4- | rev)"
+        echo "::group::[repo-add] ${pkgname}"
+        repo-add "$PWD"/../artifacts/ci.db.tar.gz "$PWD/$pkg"
+        echo "::endgroup::"
+    done
+
     for pkg in *.pkg.tar.*; do
         pkgname="$(echo "$pkg" | rev | cut -d- -f4- | rev)"
         echo "::group::[install] ${pkgname}"
@@ -105,12 +110,13 @@ for package in "${packages[@]}"; do
 
         echo "::group::[uninstall] ${pkgname}"
         message "Uninstalling $pkgname"
+        pacman -Sy
         pacman -R --recursive --unneeded --noconfirm --noprogressbar "$pkgname"
         echo "::endgroup::"
     done
     cd - > /dev/null
 
-    rm -f "${package}"/*.pkg.tar.*
+    mv "${package}"/*.pkg.tar.* artifacts
     unset package
 done
 success 'All packages built successfully'
