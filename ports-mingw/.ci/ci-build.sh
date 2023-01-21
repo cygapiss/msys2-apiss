@@ -47,7 +47,7 @@ for package in "${skipped_packages[@]}"; do
     unset package
 done
 
-test -z "${packages}" && success 'No changes in package recipes'
+test -z "${packages[@]}" && success 'No changes in package recipes'
 
 # Build
 message 'Building packages' "${packages[@]}"
@@ -69,16 +69,13 @@ for package in "${packages[@]}"; do
     echo "::group::[build] ${package}"
     execute 'Clear cache' pacman -Scc --noconfirm
     execute 'Fetch keys' "$DIR/fetch-validpgpkeys.sh"
-    cp -r ${package} B && cd B
-    message 'Building binary'
-    makepkg-mingw --noconfirm --noprogressbar --nocheck --syncdeps --rmdeps --cleanbuild || failure "${status} failed"
-    cd - > /dev/null
-    repo-add $PWD/artifacts/ci.db.tar.gz $PWD/B/*.pkg.tar.*
+    execute 'Building binary' makepkg-mingw --noconfirm --noprogressbar --nocheck --syncdeps --rmdeps --cleanbuild
+    repo-add $PWD/artifacts/ci.db.tar.gz $PWD/$package/*.pkg.tar.*
     pacman -Sy
-    cp $PWD/B/*.pkg.tar.* $PWD/artifacts
+    cp $PWD/$package/*.pkg.tar.* $PWD/artifacts
     echo "::endgroup::"
 
-    cd B
+    cd "$package"
     for pkg in *.pkg.tar.*; do
         pkgname="$(echo "$pkg" | rev | cut -d- -f4- | rev)"
         echo "::group::[install] ${pkgname}"
@@ -113,7 +110,7 @@ for package in "${packages[@]}"; do
     done
     cd - > /dev/null
 
-    rm -rf B
+    rm -f "${package}"/*.pkg.tar.*
     unset package
 done
 success 'All packages built successfully'
