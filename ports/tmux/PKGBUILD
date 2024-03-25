@@ -8,6 +8,9 @@ pkgrel=1
 pkgdesc='A terminal multiplexer'
 url='https://tmux.github.io/'
 msys2_repository_url="https://github.com/tmux/tmux"
+msys2_references=(
+  "cpe: cpe:/a:tmux_project:tmux"
+)
 arch=('i686' 'x86_64')
 license=('BSD')
 conflict=('tmux-git')
@@ -39,7 +42,6 @@ prepare() {
 build() {
   cd "${srcdir}/${pkgname}-${_base_ver}${_bugfix/./}"
   ./configure \
-    --enable-sixel \
     --prefix=/usr \
     --sysconfdir=/etc \
     --localstatedir=/var \
