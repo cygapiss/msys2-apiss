@@ -1,0 +1,132 @@
+From 377d2985b846414cb5cc2c718744b5714a7cb0cf Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Fri, 26 Dec 2025 13:31:56 +0800
+Subject: [PATCH 29/36] Add patch: avoid auipc overflow with large offsets
+ [PR91420]
+
+Signed-off-by: Yonggang Luo <luoyonggang@gmail.com>
+---
+ ...-overflow-with-large-offsets-PR91420.patch | 111 ++++++++++++++++++
+ 1 file changed, 111 insertions(+)
+ create mode 100644 packages/gcc/15.2.0/3002-avoid-auipc-overflow-with-large-offsets-PR91420.patch
+
+diff --git a/packages/gcc/15.2.0/3002-avoid-auipc-overflow-with-large-offsets-PR91420.patch b/packages/gcc/15.2.0/3002-avoid-auipc-overflow-with-large-offsets-PR91420.patch
+new file mode 100644
+index 00000000..ddde5dee
+--- /dev/null
++++ b/packages/gcc/15.2.0/3002-avoid-auipc-overflow-with-large-offsets-PR91420.patch
+@@ -0,0 +1,111 @@
++From e3622095ff6ca9be82fb70b4274ca9ed63e6d38d Mon Sep 17 00:00:00 2001
++From: Alexandre Oliva <oliva@adacore.com>
++Date: Sat, 6 Dec 2025 20:11:42 -0300
++Subject: [PATCH] avoid auipc overflow with large offsets [PR91420]
++
++When computing an address plus a large offset on riscv64 with a
++PC-relative sequence, we may hit the range limit for auipc and get a
++relocation overflow, where on riscv32 the computation wraps around.
++
++Since -mcmodel=medany requires the entire program to fit in a 2GiB
++address range, a +/-1GiB+ offset added to an in-range symbol in a
++barely-fitting program is more likely than not to be out-of-range.
++Since such large constants are unlikely to come up by chance, separate
++them from the symbol so as to avoid the relocation overflow.
++
++for  gcc/ChangeLog
++
++	PR target/91420
++	* config/riscv/riscv.cc (riscv_symbolic_constant_p): Require
++	offsets smaller than +/- 1GiB for PCREL symbols.
++
++for  gcc/testsuite/ChangeLog
++
++	PR target/91420
++	* gcc.target/riscv/pr91420.c: New.
++---
++ gcc/config/riscv/riscv.cc                | 13 ++++++-
++ gcc/testsuite/gcc.target/riscv/pr91420.c | 46 ++++++++++++++++++++++++
++ 2 files changed, 58 insertions(+), 1 deletion(-)
++ create mode 100644 gcc/testsuite/gcc.target/riscv/pr91420.c
++
++diff --git a/gcc/config/riscv/riscv.cc b/gcc/config/riscv/riscv.cc
++index bd0046ad2e8..aa7b0b383d3 100644
++--- a/gcc/config/riscv/riscv.cc
+++++ b/gcc/config/riscv/riscv.cc
++@@ -1633,8 +1633,19 @@ riscv_symbolic_constant_p (rtx x, enum riscv_symbol_type *symbol_type)
++   /* Nonzero offsets are only valid for references that don't use the GOT.  */
++   switch (*symbol_type)
++     {
++-    case SYMBOL_ABSOLUTE:
++     case SYMBOL_PCREL:
+++      /* In 64-bit mode, PC-relative offsets with ranges beyond +/-1GiB are
+++	 more likely than not to end up out of range for an auipc instruction
+++	 randomly-placed within the 2GB range usable by medany, and such
+++	 offsets are quite unlikely to come up by chance, so be conservative
+++	 and separate the offset for them when in 64-bit mode, where they don't
+++	 wrap around.  */
+++      if (TARGET_64BIT)
+++	return sext_hwi (INTVAL (offset), 30) == INTVAL (offset);
+++
+++      /* Fall through.  */
+++
+++    case SYMBOL_ABSOLUTE:
++     case SYMBOL_TLS_LE:
++       /* GAS rejects offsets outside the range [-2^31, 2^31-1].  */
++       return sext_hwi (INTVAL (offset), 32) == INTVAL (offset);
++diff --git a/gcc/testsuite/gcc.target/riscv/pr91420.c b/gcc/testsuite/gcc.target/riscv/pr91420.c
++new file mode 100644
++index 00000000000..936d998a663
++--- /dev/null
+++++ b/gcc/testsuite/gcc.target/riscv/pr91420.c
++@@ -0,0 +1,46 @@
+++/* { dg-do assemble } */
+++/* { dg-options "-O2 -mcmodel=medany -save-temps" } */
+++
+++int a[1];
+++
+++__UINTPTR_TYPE__
+++foo(void)
+++{
+++  return (__UINTPTR_TYPE__)a + 0x7fffffff;
+++}
+++
+++__UINTPTR_TYPE__
+++bfoo(void)
+++{
+++  return (__UINTPTR_TYPE__)a + 0x40000000;
+++}
+++
+++__UINTPTR_TYPE__
+++sfoo(void)
+++{
+++  return (__UINTPTR_TYPE__)a + 0x3fffffff;
+++}
+++
+++__UINTPTR_TYPE__
+++bar(void)
+++{
+++  return (__UINTPTR_TYPE__)a - 0x80000000;
+++}
+++
+++__UINTPTR_TYPE__
+++bbar(void)
+++{
+++  return (__UINTPTR_TYPE__)a - 0x40000000;
+++}
+++
+++__UINTPTR_TYPE__
+++sbar(void)
+++{
+++  return (__UINTPTR_TYPE__)a - 0x3fffffff;
+++}
+++
+++/* /* dg-final { scan-assembler-times "lla\ta[0-9]*, a$" 4 { target riscv64-*-* } } } */
+++/* /* dg-final { scan-assembler-times "lla\ta[0-9]*, a[-+]" 2 { target riscv64-*-* } } } */
+++
+++/* /* dg-final { scan-assembler-times "lla\ta[0-9]*, a[-+]$" 6 { target riscv32-*-* } } } */
+++/* /* dg-final { scan-assembler-not "lla\ta[0-9]*, a$" { target riscv32-*-* } } } */
++-- 
++2.51.0.windows.1
++
+-- 
+2.52.0.windows.1
+

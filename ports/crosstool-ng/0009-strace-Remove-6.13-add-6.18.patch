@@ -1,0 +1,54 @@
+From 934ab4b1777b9c2b87d76b7ed1a5a1ef8882ce4f Mon Sep 17 00:00:00 2001
+From: Chris Packham <judge.packham@gmail.com>
+Date: Sun, 7 Dec 2025 18:04:18 +1300
+Subject: [PATCH 09/36] strace: Remove 6.13, add 6.18
+
+Remove the old version. Add the new one
+
+https://lists.strace.io/pipermail/strace-devel/2025-December/011746.html
+
+Signed-off-by: Chris Packham <judge.packham@gmail.com>
+---
+ packages/strace/6.13/chksum       | 4 ----
+ packages/strace/6.13/version.desc | 1 -
+ packages/strace/6.18/chksum       | 4 ++++
+ packages/strace/6.18/version.desc | 0
+ 4 files changed, 4 insertions(+), 5 deletions(-)
+ delete mode 100644 packages/strace/6.13/chksum
+ delete mode 100644 packages/strace/6.13/version.desc
+ create mode 100644 packages/strace/6.18/chksum
+ create mode 100644 packages/strace/6.18/version.desc
+
+diff --git a/packages/strace/6.13/chksum b/packages/strace/6.13/chksum
+deleted file mode 100644
+index 63cd36ce..00000000
+--- a/packages/strace/6.13/chksum
++++ /dev/null
+@@ -1,4 +0,0 @@
+-md5 strace-6.13.tar.xz d6045bc205c1257a9f561670028cd63f
+-sha1 strace-6.13.tar.xz 6597aa096179bf1911e0451108f9b7e8fab26a92
+-sha256 strace-6.13.tar.xz e209daf0ee038ca5adcc4c277e9273b4d51f46a2ff86da575d36742ac3508a17
+-sha512 strace-6.13.tar.xz e702238f32882f92a2b2834fb853b5fa3d81decb441b69f0e74ba0205f6a586bfe698e34bfbac6d4f766ebd25d0b99d4679d9eb27845e5129cfd4e34ced6a8d2
+diff --git a/packages/strace/6.13/version.desc b/packages/strace/6.13/version.desc
+deleted file mode 100644
+index fcfe3891..00000000
+--- a/packages/strace/6.13/version.desc
++++ /dev/null
+@@ -1 +0,0 @@
+-obsolete='yes'
+diff --git a/packages/strace/6.18/chksum b/packages/strace/6.18/chksum
+new file mode 100644
+index 00000000..6853d18c
+--- /dev/null
++++ b/packages/strace/6.18/chksum
+@@ -0,0 +1,4 @@
++md5 strace-6.18.tar.xz 1ab327965c2cbc3ca44d868736646a83
++sha1 strace-6.18.tar.xz e8f7c82be66c0bfed738465becbf7447ed124677
++sha256 strace-6.18.tar.xz 0ad5dcba973a69e779650ef1cb335b12ee60716fc7326609895bd33e6d2a7325
++sha512 strace-6.18.tar.xz 421b75971cb04f5e3b09a1a12bd14fff9c8b315ca394f47d299937fe82f828d6c7231981797e12eab4a95b1c96e359224756c65067c8d9aec36ef18d06cfbc85
+diff --git a/packages/strace/6.18/version.desc b/packages/strace/6.18/version.desc
+new file mode 100644
+index 00000000..e69de29b
+-- 
+2.52.0.windows.1
+

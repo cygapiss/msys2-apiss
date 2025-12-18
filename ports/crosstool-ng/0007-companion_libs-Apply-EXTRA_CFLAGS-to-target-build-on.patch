@@ -1,0 +1,74 @@
+From 37aa23640bdebd6fd6f5b69ac8bf934bdaa903e6 Mon Sep 17 00:00:00 2001
+From: Chris Packham <judge.packham@gmail.com>
+Date: Sun, 7 Dec 2025 16:45:34 +1300
+Subject: [PATCH 07/36] companion_libs: Apply EXTRA_CFLAGS to target build only
+
+Commit 93d5d766 ("Use -std=c17 for companion libs, which won't build
+with C23 standard, default for gcc15") was attempting to avoid having to
+play whack-a-mole with gmp and ncurses due to GCC 15 defaulting to
+-std=gnu23. Unfortunately the extra CFLAGS were applied generically so
+also affected the build & host compilation of the packages. This caused
+problems for older build machines which had versions of GCC that do not
+understand -std=gnu17.
+
+As the kconfig check GCC_15_or_later only applies to the target anyway
+move the use of EXTRA_CFLAGS to the target build only.
+
+It is likely that we might need to do something equivalent for the build
+& host compiles as more distros pick up GCC 15 but that would need to be
+accompanied by a check of the build/host compiler.
+
+Fixes #2463
+Signed-off-by: Chris Packham <judge.packham@gmail.com>
+---
+ scripts/build/companion_libs/100-gmp.sh     | 4 +---
+ scripts/build/companion_libs/220-ncurses.sh | 4 +---
+ 2 files changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/scripts/build/companion_libs/100-gmp.sh b/scripts/build/companion_libs/100-gmp.sh
+index 4ecaa721..44937522 100644
+--- a/scripts/build/companion_libs/100-gmp.sh
++++ b/scripts/build/companion_libs/100-gmp.sh
+@@ -77,7 +77,7 @@ do_gmp_for_target() {
+             prefix="/usr"
+             ;;
+     esac
+-    gmp_opts+=( "cflags=${CT_ALL_TARGET_CFLAGS}" )
++    gmp_opts+=( "cflags=${CT_ALL_TARGET_CFLAGS} ${CT_GMP_EXTRA_CFLAGS}" )
+     gmp_opts+=( "prefix=${prefix}" )
+     gmp_opts+=( "destdir=${CT_SYSROOT_DIR}" )
+     gmp_opts+=( "shared=${CT_SHARED_LIBS}" )
+@@ -122,8 +122,6 @@ do_gmp_backend() {
+         extra_config+=("--with-pic")
+     fi
+ 
+-    cflags+=" ${CT_GMP_EXTRA_CFLAGS}"
+-
+     # GMP's configure script doesn't respect the host parameter
+     # when not cross-compiling, ie when build == host so set
+     # CC_FOR_BUILD and CPP_FOR_BUILD.
+diff --git a/scripts/build/companion_libs/220-ncurses.sh b/scripts/build/companion_libs/220-ncurses.sh
+index 36aadae6..46b1ec72 100644
+--- a/scripts/build/companion_libs/220-ncurses.sh
++++ b/scripts/build/companion_libs/220-ncurses.sh
+@@ -97,7 +97,7 @@ do_ncurses_for_target() {
+                        prefix="${prefix}" \
+                        destdir="${CT_SYSROOT_DIR}" \
+                        shared="${CT_SHARED_LIBS}" \
+-                       cflags="${CT_ALL_TARGET_CFLAGS}" \
++                       cflags="${CT_ALL_TARGET_CFLAGS} ${CT_NCURSES_EXTRA_CFLAGS}" \
+                        "${opts[@]}"
+     CT_Popd
+     CT_EndStep
+@@ -152,8 +152,6 @@ do_ncurses_backend() {
+         ncurses_opts+=("--with-shared")
+     fi
+ 
+-    cflags+=" ${CT_NCURSES_EXTRA_CFLAGS}"
+-
+     CT_DoLog EXTRA "Configuring ncurses"
+     CT_DoExecLog CFG                                                    \
+     CFLAGS="${cflags}"                                                  \
+-- 
+2.52.0.windows.1
+

@@ -1,0 +1,38 @@
+From c987ed69d1497da96ae95866d3d9390e3881d666 Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Thu, 18 Dec 2025 16:47:24 +0800
+Subject: [PATCH 17/36] Add riscv64be-unknown-elf
+
+---
+ samples/riscv64be-unknown-elf/crosstool.config | 8 ++++++++
+ samples/riscv64be-unknown-elf/reported.by      | 3 +++
+ 2 files changed, 11 insertions(+)
+ create mode 100644 samples/riscv64be-unknown-elf/crosstool.config
+ create mode 100644 samples/riscv64be-unknown-elf/reported.by
+
+diff --git a/samples/riscv64be-unknown-elf/crosstool.config b/samples/riscv64be-unknown-elf/crosstool.config
+new file mode 100644
+index 00000000..82157df8
+--- /dev/null
++++ b/samples/riscv64be-unknown-elf/crosstool.config
+@@ -0,0 +1,8 @@
++CT_CONFIG_VERSION="4"
++CT_ARCH_RISCV=y
++# CT_DEMULTILIB is not set
++CT_ARCH_USE_MMU=y
++CT_ARCH_BE=y
++CT_ARCH_64=y
++CT_DEBUG_GDB=y
++# CT_GDB_CROSS_PYTHON is not set
+diff --git a/samples/riscv64be-unknown-elf/reported.by b/samples/riscv64be-unknown-elf/reported.by
+new file mode 100644
+index 00000000..9456e59b
+--- /dev/null
++++ b/samples/riscv64be-unknown-elf/reported.by
+@@ -0,0 +1,3 @@
++reporter_name="Paul Walmsley <paul.walmsley@sifive.com>"
++reporter_url="https://www.sifive.com/"
++reporter_comment=""
+-- 
+2.52.0.windows.1
+

@@ -1,0 +1,82 @@
+From 676310d55e8c553a626d1a6678e4eb7a9882662f Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Sun, 21 Dec 2025 03:13:10 +0800
+Subject: [PATCH 27/36] TOOLCHAIN_ENABLE_NLS should not depends on
+ GETTEXT_NEEDED
+
+GETTEXT_NEEDED is optional when building host/build
+
+Also fixes nls for gcc because of the following issues:
+
+https://gcc.gnu.org/bugzilla/show_bug.cgi?id=108865
+https://github.com/msys2/MINGW-packages/issues/21660
+
+Signed-off-by: Yonggang Luo <luoyonggang@gmail.com>
+---
+ config/toolchain.in            | 1 -
+ scripts/build/cc/gcc.sh        | 7 ++++---
+ scripts/build/debug/300-gdb.sh | 4 +++-
+ 3 files changed, 7 insertions(+), 5 deletions(-)
+
+diff --git a/config/toolchain.in b/config/toolchain.in
+index 0042d769..532be9f5 100644
+--- a/config/toolchain.in
++++ b/config/toolchain.in
+@@ -329,7 +329,6 @@ comment "Misc options"
+ config TOOLCHAIN_ENABLE_NLS
+     bool
+     prompt "Enable nls"
+-    select GETTEXT_NEEDED
+     help
+       Say 'Y' here to enable native language support (nls).
+ 
+diff --git a/scripts/build/cc/gcc.sh b/scripts/build/cc/gcc.sh
+index fb51e097..67afd848 100644
+--- a/scripts/build/cc/gcc.sh
++++ b/scripts/build/cc/gcc.sh
+@@ -203,7 +203,6 @@ do_cc_core() {
+     core_opts+=( "ldflags=${CT_LDFLAGS_FOR_BUILD}" )
+     core_opts+=( "lang_list=c" )
+     core_opts+=( "build_step=core" )
+-    core_opts+=( "mode=static" )
+     core_opts+=( "build_libgcc=yes" )
+ 
+     CT_DoStep INFO "Installing core C gcc compiler with jobs flags:${CT_JOBSFLAGS}"
+@@ -536,7 +535,8 @@ do_gcc_core_backend() {
+     esac
+ 
+     if [ "${CT_TOOLCHAIN_ENABLE_NLS}" = "y" ]; then
+-        extra_config+=("--with-libintl-prefix=${complibs}")
++        extra_config+=("--enable-nls")
++        extra_config+=("--disable-win32-utf8-manifest")
+     else
+         extra_config+=("--disable-nls")
+     fi
+@@ -1239,7 +1239,8 @@ do_gcc_backend() {
+     esac
+ 
+     if [ "${CT_TOOLCHAIN_ENABLE_NLS}" = "y" ]; then
+-        extra_config+=("--with-libintl-prefix=${complibs}")
++        extra_config+=("--enable-nls")
++        extra_config+=("--disable-win32-utf8-manifest")
+     else
+         extra_config+=("--disable-nls")
+     fi
+diff --git a/scripts/build/debug/300-gdb.sh b/scripts/build/debug/300-gdb.sh
+index 508ba25f..12ea62b4 100644
+--- a/scripts/build/debug/300-gdb.sh
++++ b/scripts/build/debug/300-gdb.sh
+@@ -286,7 +286,9 @@ do_gdb_backend()
+         *)      extra_config+=("--enable-threads");;
+     esac
+ 
+-    if [ "${CT_TOOLCHAIN_ENABLE_NLS}" != "y" ]; then
++    if [ "${CT_TOOLCHAIN_ENABLE_NLS}" = "y" ]; then
++        extra_config+=("--enable-nls")
++    else
+         extra_config+=("--disable-nls")
+     fi
+ 
+-- 
+2.52.0.windows.1
+
