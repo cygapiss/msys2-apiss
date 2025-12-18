@@ -1,0 +1,31 @@
+From be7fafbc7b6435c55a6d813e4bb02429e261ef7c Mon Sep 17 00:00:00 2001
+From: Chris Packham <judge.packham@gmail.com>
+Date: Sat, 24 Jan 2026 12:58:22 +1300
+Subject: [PATCH 13/36] newlib: Add 4.6.0 snapshot
+
+https://sourceware.org/pipermail/newlib/2026/022251.html
+
+Signed-off-by: Chris Packham <judge.packham@gmail.com>
+---
+ packages/newlib/4.6.0.20260123/chksum       | 4 ++++
+ packages/newlib/4.6.0.20260123/version.desc | 0
+ 2 files changed, 4 insertions(+)
+ create mode 100644 packages/newlib/4.6.0.20260123/chksum
+ create mode 100644 packages/newlib/4.6.0.20260123/version.desc
+
+diff --git a/packages/newlib/4.6.0.20260123/chksum b/packages/newlib/4.6.0.20260123/chksum
+new file mode 100644
+index 00000000..2e6ccd0b
+--- /dev/null
++++ b/packages/newlib/4.6.0.20260123/chksum
+@@ -0,0 +1,4 @@
++md5 newlib-4.6.0.20260123.tar.gz e596f21d6e189b21339d1dc957b90409
++sha1 newlib-4.6.0.20260123.tar.gz 8159f4fd0761c6c56c061acd90db2b41abfa1150
++sha256 newlib-4.6.0.20260123.tar.gz 6ff27e3bf022666f43f7802255be680eeff722ac181b1725d21e2e8318604ee3
++sha512 newlib-4.6.0.20260123.tar.gz ffa16d6465c0b429264c46395fa760fbcf072d3ff86e87330ba1f483efcfe66393ef83b03932759444a0ebeaef94d3ca58a59e91ab7b97b2a6ac6be2e7589657
+diff --git a/packages/newlib/4.6.0.20260123/version.desc b/packages/newlib/4.6.0.20260123/version.desc
+new file mode 100644
+index 00000000..e69de29b
+-- 
+2.52.0.windows.1
+

@@ -1,0 +1,324 @@
+From 5b48e1222864dfd097c5534289926f901020490d Mon Sep 17 00:00:00 2001
+From: Chris Packham <judge.packham@gmail.com>
+Date: Sun, 7 Dec 2025 18:02:26 +1300
+Subject: [PATCH 08/36] linux: Add 6.18 bump LTS
+
+Add 6.18.3 and 6.17.13 Bump LTS.
+
+Signed-off-by: Chris Packham <judge.packham@gmail.com>
+---
+ packages/linux/5.10.240/chksum                     | 8 --------
+ packages/linux/5.10.247/chksum                     | 8 ++++++++
+ packages/linux/{5.10.240 => 5.10.247}/version.desc | 0
+ packages/linux/5.15.189/chksum                     | 8 --------
+ packages/linux/5.15.197/chksum                     | 8 ++++++++
+ packages/linux/{5.15.189 => 5.15.197}/version.desc | 0
+ packages/linux/5.4.296/chksum                      | 8 --------
+ packages/linux/5.4.302/chksum                      | 8 ++++++++
+ packages/linux/{5.4.296 => 5.4.302}/version.desc   | 0
+ packages/linux/6.1.147/chksum                      | 8 --------
+ packages/linux/6.1.159/chksum                      | 8 ++++++++
+ packages/linux/{6.1.147 => 6.1.159}/version.desc   | 0
+ packages/linux/6.12.41/chksum                      | 8 --------
+ packages/linux/6.12.63/chksum                      | 8 ++++++++
+ packages/linux/{6.12.41 => 6.12.63}/version.desc   | 0
+ packages/linux/6.16.9/chksum                       | 8 ++++++++
+ packages/linux/{6.16 => 6.16.9}/version.desc       | 0
+ packages/linux/6.16/chksum                         | 8 --------
+ packages/linux/6.17.13/chksum                      | 8 ++++++++
+ packages/linux/{6.6.101 => 6.17.13}/version.desc   | 0
+ packages/linux/6.18.3/chksum                       | 8 ++++++++
+ packages/linux/{5.10.240 => 6.18.3}/version.desc   | 0
+ packages/linux/6.6.101/chksum                      | 8 --------
+ packages/linux/6.6.119/chksum                      | 8 ++++++++
+ packages/linux/{5.10.240 => 6.6.119}/version.desc  | 0
+ 25 files changed, 72 insertions(+), 56 deletions(-)
+ delete mode 100644 packages/linux/5.10.240/chksum
+ create mode 100644 packages/linux/5.10.247/chksum
+ copy packages/linux/{5.10.240 => 5.10.247}/version.desc (100%)
+ delete mode 100644 packages/linux/5.15.189/chksum
+ create mode 100644 packages/linux/5.15.197/chksum
+ rename packages/linux/{5.15.189 => 5.15.197}/version.desc (100%)
+ delete mode 100644 packages/linux/5.4.296/chksum
+ create mode 100644 packages/linux/5.4.302/chksum
+ rename packages/linux/{5.4.296 => 5.4.302}/version.desc (100%)
+ delete mode 100644 packages/linux/6.1.147/chksum
+ create mode 100644 packages/linux/6.1.159/chksum
+ rename packages/linux/{6.1.147 => 6.1.159}/version.desc (100%)
+ delete mode 100644 packages/linux/6.12.41/chksum
+ create mode 100644 packages/linux/6.12.63/chksum
+ rename packages/linux/{6.12.41 => 6.12.63}/version.desc (100%)
+ create mode 100644 packages/linux/6.16.9/chksum
+ rename packages/linux/{6.16 => 6.16.9}/version.desc (100%)
+ delete mode 100644 packages/linux/6.16/chksum
+ create mode 100644 packages/linux/6.17.13/chksum
+ rename packages/linux/{6.6.101 => 6.17.13}/version.desc (100%)
+ create mode 100644 packages/linux/6.18.3/chksum
+ copy packages/linux/{5.10.240 => 6.18.3}/version.desc (100%)
+ delete mode 100644 packages/linux/6.6.101/chksum
+ create mode 100644 packages/linux/6.6.119/chksum
+ rename packages/linux/{5.10.240 => 6.6.119}/version.desc (100%)
+
+diff --git a/packages/linux/5.10.240/chksum b/packages/linux/5.10.240/chksum
+deleted file mode 100644
+index 8d923744..00000000
+--- a/packages/linux/5.10.240/chksum
++++ /dev/null
+@@ -1,8 +0,0 @@
+-md5 linux-5.10.240.tar.xz 0bce2f45b299935a06b87da5a0062a78
+-sha1 linux-5.10.240.tar.xz 5a2dafafe95d63f7f8b69c1385e86007e38a1d53
+-sha256 linux-5.10.240.tar.xz 8d88c3977226d666554b75f480d1e6c5f4e4d2acdf2a3462840c6bac88634d13
+-sha512 linux-5.10.240.tar.xz ddff83678fd39465b2e92141267403db58b64e95fb746259c92cd439ffd695f5aa3aed81b9bf1891f193e8476a2ab3e03fcdad77ebb953f934b8e19ae609a827
+-md5 linux-5.10.240.tar.gz ef023ced173630ab29b6362388296316
+-sha1 linux-5.10.240.tar.gz 3e6f02f3636fb8721806550707e4e2da0d167d67
+-sha256 linux-5.10.240.tar.gz 5fddf879c77d1fa95c44842be41ff826f6b2d42a1739a8acce6ebf99f8cd0657
+-sha512 linux-5.10.240.tar.gz c17aee2b9f297bb31ca42a5df5cbdd35243eeecaf5a90422416659c21e9d4061b527064b6005caa1c3f33571402240cf4b1f3019701246284086aeb229f11e6e
+diff --git a/packages/linux/5.10.247/chksum b/packages/linux/5.10.247/chksum
+new file mode 100644
+index 00000000..bed7b1ab
+--- /dev/null
++++ b/packages/linux/5.10.247/chksum
+@@ -0,0 +1,8 @@
++md5 linux-5.10.247.tar.xz 17581ec89f0f55e78d1c662ceca39a83
++sha1 linux-5.10.247.tar.xz 5a5880705adedeee1cd53fc5539e09144495c57e
++sha256 linux-5.10.247.tar.xz 70c8b87ba1fcd8bfa663661934dc9bda92d0b5f3c0fc3197bb56399f69d9fe0c
++sha512 linux-5.10.247.tar.xz 1e5e564cc0b612b087b3e00fc62d0983d11db55063108163b7f5f9cd86eba832b387380c08ab1852413f157b96d3c13335e54e96ed49ac6b64fecfd9bb3852dc
++md5 linux-5.10.247.tar.gz 41571017c155258127f03519c84b935e
++sha1 linux-5.10.247.tar.gz 37d5699dcafa3ffaffcd859d0a876a96555d2e0d
++sha256 linux-5.10.247.tar.gz d7065d11c348976dcd89884b73867562c5a527a18230be15bede96f657399375
++sha512 linux-5.10.247.tar.gz 164426769c5f6d4da0f26c800e1be0b492da8e31ddca01142faec32448d66a651197eadc1e8a1aa59685e5eeeeac3cc9999c1d0f184ad1c1e3bc8fb0fb9b7e7e
+diff --git a/packages/linux/5.10.240/version.desc b/packages/linux/5.10.247/version.desc
+similarity index 100%
+copy from packages/linux/5.10.240/version.desc
+copy to packages/linux/5.10.247/version.desc
+diff --git a/packages/linux/5.15.189/chksum b/packages/linux/5.15.189/chksum
+deleted file mode 100644
+index dc175922..00000000
+--- a/packages/linux/5.15.189/chksum
++++ /dev/null
+@@ -1,8 +0,0 @@
+-md5 linux-5.15.189.tar.xz 5aaed9168b561cc74f3b3f9a3816d472
+-sha1 linux-5.15.189.tar.xz 371000aa56c95aa5dcd26d3a360352fd07548ee3
+-sha256 linux-5.15.189.tar.xz e3d0025b87278e14733cb326700f17c7cceb54d920622b0d5fcd58a88c6850c3
+-sha512 linux-5.15.189.tar.xz c2464539f16b2ffc7afa06beab00010bb728c77a61c88445e5b9e7f25ad37ce8301324f3ba63e7fc1171ae2aff05d377454d6da1a4aae7a9508f5577639f2284
+-md5 linux-5.15.189.tar.gz 5f19db73f317f65cb5aaa46a3b174821
+-sha1 linux-5.15.189.tar.gz 2fd49cf51bc6aa8a85f29a1334aa465a5aad6e51
+-sha256 linux-5.15.189.tar.gz 45b7732e9e06229592ce997e78d01f62bf8a7ef689949649c452145fe26e93dd
+-sha512 linux-5.15.189.tar.gz 735576d3949516519e783cbda9f559254a68901c90e884fdf9463e101c62e8d2c12f8b15d66de7b5821ddb932399a48fb38035fd4f0b5664b396b9302e258521
+diff --git a/packages/linux/5.15.197/chksum b/packages/linux/5.15.197/chksum
+new file mode 100644
+index 00000000..574b6da8
+--- /dev/null
++++ b/packages/linux/5.15.197/chksum
+@@ -0,0 +1,8 @@
++md5 linux-5.15.197.tar.xz 8f71d75c16337e3351d2312a82deef4a
++sha1 linux-5.15.197.tar.xz 5de80283c3b7650a89cbbb7dfe56833ec95e40e8
++sha256 linux-5.15.197.tar.xz fd218df8e2107a4443b6c29fef7f95aad167031e0fbdbc7a858ae8471360668a
++sha512 linux-5.15.197.tar.xz 9d83666747f7a7484551e4278805ed4461ba3bb4d5b8ced2220de6703d1e66aa45a690774bc79ff8334b8010bfc958b25225e7224db07f5dfe04d47ad9eca94a
++md5 linux-5.15.197.tar.gz d8df0ffa11d562d8739ff7b4cb622218
++sha1 linux-5.15.197.tar.gz ec1d98adfd63d929fa2579e9dd67022c59be4b64
++sha256 linux-5.15.197.tar.gz 1a2718e05bb1734c56c058a1301c2e0a6ab784034ab9afd2ef7be8883c56c435
++sha512 linux-5.15.197.tar.gz 0dd006009da603ae0198e3160816307f0e58a4dd9b9b592255e9ecc177a04422e2e8f1916bb8fe41df7d12a0a7cf47a8fb198bb808e56a6d9ba18f0e197ab1cf
+diff --git a/packages/linux/5.15.189/version.desc b/packages/linux/5.15.197/version.desc
+similarity index 100%
+rename from packages/linux/5.15.189/version.desc
+rename to packages/linux/5.15.197/version.desc
+diff --git a/packages/linux/5.4.296/chksum b/packages/linux/5.4.296/chksum
+deleted file mode 100644
+index f334c7f0..00000000
+--- a/packages/linux/5.4.296/chksum
++++ /dev/null
+@@ -1,8 +0,0 @@
+-md5 linux-5.4.296.tar.xz ba4b3557d1821fab55b27e64587eb66b
+-sha1 linux-5.4.296.tar.xz 0d5b2a8887c4ae9194e933e451955994bff05c84
+-sha256 linux-5.4.296.tar.xz 3d63614e58bf1befaba3f5713145200d09f26e564832c8948094fdf5b11fa73a
+-sha512 linux-5.4.296.tar.xz 0bca0dd420d98b45dca0ba305f67cbfe104af412186b160e486499b7022a6fca5ef9b91948d0282bbe16563febda350712a2e0566a0e2f33ace4a3f56322992c
+-md5 linux-5.4.296.tar.gz 1db7676edb248232ad2e806c79a1e447
+-sha1 linux-5.4.296.tar.gz 2f17338b9663273aa47f738c88bd42b25b56f888
+-sha256 linux-5.4.296.tar.gz 2c7fdcf41b5ff97cf10c8dd389a19f12ede6d4ef5915411f6e584f9c504e974f
+-sha512 linux-5.4.296.tar.gz 97e840d2fd784f6e79f6c12f364c83ad2b9817ace2f431ca3dc3ee7aa85768692ae314e7d0f310f201fdb123c378141b58eef73648c403de666a84050f6ea545
+diff --git a/packages/linux/5.4.302/chksum b/packages/linux/5.4.302/chksum
+new file mode 100644
+index 00000000..e602a772
+--- /dev/null
++++ b/packages/linux/5.4.302/chksum
+@@ -0,0 +1,8 @@
++md5 linux-5.4.302.tar.xz f0ebaa98ada172815e972df854386a9e
++sha1 linux-5.4.302.tar.xz 2c81367cf4d52b57c19ed3194042cbd8fb85bf7b
++sha256 linux-5.4.302.tar.xz ae6a3207f12aa4d6cfb0fa793ec9da4a6fcdfdcb57d869d63d6b77e3a8c1423d
++sha512 linux-5.4.302.tar.xz b4f67ba747a4813fe71d9bb41151b13273bbf2de370c9867a6deca11e05aa702351d33f746d8f7a8fe0a56f58dc89ea7555915e127d75ee151b231b5c49ef4c2
++md5 linux-5.4.302.tar.gz e177dc9f2e0ca359794cd6317b277e39
++sha1 linux-5.4.302.tar.gz 9508e9665df2c98d95bd5a10151fabbd83077bad
++sha256 linux-5.4.302.tar.gz 573242a47528acc2e6122ed277a6f1fda2dcf9a58556a97243543d5f3122c9dc
++sha512 linux-5.4.302.tar.gz 1d9f7af54c8f830f121a6ed34ffbe27d519fe9527c45fe96197fa5912afdc78b5e42ecd60c618a4d48b52cc5ccb81d6b638c055fc1a7d1845491d2699006efdf
+diff --git a/packages/linux/5.4.296/version.desc b/packages/linux/5.4.302/version.desc
+similarity index 100%
+rename from packages/linux/5.4.296/version.desc
+rename to packages/linux/5.4.302/version.desc
+diff --git a/packages/linux/6.1.147/chksum b/packages/linux/6.1.147/chksum
+deleted file mode 100644
+index 02f6553b..00000000
+--- a/packages/linux/6.1.147/chksum
++++ /dev/null
+@@ -1,8 +0,0 @@
+-md5 linux-6.1.147.tar.xz ccfc5f1d252cb17eb3ce803bfcec17bd
+-sha1 linux-6.1.147.tar.xz 6164e8b71cf15bd8e78da067f6186928ae54c5af
+-sha256 linux-6.1.147.tar.xz 218f25663a41e3d811e84fa1c4acec50684898b2f6d0c8c0deb531d937e466f7
+-sha512 linux-6.1.147.tar.xz ff363aa80a2dac357e247331f206b67d79236471dfaac13b94fcee05db6533572aa42f94d520d8a396628ba145cb62ad33a0d6dc46334292af696d8b4ceaf025
+-md5 linux-6.1.147.tar.gz 593e0388ffd70ddf05a53dbc1280cc28
+-sha1 linux-6.1.147.tar.gz 7e656f519ad65134a1aeaabaeac18145bfdb6122
+-sha256 linux-6.1.147.tar.gz bad198f7699815dc8fb1dc36bd7adc410ea9ffd94997d9b90bce7cd8fd6b67fc
+-sha512 linux-6.1.147.tar.gz e477cc5cce3ed4c8aac1ad4ec15a75bb2ab6ad17ed6aefba4185b142ab2e24e5ed9e376d173407905e9f00d24925bc64f62cdb50cca470dfdcffcd6b38ebca8a
+diff --git a/packages/linux/6.1.159/chksum b/packages/linux/6.1.159/chksum
+new file mode 100644
+index 00000000..ac72485d
+--- /dev/null
++++ b/packages/linux/6.1.159/chksum
+@@ -0,0 +1,8 @@
++md5 linux-6.1.159.tar.xz b5a7d737830841014596e2a9ec6308f4
++sha1 linux-6.1.159.tar.xz ef37713d9c65024acd8ba51606a656be42362f0a
++sha256 linux-6.1.159.tar.xz 1f207ebe93980829ecc0a18b694816f22b715e9893767731651969a168342b9e
++sha512 linux-6.1.159.tar.xz ee40a5d418600ba1b6f9c3456a3f00abdefa0df5c3af11b8982de71d6b233df40918885f02f17d6df46bb01aa76783e594881b89536e8113d95beaf0e2da5a68
++md5 linux-6.1.159.tar.gz 55f6da08d3295d56624feea1a6cf2bfa
++sha1 linux-6.1.159.tar.gz 17dc847fb7e54ebfce262e0d6d3ba7f2209e5cb0
++sha256 linux-6.1.159.tar.gz 49bd83e59469b5d6097c6a8dd9a84e9a87214a9ed726e9d4bb80015f9b7ee43e
++sha512 linux-6.1.159.tar.gz f0ea76fd8737f2836fa967a882797a84380060eaaf2b98dfbea6dfa205992d2dadc351bdfdbdcb66ac3ad9b1491f500822346ada8d9a6ca511265e8100cc4ca8
+diff --git a/packages/linux/6.1.147/version.desc b/packages/linux/6.1.159/version.desc
+similarity index 100%
+rename from packages/linux/6.1.147/version.desc
+rename to packages/linux/6.1.159/version.desc
+diff --git a/packages/linux/6.12.41/chksum b/packages/linux/6.12.41/chksum
+deleted file mode 100644
+index a0f0390a..00000000
+--- a/packages/linux/6.12.41/chksum
++++ /dev/null
+@@ -1,8 +0,0 @@
+-md5 linux-6.12.41.tar.xz 4f8d04818209e913856e1ec64f827c9d
+-sha1 linux-6.12.41.tar.xz 5775b3a95fe7541e50564d67d0620511a95df3ac
+-sha256 linux-6.12.41.tar.xz 6b19a3ae99423de2416964d67251d745910277af258b4c4c63e88fd87dbf0e27
+-sha512 linux-6.12.41.tar.xz c3b000894a51a944ac3357995935f8bd19d92d3764f1517413a494c89c8a54bab304ddf038faf1ec0b8716c7498f040f681779c3f3f0ee764e6608d2465ad083
+-md5 linux-6.12.41.tar.gz 187f109b9212a304c228e07566791e97
+-sha1 linux-6.12.41.tar.gz 44cea958f48ca4dfdeeef72d4a3c17596f3a9084
+-sha256 linux-6.12.41.tar.gz d4b50ba6904b3a68d7fbea3db0621928b450a950e71f9ad97cafc933d22c30fa
+-sha512 linux-6.12.41.tar.gz 079f2aceaab133e5cd837f4a96cea3103df1c4e89fac567bc1c1dab1a45b17f049b0d64d0335411aa6153a3bc57ccec4f5f59e91da32e5a16e2a63fe44e6c1bd
+diff --git a/packages/linux/6.12.63/chksum b/packages/linux/6.12.63/chksum
+new file mode 100644
+index 00000000..bde97435
+--- /dev/null
++++ b/packages/linux/6.12.63/chksum
+@@ -0,0 +1,8 @@
++md5 linux-6.12.63.tar.xz 5302136bc890b24a14d54175edd32403
++sha1 linux-6.12.63.tar.xz 1c6700396125422fee073b0bd60961e5fc8d07e0
++sha256 linux-6.12.63.tar.xz 9502c5ffe4b894383c97abfccf74430a84732f04ee476b9c0d87635b29df7db3
++sha512 linux-6.12.63.tar.xz 89a4aaa7f924b2c579d0bf384742c3ec2fc9b11c272b9d68ad645a99127043a4f55f8a07067a99ff6220ba9c3efb29dbf27baa298d2b5980d811771873afac1d
++md5 linux-6.12.63.tar.gz 42513dffe3871648f204f46dc37a138c
++sha1 linux-6.12.63.tar.gz 3ac1ee449e85710d005770358e5e9dea3d6f4467
++sha256 linux-6.12.63.tar.gz 9557e9915b9b4325804968fe7cd8e762e4afdc97e6998f7ee1b6a6101d2ab7dc
++sha512 linux-6.12.63.tar.gz 49c3b166391d139586bbee2071349a11892173ef91bab0fa3b376323f6cc5971c790292536ebd76c01d8b99339c7330885cce7a3d4e8fbdfb45ef9981fa8d896
+diff --git a/packages/linux/6.12.41/version.desc b/packages/linux/6.12.63/version.desc
+similarity index 100%
+rename from packages/linux/6.12.41/version.desc
+rename to packages/linux/6.12.63/version.desc
+diff --git a/packages/linux/6.16.9/chksum b/packages/linux/6.16.9/chksum
+new file mode 100644
+index 00000000..325115c0
+--- /dev/null
++++ b/packages/linux/6.16.9/chksum
+@@ -0,0 +1,8 @@
++md5 linux-6.16.9.tar.xz feb0a3d5ecf5a4628aed7d9f8f7ab3f6
++sha1 linux-6.16.9.tar.xz 32a49bad6972f7ea81e28bbc227b3fe80164a625
++sha256 linux-6.16.9.tar.xz 7ac8c8a3cf05476375deaaa85dfcee095a826ffe557b437f43774fc3b64ce58d
++sha512 linux-6.16.9.tar.xz 4a3e704edb7a880422d6d19ec749e9a591520aca5c5614043e6e36887b5dd6a2a0c813ea761f405350c7c49433d37e9df5d9f85a54f290038b7a2af7cbef8a8b
++md5 linux-6.16.9.tar.gz 8decc29ce59bb420d6468e121e07248a
++sha1 linux-6.16.9.tar.gz 9628d3e5ff8848b83353d74828110ac7f71a70c4
++sha256 linux-6.16.9.tar.gz 9e24b71efcaf005ad68efbbad1e08b6bbbbf9c3477d58e9a17b70cc343a4bed9
++sha512 linux-6.16.9.tar.gz 08debd4e042b509a471b3911e568e4625f4ce3fb2faaffb6b1fdbdaaf50eb72df049c680e74bcf2290664adb31ac64454581b4f70587157a0b663d8edd1f116b
+diff --git a/packages/linux/6.16/version.desc b/packages/linux/6.16.9/version.desc
+similarity index 100%
+rename from packages/linux/6.16/version.desc
+rename to packages/linux/6.16.9/version.desc
+diff --git a/packages/linux/6.16/chksum b/packages/linux/6.16/chksum
+deleted file mode 100644
+index a03a7c03..00000000
+--- a/packages/linux/6.16/chksum
++++ /dev/null
+@@ -1,8 +0,0 @@
+-md5 linux-6.16.tar.xz dd850269c3f456c0ff5518b1a2a81836
+-sha1 linux-6.16.tar.xz 43c0c30592fb9453a8289f0c6c0a5ec10162ee65
+-sha256 linux-6.16.tar.xz 1a4be2fe6b5246aa4ac8987a8a4af34c42a8dd7d08b46ab48516bcc1befbcd83
+-sha512 linux-6.16.tar.xz 55a00f89ad6db6db2e26ff5dc5cfc96bbf6654e5bd5d17d2a3b944a47640367e54139716d230923187bebc6cb7756edc9511a620fb8abc6f32c50a658a734784
+-md5 linux-6.16.tar.gz 08ab460ca3a1d9210f5b7c2549b6bad3
+-sha1 linux-6.16.tar.gz bc5b3f0fc9598fc285e194cf538616fde91b431c
+-sha256 linux-6.16.tar.gz 7c44ae50d631d83d6ffa92934e07d4c9ff80c5fde201e0c8007f55be3d2cdafc
+-sha512 linux-6.16.tar.gz abc1360664e5cce86228f64e34f1363aec712a9ac8f84cb0ac75df25fd68cb3d8ba3160aa616e3a78efb3616106ab0df2be0a43e215eda934490191e9bcd9b2b
+diff --git a/packages/linux/6.17.13/chksum b/packages/linux/6.17.13/chksum
+new file mode 100644
+index 00000000..2a189ebe
+--- /dev/null
++++ b/packages/linux/6.17.13/chksum
+@@ -0,0 +1,8 @@
++md5 linux-6.17.13.tar.xz d437e374e45da47b252c80c6ad9e7f77
++sha1 linux-6.17.13.tar.xz 43a992cea60d6c4fe63c8cfbe2d681c710783384
++sha256 linux-6.17.13.tar.xz 116802dc3ad1646163cc6ffe9bddba24a8069b569135ec0523cd799064f2edb9
++sha512 linux-6.17.13.tar.xz 91450681e4d07ba20f8dfd5863748d5bb190615c17ab31f27b65e2b70f2785d70a1be4e565efc956f971bedc9806344f680c584560e2f132f3190c6c888ba981
++md5 linux-6.17.13.tar.gz 3a3be003e8d3e30652117b13244cbd08
++sha1 linux-6.17.13.tar.gz 36f98a312d3b5e2132a6a0fb353135c4d435905e
++sha256 linux-6.17.13.tar.gz c888d83fd426c817a31e70d8460bc3e4c7f2e07567060171b1ffb0beadff6de8
++sha512 linux-6.17.13.tar.gz 330fc7a5bc448f20821f7d93d24881e60e6e3774fa9da15d9d3720a8a442c5ab90a9de8b5e11b2207cdb81cee99e1fc06d7c09478e584b993e77b872f96e8981
+diff --git a/packages/linux/6.6.101/version.desc b/packages/linux/6.17.13/version.desc
+similarity index 100%
+rename from packages/linux/6.6.101/version.desc
+rename to packages/linux/6.17.13/version.desc
+diff --git a/packages/linux/6.18.3/chksum b/packages/linux/6.18.3/chksum
+new file mode 100644
+index 00000000..0cce56f3
+--- /dev/null
++++ b/packages/linux/6.18.3/chksum
+@@ -0,0 +1,8 @@
++md5 linux-6.18.3.tar.xz 57f0cb3f23afba114a78d656d04be91b
++sha1 linux-6.18.3.tar.xz 110822728cd5ac3976b6a0345fb20fdc2a6d6e71
++sha256 linux-6.18.3.tar.xz 7a8879167b89c4bae077d6f39c4f2130769f05dbdad2aad914adab9afb7d7f9a
++sha512 linux-6.18.3.tar.xz 09e46cd42dba82ba3ca5febd0ab9b9a6b5cac5e2c214a1374c79f82ecf826979d9bb52b543a187bc0c1257b7b45c7160bb28ff2d2a224a4d55a4560cdf2a5f95
++md5 linux-6.18.3.tar.gz 84573ed9d5d61eb57f12e595366f08b6
++sha1 linux-6.18.3.tar.gz 5ec324aa119a8f2a1e86039416e1b016e7d27ce0
++sha256 linux-6.18.3.tar.gz 894fc53491d527df3c092742a06c2b8c587d052b6be86eb336254adc459a05fc
++sha512 linux-6.18.3.tar.gz 7282a0a2d93427eaa218d30913e7e4b6ca9118010e985231ed7a6d830f55483b9efc4b7fb1eea203599ab8c3992579f41f9cfdf28055b78f33ac4e82f6561528
+diff --git a/packages/linux/5.10.240/version.desc b/packages/linux/6.18.3/version.desc
+similarity index 100%
+copy from packages/linux/5.10.240/version.desc
+copy to packages/linux/6.18.3/version.desc
+diff --git a/packages/linux/6.6.101/chksum b/packages/linux/6.6.101/chksum
+deleted file mode 100644
+index 3191e14a..00000000
+--- a/packages/linux/6.6.101/chksum
++++ /dev/null
+@@ -1,8 +0,0 @@
+-md5 linux-6.6.101.tar.xz 416dcf1d188dc61278a7a050144dd5b2
+-sha1 linux-6.6.101.tar.xz 836d33fad7fa71fbf8fc8505f804ea4c8418e47a
+-sha256 linux-6.6.101.tar.xz 8c4ff2869736538b9b0d88ea8dbf0332b79c6ecc40a32066768a754df1fae1c0
+-sha512 linux-6.6.101.tar.xz 61a67b2e222ceb4f607e94df1ad2be3c582c5664df8c939b52f5778e126ecba9baaa2ed750765d7eeac8919c599cd28b53c6330ae3c0d7a9e2cee5319d5f09aa
+-md5 linux-6.6.101.tar.gz a74f5bbad889d4c7a5130ef564ee367f
+-sha1 linux-6.6.101.tar.gz dfe85fc47ea60b88f4382a37ae2748d65fb203f7
+-sha256 linux-6.6.101.tar.gz 0b3f40179ea2dc0d968931033722c4a9f81193febbff6cf3d5fe50637ea9aa2d
+-sha512 linux-6.6.101.tar.gz 7e5571eff513f84f2c80a331f9d98bb2766c99877aca25f460a37b039efee5e94dd1f3db712f6157789c119164d84bb8be87709141e0b77240983500c114f9c5
+diff --git a/packages/linux/6.6.119/chksum b/packages/linux/6.6.119/chksum
+new file mode 100644
+index 00000000..d79d2656
+--- /dev/null
++++ b/packages/linux/6.6.119/chksum
+@@ -0,0 +1,8 @@
++md5 linux-6.6.119.tar.xz 98fab2a81b48c92490692e3dd6f71995
++sha1 linux-6.6.119.tar.xz 1462329ebb007d25cd4d00ccdc44985d791df903
++sha256 linux-6.6.119.tar.xz 3da09b980bb404cc28793479bb2d6c636522679215ffa65a04c893575253e5e8
++sha512 linux-6.6.119.tar.xz 4a9c52bea73621f446155fcd801bc7b8e9f81d3008e220e9726517b39949d03abd317bb27cef854317b398153b1896dae2bc10c3207bf57acbea61e5c3fa4ac2
++md5 linux-6.6.119.tar.gz 4228337fcaef195bb34d409cb23e2d7f
++sha1 linux-6.6.119.tar.gz 4bcb1aa32e846a584d4f9858e86903c75e9b1760
++sha256 linux-6.6.119.tar.gz 8746989ee49541eae752c219eb5260cf730bd1400052792ab74674a3b0827e0b
++sha512 linux-6.6.119.tar.gz 1866100f4bc1ad7a9be5cb83fcd214ec2a97a286a14cdfd69f9f2f2630e19b2f16110e838d1ed7635a087b2323b4f52e7c9cb77a7306edd3b9417b9af84f4b32
+diff --git a/packages/linux/5.10.240/version.desc b/packages/linux/6.6.119/version.desc
+similarity index 100%
+rename from packages/linux/5.10.240/version.desc
+rename to packages/linux/6.6.119/version.desc
+-- 
+2.52.0.windows.1
+

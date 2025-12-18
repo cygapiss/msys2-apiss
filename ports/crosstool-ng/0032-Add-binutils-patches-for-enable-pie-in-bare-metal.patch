@@ -1,0 +1,55 @@
+From 1ff89bacd868cfe371e6fcef8b7b6b129ffbc139 Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Tue, 30 Dec 2025 08:58:11 +0800
+Subject: [PATCH 32/36] Add binutils patches for enable -pie in bare-metal
+
+---
+ ...sable-shared-library-support-for-emb.patch | 36 +++++++++++++++++++
+ 1 file changed, 36 insertions(+)
+ create mode 100644 packages/binutils/2.45/0001-Revert-RISC-V-Disable-shared-library-support-for-emb.patch
+
+diff --git a/packages/binutils/2.45/0001-Revert-RISC-V-Disable-shared-library-support-for-emb.patch b/packages/binutils/2.45/0001-Revert-RISC-V-Disable-shared-library-support-for-emb.patch
+new file mode 100644
+index 00000000..c56dd1c6
+--- /dev/null
++++ b/packages/binutils/2.45/0001-Revert-RISC-V-Disable-shared-library-support-for-emb.patch
+@@ -0,0 +1,36 @@
++From e6b11ba45f7083b5c57becf813520d73bcbe29ed Mon Sep 17 00:00:00 2001
++From: Yonggang Luo <luoyonggang@gmail.com>
++Date: Tue, 30 Dec 2025 08:54:25 +0800
++Subject: [PATCH] Revert "RISC-V: Disable shared library support for embedded
++ elf."
++
++This reverts commit be1dce26256aa9f6c7742e81c8c3db9eacff079d.
++---
++ ld/emulparams/elf32lriscv-defs.sh | 11 ++---------
++ 1 file changed, 2 insertions(+), 9 deletions(-)
++
++diff --git a/ld/emulparams/elf32lriscv-defs.sh b/ld/emulparams/elf32lriscv-defs.sh
++index 016556168c3..5c0dac2af8b 100644
++--- a/ld/emulparams/elf32lriscv-defs.sh
+++++ b/ld/emulparams/elf32lriscv-defs.sh
++@@ -16,15 +16,8 @@ if test `echo "$host" | sed -e s/64//` = `echo "$target" | sed -e s/64//`; then
++   esac
++ fi
++ 
++-# Enable shared library support for everything except an embedded elf target.
++-case "$target" in
++-  riscv*-elf)
++-    ;;
++-  *)
++-    GENERATE_SHLIB_SCRIPT=yes
++-    GENERATE_PIE_SCRIPT=yes
++-    ;;
++-esac
+++GENERATE_SHLIB_SCRIPT=yes
+++GENERATE_PIE_SCRIPT=yes
++ 
++ IREL_IN_PLT=
++ TEXT_START_ADDR=0x10000
++-- 
++2.52.0.windows.1
++
+-- 
+2.52.0.windows.1
+

@@ -1,0 +1,27 @@
+From a9ba50052c162d655cfd7c97a9cb4ef982001870 Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Sat, 20 Dec 2025 12:01:26 +0800
+Subject: [PATCH 05/36] libexpat: update comment for do_expat_backend
+
+comment the shared parameter
+
+Signed-off-by: Yonggang Luo <luoyonggang@gmail.com>
+---
+ scripts/build/companion_libs/210-expat.sh | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/scripts/build/companion_libs/210-expat.sh b/scripts/build/companion_libs/210-expat.sh
+index 68667f6e..ce6bff99 100644
+--- a/scripts/build/companion_libs/210-expat.sh
++++ b/scripts/build/companion_libs/210-expat.sh
+@@ -71,6 +71,7 @@ fi
+ #   host          : machine to run on         : tuple     : (none)
+ #   prefix        : prefix to install into    : dir       : (none)
+ #   destdir       : install destination       : dir       : (none)
++#   shared        : build shared lib          : bool      : n
+ do_expat_backend() {
+     local host
+     local prefix
+-- 
+2.52.0.windows.1
+

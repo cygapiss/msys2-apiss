@@ -1,0 +1,48 @@
+From cf6e0ca065e79769e89149d9af61a23633d0390c Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Thu, 18 Dec 2025 03:42:47 +0800
+Subject: [PATCH 14/36] Modify config to support correct Mingw64 Triplet Name
+
+---
+ scripts/config.guess | 5 ++++-
+ scripts/config.sub   | 6 +++---
+ 2 files changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/scripts/config.guess b/scripts/config.guess
+index a9d01fde..f72032c7 100755
+--- a/scripts/config.guess
++++ b/scripts/config.guess
+@@ -926,7 +926,10 @@ EOF
+ 	GUESS=$UNAME_MACHINE-pc-cygwin
+ 	;;
+     *:MINGW64*:*)
+-	GUESS=$UNAME_MACHINE-pc-mingw64
++	GUESS=x86_64-w64-mingw32
++	;;
++    *:MINGW32*:*)
++	GUESS=i686-w64-mingw32
+ 	;;
+     *:MINGW*:*)
+ 	GUESS=$UNAME_MACHINE-pc-mingw32
+diff --git a/scripts/config.sub b/scripts/config.sub
+index 56db5e54..fff7a872 100755
+--- a/scripts/config.sub
++++ b/scripts/config.sub
+@@ -442,11 +442,11 @@ case $1 in
+ 				basic_os=sysv
+ 				;;
+ 			mingw64)
+-				basic_machine=x86_64-pc
+-				basic_os=mingw64
++				basic_machine=x86_64-w64
++				basic_os=mingw32
+ 				;;
+ 			mingw32)
+-				basic_machine=i686-pc
++				basic_machine=i686-w64
+ 				basic_os=mingw32
+ 				;;
+ 			mingw32ce)
+-- 
+2.52.0.windows.1
+

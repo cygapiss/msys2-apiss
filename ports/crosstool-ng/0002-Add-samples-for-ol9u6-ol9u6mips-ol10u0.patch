@@ -1,0 +1,244 @@
+From f7e05228da7ea5cfb043d6d8df82956a1e83b370 Mon Sep 17 00:00:00 2001
+From: Bruce McCulloch <bruce.mcculloch@oracle.com>
+Date: Tue, 26 Aug 2025 12:59:33 -0700
+Subject: [PATCH 02/36] Add samples for ol9u6, ol9u6mips, ol10u0
+
+Signed-off-by: Bruce McCulloch <bruce.mcculloch@oracle.com>
+---
+ .../aarch64-ol10u0-linux-gnu/crosstool.config | 27 +++++++++++++++++
+ samples/aarch64-ol10u0-linux-gnu/reported.by  |  3 ++
+ .../aarch64-ol9u6-linux-gnu/crosstool.config  | 27 +++++++++++++++++
+ samples/aarch64-ol9u6-linux-gnu/reported.by   |  3 ++
+ .../mips64-ol9u6-linux-gnu/crosstool.config   | 29 +++++++++++++++++++
+ samples/mips64-ol9u6-linux-gnu/reported.by    |  3 ++
+ .../x86_64-ol10u0-linux-gnu/crosstool.config  | 27 +++++++++++++++++
+ samples/x86_64-ol10u0-linux-gnu/reported.by   |  3 ++
+ .../x86_64-ol9u6-linux-gnu/crosstool.config   | 27 +++++++++++++++++
+ samples/x86_64-ol9u6-linux-gnu/reported.by    |  3 ++
+ 10 files changed, 152 insertions(+)
+ create mode 100644 samples/aarch64-ol10u0-linux-gnu/crosstool.config
+ create mode 100644 samples/aarch64-ol10u0-linux-gnu/reported.by
+ create mode 100644 samples/aarch64-ol9u6-linux-gnu/crosstool.config
+ create mode 100644 samples/aarch64-ol9u6-linux-gnu/reported.by
+ create mode 100644 samples/mips64-ol9u6-linux-gnu/crosstool.config
+ create mode 100644 samples/mips64-ol9u6-linux-gnu/reported.by
+ create mode 100644 samples/x86_64-ol10u0-linux-gnu/crosstool.config
+ create mode 100644 samples/x86_64-ol10u0-linux-gnu/reported.by
+ create mode 100644 samples/x86_64-ol9u6-linux-gnu/crosstool.config
+ create mode 100644 samples/x86_64-ol9u6-linux-gnu/reported.by
+
+diff --git a/samples/aarch64-ol10u0-linux-gnu/crosstool.config b/samples/aarch64-ol10u0-linux-gnu/crosstool.config
+new file mode 100644
+index 00000000..c5ec2171
+--- /dev/null
++++ b/samples/aarch64-ol10u0-linux-gnu/crosstool.config
+@@ -0,0 +1,27 @@
++CT_CONFIG_VERSION="4"
++CT_ARCH_ARM=y
++CT_ARCH_64=y
++CT_TARGET_VENDOR="ol10u0"
++CT_KERNEL_LINUX=y
++CT_LINUX_USE_ORACLE=y
++CT_BINUTILS_USE_ORACLE=y
++CT_BINUTILS_ORACLE_V_2_41=y
++CT_BINUTILS_ORACLE_DEVEL_BRANCH="oracle/binutils/ol10-u0"
++CT_BINUTILS_LINKER_LD_GOLD=y
++CT_BINUTILS_GOLD_THREADS=y
++CT_BINUTILS_LD_WRAPPER=y
++CT_BINUTILS_PLUGINS=y
++CT_GLIBC_USE_ORACLE=y
++CT_GLIBC_EXTRA_CFLAGS="-Wno-missing-attributes -Wno-array-bounds -Wno-array-parameter -Wno-stringop-overflow -Wno-maybe-uninitialized"
++CT_GLIBC_ENABLE_COMMON_FLAG=y
++CT_GLIBC_ENABLE_DEBUG=n
++CT_GLIBC_ORACLE_V_2_39=y
++CT_CC_LANG_CXX=y
++CT_GLIBC_ORACLE_DEVEL_BRANCH="oracle/glibc/ol10-u0"
++CT_GCC_USE_ORACLE=y
++CT_ISL_V_0_18=y
++CT_GCC_ORACLE_V_14=y
++CT_GCC_ORACLE_VERSION="14.2.1-7.0.1"
++CT_GCC_ORACLE_DEVEL_BRANCH="oracle/gcc/ol10-u0"
++CT_CC_GCC_CORE_EXTRA_CONFIG_ARRAY="--enable-host-pie --enable-host-bind-now"
++CT_CC_GCC_EXTRA_CONFIG_ARRAY="--enable-host-pie --enable-host-bind-now"
+diff --git a/samples/aarch64-ol10u0-linux-gnu/reported.by b/samples/aarch64-ol10u0-linux-gnu/reported.by
+new file mode 100644
+index 00000000..49cd85c9
+--- /dev/null
++++ b/samples/aarch64-ol10u0-linux-gnu/reported.by
+@@ -0,0 +1,3 @@
++reporter_name="Bruce McCulloch"
++reporter_url=""
++reporter_comment="OL 10.0 toolchain configured for aarch64"
+diff --git a/samples/aarch64-ol9u6-linux-gnu/crosstool.config b/samples/aarch64-ol9u6-linux-gnu/crosstool.config
+new file mode 100644
+index 00000000..0610c1b8
+--- /dev/null
++++ b/samples/aarch64-ol9u6-linux-gnu/crosstool.config
+@@ -0,0 +1,27 @@
++CT_CONFIG_VERSION="4"
++CT_ARCH_ARM=y
++CT_ARCH_64=y
++CT_TARGET_VENDOR="ol9u6"
++CT_KERNEL_LINUX=y
++CT_LINUX_USE_ORACLE=y
++CT_BINUTILS_USE_ORACLE=y
++CT_BINUTILS_ORACLE_V_2_35=y
++CT_BINUTILS_ORACLE_DEVEL_BRANCH="oracle/binutils/ol9-u6"
++CT_BINUTILS_LINKER_LD_GOLD=y
++CT_BINUTILS_GOLD_THREADS=y
++CT_BINUTILS_LD_WRAPPER=y
++CT_BINUTILS_PLUGINS=y
++CT_GLIBC_USE_ORACLE=y
++CT_GLIBC_EXTRA_CFLAGS="-Wno-missing-attributes -Wno-array-bounds -Wno-array-parameter -Wno-stringop-overflow -Wno-maybe-uninitialized"
++CT_GLIBC_ENABLE_COMMON_FLAG=y
++CT_GLIBC_ENABLE_DEBUG=n
++CT_GLIBC_ORACLE_V_2_34=y
++CT_CC_LANG_CXX=y
++CT_GLIBC_ORACLE_DEVEL_BRANCH="oracle/glibc/ol9-u6"
++CT_GCC_USE_ORACLE=y
++CT_ISL_V_0_16=y
++CT_GCC_ORACLE_V_11=y
++CT_GCC_ORACLE_VERSION="11.5.0-6.0.1"
++CT_GCC_ORACLE_DEVEL_BRANCH="oracle/gcc/ol9-u6"
++CT_CC_GCC_CORE_EXTRA_CONFIG_ARRAY="--enable-host-pie --enable-host-bind-now"
++CT_CC_GCC_EXTRA_CONFIG_ARRAY="--enable-host-pie --enable-host-bind-now"
+diff --git a/samples/aarch64-ol9u6-linux-gnu/reported.by b/samples/aarch64-ol9u6-linux-gnu/reported.by
+new file mode 100644
+index 00000000..a3b5511a
+--- /dev/null
++++ b/samples/aarch64-ol9u6-linux-gnu/reported.by
+@@ -0,0 +1,3 @@
++reporter_name="Bruce McCulloch"
++reporter_url=""
++reporter_comment="OL 9.6 toolchain configured for aarch64"
+diff --git a/samples/mips64-ol9u6-linux-gnu/crosstool.config b/samples/mips64-ol9u6-linux-gnu/crosstool.config
+new file mode 100644
+index 00000000..16259809
+--- /dev/null
++++ b/samples/mips64-ol9u6-linux-gnu/crosstool.config
+@@ -0,0 +1,29 @@
++CT_CONFIG_VERSION="4"
++CT_ARCH_MIPS=y
++CT_ARCH_mips_n64=y
++CT_ARCH_64=y
++CT_ARCH_FLOAT_HW=y
++CT_KERNEL_LINUX=y
++CT_CC_LANG_CXX=y
++CT_TARGET_VENDOR="ol9u6"
++CT_LINUX_USE_ORACLE=y
++CT_BINUTILS_USE_ORACLE=y
++CT_BINUTILS_ORACLE_V_2_35=y
++CT_BINUTILS_ORACLE_DEVEL_BRANCH="oracle/binutils/ol9-u6-mips64"
++CT_BINUTILS_LINKER_LD_GOLD=y
++CT_BINUTILS_GOLD_THREADS=y
++CT_BINUTILS_LD_WRAPPER=y
++CT_BINUTILS_PLUGINS=y
++CT_GLIBC_USE_ORACLE=y
++CT_GLIBC_EXTRA_CFLAGS="-Wno-missing-attributes -Wno-array-bounds -Wno-array-parameter -Wno-stringop-overflow -Wno-maybe-uninitialized"
++CT_GLIBC_ENABLE_COMMON_FLAG=y
++CT_GLIBC_ENABLE_DEBUG=n
++CT_GLIBC_ORACLE_V_2_34=y
++CT_GLIBC_ORACLE_DEVEL_BRANCH="oracle/glibc/ol9-u6-mips64"
++CT_GCC_USE_ORACLE=y
++CT_ISL_V_0_16=y
++CT_GCC_ORACLE_V_11=y
++CT_GCC_ORACLE_VERSION="11.5.0-5.0.1"
++CT_GCC_ORACLE_DEVEL_BRANCH="oracle/gcc/ol9-u6"
++CT_CC_GCC_CORE_EXTRA_CONFIG_ARRAY="--enable-host-pie --enable-host-bind-now"
++CT_CC_GCC_EXTRA_CONFIG_ARRAY="--enable-host-pie --enable-host-bind-now"
+diff --git a/samples/mips64-ol9u6-linux-gnu/reported.by b/samples/mips64-ol9u6-linux-gnu/reported.by
+new file mode 100644
+index 00000000..6f9e3ae2
+--- /dev/null
++++ b/samples/mips64-ol9u6-linux-gnu/reported.by
+@@ -0,0 +1,3 @@
++reporter_name="Bruce McCulloch"
++reporter_url=""
++reporter_comment="OL 9.6 toolchain configured for mips64"
+diff --git a/samples/x86_64-ol10u0-linux-gnu/crosstool.config b/samples/x86_64-ol10u0-linux-gnu/crosstool.config
+new file mode 100644
+index 00000000..908d0ff8
+--- /dev/null
++++ b/samples/x86_64-ol10u0-linux-gnu/crosstool.config
+@@ -0,0 +1,27 @@
++CT_CONFIG_VERSION="4"
++CT_ARCH_X86=y
++CT_ARCH_64=y
++CT_TARGET_VENDOR="ol10u0"
++CT_KERNEL_LINUX=y
++CT_LINUX_USE_ORACLE=y
++CT_BINUTILS_USE_ORACLE=y
++CT_BINUTILS_ORACLE_V_2_41=y
++CT_BINUTILS_ORACLE_DEVEL_BRANCH="oracle/binutils/ol10-u0"
++CT_BINUTILS_LINKER_LD_GOLD=y
++CT_BINUTILS_GOLD_THREADS=y
++CT_BINUTILS_LD_WRAPPER=y
++CT_BINUTILS_PLUGINS=y
++CT_GLIBC_USE_ORACLE=y
++CT_GLIBC_EXTRA_CFLAGS="-Wno-missing-attributes -Wno-array-bounds -Wno-array-parameter -Wno-stringop-overflow -Wno-maybe-uninitialized"
++CT_GLIBC_ENABLE_COMMON_FLAG=y
++CT_GLIBC_ENABLE_DEBUG=n
++CT_GLIBC_ORACLE_V_2_39=y
++CT_CC_LANG_CXX=y
++CT_GLIBC_ORACLE_DEVEL_BRANCH="oracle/glibc/ol10-u0"
++CT_GCC_USE_ORACLE=y
++CT_ISL_V_0_18=y
++CT_GCC_ORACLE_V_14=y
++CT_GCC_ORACLE_VERSION="14.2.1-7.0.1"
++CT_GCC_ORACLE_DEVEL_BRANCH="oracle/gcc/ol10-u0"
++CT_CC_GCC_CORE_EXTRA_CONFIG_ARRAY="--enable-host-pie --enable-host-bind-now"
++CT_CC_GCC_EXTRA_CONFIG_ARRAY="--enable-host-pie --enable-host-bind-now"
+diff --git a/samples/x86_64-ol10u0-linux-gnu/reported.by b/samples/x86_64-ol10u0-linux-gnu/reported.by
+new file mode 100644
+index 00000000..142c3e44
+--- /dev/null
++++ b/samples/x86_64-ol10u0-linux-gnu/reported.by
+@@ -0,0 +1,3 @@
++reporter_name="Bruce McCulloch"
++reporter_url=""
++reporter_comment="OL 10.0 toolchain configured for x86_64"
+diff --git a/samples/x86_64-ol9u6-linux-gnu/crosstool.config b/samples/x86_64-ol9u6-linux-gnu/crosstool.config
+new file mode 100644
+index 00000000..818586f2
+--- /dev/null
++++ b/samples/x86_64-ol9u6-linux-gnu/crosstool.config
+@@ -0,0 +1,27 @@
++CT_CONFIG_VERSION="4"
++CT_ARCH_X86=y
++CT_ARCH_64=y
++CT_TARGET_VENDOR="ol9u6"
++CT_KERNEL_LINUX=y
++CT_LINUX_USE_ORACLE=y
++CT_BINUTILS_USE_ORACLE=y
++CT_BINUTILS_ORACLE_V_2_35=y
++CT_BINUTILS_ORACLE_DEVEL_BRANCH="oracle/binutils/ol9-u6"
++CT_BINUTILS_LINKER_LD_GOLD=y
++CT_BINUTILS_GOLD_THREADS=y
++CT_BINUTILS_LD_WRAPPER=y
++CT_BINUTILS_PLUGINS=y
++CT_GLIBC_USE_ORACLE=y
++CT_GLIBC_EXTRA_CFLAGS="-Wno-missing-attributes -Wno-array-bounds -Wno-array-parameter -Wno-stringop-overflow -Wno-maybe-uninitialized"
++CT_GLIBC_ENABLE_COMMON_FLAG=y
++CT_GLIBC_ENABLE_DEBUG=n
++CT_GLIBC_ORACLE_V_2_34=y
++CT_CC_LANG_CXX=y
++CT_GLIBC_ORACLE_DEVEL_BRANCH="oracle/glibc/ol9-u6"
++CT_GCC_USE_ORACLE=y
++CT_ISL_V_0_16=y
++CT_GCC_ORACLE_V_11=y
++CT_GCC_ORACLE_VERSION="11.5.0-5.0.1"
++CT_GCC_ORACLE_DEVEL_BRANCH="oracle/gcc/ol9-u6"
++CT_CC_GCC_CORE_EXTRA_CONFIG_ARRAY="--enable-host-pie --enable-host-bind-now"
++CT_CC_GCC_EXTRA_CONFIG_ARRAY="--enable-host-pie --enable-host-bind-now"
+diff --git a/samples/x86_64-ol9u6-linux-gnu/reported.by b/samples/x86_64-ol9u6-linux-gnu/reported.by
+new file mode 100644
+index 00000000..eb512988
+--- /dev/null
++++ b/samples/x86_64-ol9u6-linux-gnu/reported.by
+@@ -0,0 +1,3 @@
++reporter_name="Bruce McCulloch"
++reporter_url=""
++reporter_comment="OL 9.6 toolchain configured for x86_64"
+-- 
+2.52.0.windows.1
+

@@ -1,0 +1,108 @@
+From ec1bc64ebc29192e9ea50659d20bca67284b3481 Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Sat, 20 Dec 2025 17:16:02 +0800
+Subject: [PATCH 24/36] shared=y for host and build
+
+---
+ scripts/build/companion_libs/200-libelf.sh   | 2 ++
+ scripts/build/companion_libs/210-expat.sh    | 1 +
+ scripts/build/companion_libs/220-ncurses.sh  | 2 ++
+ scripts/build/companion_libs/320-libiconv.sh | 2 ++
+ scripts/build/companion_libs/330-gettext.sh  | 2 ++
+ 5 files changed, 9 insertions(+)
+
+diff --git a/scripts/build/companion_libs/200-libelf.sh b/scripts/build/companion_libs/200-libelf.sh
+index f0d8be47..84eacd57 100644
+--- a/scripts/build/companion_libs/200-libelf.sh
++++ b/scripts/build/companion_libs/200-libelf.sh
+@@ -35,6 +35,7 @@ do_libelf_for_build() {
+     libelf_opts+=( "prefix=${CT_BUILDTOOLS_PREFIX_DIR}" )
+     libelf_opts+=( "cflags=${CT_CFLAGS_FOR_BUILD}" )
+     libelf_opts+=( "ldflags=${CT_LDFLAGS_FOR_BUILD}" )
++    libelf_opts+=( "shared=y" )
+     do_libelf_backend "${libelf_opts[@]}"
+ 
+     CT_Popd
+@@ -52,6 +53,7 @@ do_libelf_for_host() {
+     libelf_opts+=( "prefix=${CT_HOST_COMPLIBS_DIR}" )
+     libelf_opts+=( "cflags=${CT_CFLAGS_FOR_HOST}" )
+     libelf_opts+=( "ldflags=${CT_LDFLAGS_FOR_HOST}" )
++    libelf_opts+=( "shared=y" )
+     do_libelf_backend "${libelf_opts[@]}"
+ 
+     CT_Popd
+diff --git a/scripts/build/companion_libs/210-expat.sh b/scripts/build/companion_libs/210-expat.sh
+index ce6bff99..de9d06bb 100644
+--- a/scripts/build/companion_libs/210-expat.sh
++++ b/scripts/build/companion_libs/210-expat.sh
+@@ -29,6 +29,7 @@ do_expat_for_host() {
+     expat_opts+=( "prefix=${CT_HOST_COMPLIBS_DIR}" )
+     expat_opts+=( "cflags=${CT_CFLAGS_FOR_HOST}" )
+     expat_opts+=( "ldflags=${CT_LDFLAGS_FOR_HOST}" )
++    expat_opts+=( "shared=y" )
+ 
+     do_expat_backend "${expat_opts[@]}"
+ 
+diff --git a/scripts/build/companion_libs/220-ncurses.sh b/scripts/build/companion_libs/220-ncurses.sh
+index 46b1ec72..5516034b 100644
+--- a/scripts/build/companion_libs/220-ncurses.sh
++++ b/scripts/build/companion_libs/220-ncurses.sh
+@@ -33,6 +33,7 @@ do_ncurses_for_build() {
+                        destdir="${CT_BUILDTOOLS_PREFIX_DIR}" \
+                        cflags="${CT_CFLAGS_FOR_BUILD}" \
+                        ldflags="${CT_LDFLAGS_FOR_BUILD}" \
++                       shared=y \
+                        install_target=install.progs \
+                        "${opts[@]}"
+     CT_Popd
+@@ -63,6 +64,7 @@ do_ncurses_for_host() {
+                        prefix="${CT_HOST_COMPLIBS_DIR}" \
+                        cflags="${CT_CFLAGS_FOR_HOST}" \
+                        ldflags="${CT_LDFLAGS_FOR_HOST}" \
++                       shared=y \
+                        "${opts[@]}"
+     CT_Popd
+     CT_EndStep
+diff --git a/scripts/build/companion_libs/320-libiconv.sh b/scripts/build/companion_libs/320-libiconv.sh
+index 9748ba28..ca8a0260 100644
+--- a/scripts/build/companion_libs/320-libiconv.sh
++++ b/scripts/build/companion_libs/320-libiconv.sh
+@@ -31,6 +31,7 @@ do_libiconv_for_build() {
+     libiconv_opts+=( "prefix=${CT_BUILDTOOLS_PREFIX_DIR}" )
+     libiconv_opts+=( "cflags=${CT_CFLAGS_FOR_BUILD}" )
+     libiconv_opts+=( "ldflags=${CT_LDFLAGS_FOR_BUILD}" )
++    libiconv_opts+=( "shared=y" )
+     do_libiconv_backend "${libiconv_opts[@]}"
+ 
+     CT_Popd
+@@ -48,6 +49,7 @@ do_libiconv_for_host() {
+     libiconv_opts+=( "prefix=${CT_HOST_COMPLIBS_DIR}" )
+     libiconv_opts+=( "cflags=${CT_CFLAGS_FOR_HOST}" )
+     libiconv_opts+=( "ldflags=${CT_LDFLAGS_FOR_HOST}" )
++    libiconv_opts+=( "shared=y" )
+     do_libiconv_backend "${libiconv_opts[@]}"
+ 
+     CT_Popd
+diff --git a/scripts/build/companion_libs/330-gettext.sh b/scripts/build/companion_libs/330-gettext.sh
+index 9fa3bdcc..f068b910 100644
+--- a/scripts/build/companion_libs/330-gettext.sh
++++ b/scripts/build/companion_libs/330-gettext.sh
+@@ -31,6 +31,7 @@ do_gettext_for_build() {
+     gettext_opts+=( "prefix=${CT_BUILDTOOLS_PREFIX_DIR}" )
+     gettext_opts+=( "cflags=${CT_CFLAGS_FOR_BUILD}" )
+     gettext_opts+=( "ldflags=${CT_LDFLAGS_FOR_BUILD}" )
++    gettext_opts+=( "shared=y" )
+     do_gettext_backend "${gettext_opts[@]}"
+ 
+     CT_Popd
+@@ -48,6 +49,7 @@ do_gettext_for_host() {
+     gettext_opts+=( "prefix=${CT_HOST_COMPLIBS_DIR}" )
+     gettext_opts+=( "cflags=${CT_CFLAGS_FOR_HOST}" )
+     gettext_opts+=( "ldflags=${CT_LDFLAGS_FOR_HOST}" )
++    gettext_opts+=( "shared=y" )
+     do_gettext_backend "${gettext_opts[@]}"
+ 
+     CT_Popd
+-- 
+2.52.0.windows.1
+

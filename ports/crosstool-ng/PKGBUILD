@@ -1,7 +1,7 @@
 # Maintainer: Martell Malone <martellmalone@gmail.com>
 
 pkgname="crosstool-ng"
-pkgver=1.27.0
+pkgver=1.28.0
 pkgrel=1
 pkgdesc="A cross-platform open-source toolchain system"
 arch=('i686' 'x86_64')
@@ -11,28 +11,107 @@ license=("spdx:MIT")
 makedepends=("autoconf" "automake-wrapper" "binutils" "bison"
              "flex" "gettext-devel" "git" "gcc" "gperf"
              "patch" "ncurses-devel"
-             "tar" "texinfo" "wget" "xz" 'autotools' 'help2man')
+             "tar" "texinfo" "wget" "xz" "gzip" 'autotools' 'help2man')
 depends=("ncurses" "libintl")
 options=('staticlibs' 'strip')
-source=("http://crosstool-ng.org/download/crosstool-ng/${pkgname}-${pkgver}.tar.xz"
-        "0001-Modify-config-to-support-correct-Mingw64-Triplet-Nam.patch")
-sha256sums=('0506ab98fa0ad6d263a555feeb2c7fff9bc24a434635d4b0cdff9137fe5b4477'
-            '6d470e518609df696f76c1ba57ce278254c80ba7b33705ef8e45c7d36a23c493')
-noextract=(${pkgname}-${pkgver}.tar.xz)
+
+_patches=(
+  0001-README.md-Remove-old-note.patch
+  0002-Add-samples-for-ol9u6-ol9u6mips-ol10u0.patch
+  0003-samples-Add-aarch64_be-unknown-linux-gnu-musl.patch
+  0004-m4-ctng_python.m4-Update-for-python3.14.patch
+  0005-libexpat-update-comment-for-do_expat_backend.patch
+  0006-ci-Switch-to-macos-14-runners.patch
+  0007-companion_libs-Apply-EXTRA_CFLAGS-to-target-build-on.patch
+  0008-linux-Add-6.18-bump-LTS.patch
+  0009-strace-Remove-6.13-add-6.18.patch
+  0010-gdb-Add-gdb-17.1.patch
+  0011-Add-Ubuntu-18.04-20.04-22.04-24.04-configs-on-x86_64.patch
+  0012-Revert-Add-ncurses-patch-to-handle-debian-mingw32-to.patch
+  0013-newlib-Add-4.6.0-snapshot.patch
+  0014-Modify-config-to-support-correct-Mingw64-Triplet-Nam.patch
+  0015-Add-bigendian-support-for-riscv64.patch
+  0016-Add-patches-for-building-with-msys.patch
+  0017-Add-riscv64be-unknown-elf.patch
+  0018-Update-patch-to-accept-binary.patch
+  0019-Use-relative-paths-when-needed.patch
+  0020-Deal-with-zlib-compile-random-failure.patch
+  0021-The-WINDRES-need-pass-into-CT_SRC_DIR-gcc.patch
+  0022-Add-patches-from-MINGW-packages-make-libtool-and-dtc.patch
+  0023-Building-make-as-mingw32-make-for-MINGW64.patch
+  0024-shared-y-for-host-and-build.patch
+  0025-Support-for-python-properly.patch
+  0026-Add-mingw-msys-patches-for-gcc.patch
+  0027-TOOLCHAIN_ENABLE_NLS-should-not-depends-on-GETTEXT_N.patch
+  0028-Make-use-of-CMAKE_HOST_EXECUTABLE_SUFFIX-in-toolchai.patch
+  0029-Add-patch-avoid-auipc-overflow-with-large-offsets-PR.patch
+  0030-liblto_plugin-symbolic-linkage-fixes.patch
+  0031-Extract-msys2-and-mingw-patches-and-building-bfd-LTO.patch
+  0032-Add-binutils-patches-for-enable-pie-in-bare-metal.patch
+  0033-Revert-gcc-Disable-CC_GCC_ENABLE_DEFAULT_PIE-on-RISC.patch
+#  0034-make-zlib-NCURSES-expat-to-be-optional.patch
+  0035-Add-mingw-patches-for-binutils.patch
+  0036-Add-ncurses-6.6.patch
+)
+
+source=("https://github.com/crosstool-ng/crosstool-ng/archive/refs/tags/${pkgname}-${pkgver}.tar.gz")
+source+=(${_patches[@]})
+noextract=(${pkgname}-${pkgver}.tar.gz)
+
+sha256sums=('c629767b6d79ae6b7720bd2e12fefc74d76f78b41f74ff0ebde0087c1d295159'
+            'f8fba52db2e5951bfe01caeb727a6b2d9de7f2df519df7500307084e55bd2dad'
+            '19599712cf1006103e987d2e84f5a4f21b63fd7d3f218945eea37bf3b81aeb7a'
+            '42b124d4c05e229c8b35f574e0198caac7d2e6411119753b6c713321ae9f098e'
+            'a6f78a84a61612ef2e38778e7cf5475974d9d3ed9d8ea31461b3b71dfdca89c1'
+            'b47f9afac90e23e708ddbcac5f01717d50f0517323e5cb45a822b6eb1e2cf133'
+            '862b9ec310c9d97a15cc4615e32ab4f2a11c9bc72d4e0a9c61441bec23ef4784'
+            '2f10925d76bbf4c838da7b323b73fba95065f4c719d998f5829b02edab5be2e9'
+            '661058435ee24f07046ce26d1b6de85aa016f9a1bd02fbabaff13ebc85f0575f'
+            '8583c835f8849239ce49c9a37d4f7d11af35f79b51c58b807d903f4cd5f72eba'
+            'abaad5e8701ef8823a3ce56e12c04d20cd2976d1b7b80cdc342e512d877117f9'
+            'f0a73e7ca55c0641c9085c3e9b9e35954103150c4fe963969249c19b6881bf64'
+            'a93eb9e841336e3875ca3c89e6620ed75b28ddc4663bf256b83343f082aced80'
+            '98989fff02c05e7ff7cf4aeabe5428a55b27029eba3b04ca2be2fa55165ddfc3'
+            'fd040999dcdd5d7c262295c17277dc51b8b6f96d84f2c1ec369d728cd150d66d'
+            'c7384dfac839c86201a329364dbb4909ded706abea4a83817f9d6eb5230ba6d4'
+            'c62dfa131b3c8733e02fa59f86103224d652cf63e91c5408890504336359dd24'
+            '26890459a15e0344aeb89e0e100a6ac9cfc91500bfa8770b146a28eeafd76fe7'
+            'b6dca68dd9675670decb89e57db2ebb7cae8bd22e6d228fbc65cb937c0306b5c'
+            'a54b5ae9265901dbd9b6826a3fcbde9dfc13efb489a16e14fcbf3e6bff9ba091'
+            'ba1260a87060e9311926e622101ba081b7de4de2dfef0f72c9cfd75e2d52efb8'
+            'e02d4068355bbd5fe7d4e0760020fbb6723a2118aeb1169c968175773023ecff'
+            '5f3c6b0e71f1d21e7cf51c8a38b14d7970142e34b7c460d97dabed9a26acdffb'
+            '3c00ea4bf44ecc44e492702377bf0a0dff4f11b9dc87b728abebec534b17c9df'
+            '196de93fbfd645fc0190451f2bf00c7c178fcd0ac69f6fbf0eef2635e77331e9'
+            'bc7ee74411aeb6d162ca1d893d1a97c4746b00eefedb8f252e200f2b4ebaa2fe'
+            'fceb9107d33f4235d2ba0919ff5c1bdb4639d502a2b76fcba08a1d12cb1a20e4'
+            '6cd459171c7903460cfb9d920cb62acec6702d0d1796730dd90948cdf10e20e1'
+            'fbbde14232143cb402f97b6954a047d952ab6c57ad0dc80e8af9fb51afe6fefc'
+            '2d24818b2e3adf32adf8748e1034fa6e176c32c5768b0cadf9e07a77c283b629'
+            '36776d06138d0944f0ebd99ac4f16aa780e7b45e45ca4019096a51552030f10c'
+            'd3d6c124b8e90885b111aafd4c2db83988f12de4ff97f390be6115959ae0d29c'
+            'ade6efd27e683192c164b78b2f6e781f6e38f89eded89a078515c62d9671d41d'
+            'b7cbbffd031891e396a3612d0dd1a4e94ae837d1988778a80ffff68a0b093b9d'
+            'e26bb5790f62d88d612ef778634ccfccd6cfd9489d2cdaef63687b64dbbc842c'
+            'e215f5d857150390fdc7a869290c15ba118397314af860ddb084fcd5d8a78a5b')
 
 prepare() {
   install -Dm755 /usr/bin/bsdunzip "${srcdir}/bin/unzip"
-  [[ -d ${srcdir}/${pkgname}-${pkgver} ]] && rm -rf ${srcdir}/${pkgname}-${pkgver}
-  tar -xJf ${srcdir}/${pkgname}-${pkgver}.tar.xz -C ${srcdir} || true
+  [[ -d ${srcdir}/${pkgname}-${pkgname}-${pkgver} ]] && rm -rf ${srcdir}/${pkgname}-${pkgname}-${pkgver}
+  tar -xf ${srcdir}/${pkgname}-${pkgver}.tar.gz -C ${srcdir} || true
   
-  cd "${srcdir}/${pkgname}-${pkgver}"
-  patch -p1 -i "${srcdir}/0001-Modify-config-to-support-correct-Mingw64-Triplet-Nam.patch"
+  cd "${srcdir}/${pkgname}-${pkgname}-${pkgver}"
+
+  for patch_filename in "${_patches[@]}"; do
+    echo "Applying patch: '${patch_filename}'"
+    patch --binary -Np1 -i "${srcdir}/${patch_filename}"
+  done
 
   ./bootstrap
 }
 
 build() {
-  cd "${srcdir}/${pkgname}-${pkgver}"
+  cd "${srcdir}/${pkgname}-${pkgname}-${pkgver}"
   PATH="${srcdir}/bin:$PATH" ./configure \
     --build=${CHOST} \
     --prefix=/usr
@@ -41,6 +120,6 @@ build() {
 }
 
 package() {
-  cd "${srcdir}/${pkgname}-${pkgver}"
+  cd "${srcdir}/${pkgname}-${pkgname}-${pkgver}"
   make DESTDIR=${pkgdir} install
 }

@@ -1,0 +1,73 @@
+From a3fef85781d3cda0b27388916f3287826aeec177 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?J=2E=20Neusch=C3=A4fer?= <j.ne@posteo.net>
+Date: Sat, 27 Sep 2025 00:29:10 +0200
+Subject: [PATCH 03/36] samples: Add aarch64_be-unknown-linux-{gnu,musl}
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
+---
+ samples/aarch64_be-unknown-linux-gnu/crosstool.config |  9 +++++++++
+ samples/aarch64_be-unknown-linux-gnu/reported.by      |  3 +++
+ .../aarch64_be-unknown-linux-musl/crosstool.config    | 11 +++++++++++
+ samples/aarch64_be-unknown-linux-musl/reported.by     |  3 +++
+ 4 files changed, 26 insertions(+)
+ create mode 100644 samples/aarch64_be-unknown-linux-gnu/crosstool.config
+ create mode 100644 samples/aarch64_be-unknown-linux-gnu/reported.by
+ create mode 100644 samples/aarch64_be-unknown-linux-musl/crosstool.config
+ create mode 100644 samples/aarch64_be-unknown-linux-musl/reported.by
+
+diff --git a/samples/aarch64_be-unknown-linux-gnu/crosstool.config b/samples/aarch64_be-unknown-linux-gnu/crosstool.config
+new file mode 100644
+index 00000000..ab674348
+--- /dev/null
++++ b/samples/aarch64_be-unknown-linux-gnu/crosstool.config
+@@ -0,0 +1,9 @@
++CT_CONFIG_VERSION="4"
++CT_ARCH_ARM=y
++CT_ARCH_BE=y
++CT_ARCH_64=y
++CT_TARGET_VENDOR=""
++CT_KERNEL_LINUX=y
++CT_BINUTILS_PLUGINS=y
++CT_CC_LANG_CXX=y
++CT_DEBUG_GDB=y
+diff --git a/samples/aarch64_be-unknown-linux-gnu/reported.by b/samples/aarch64_be-unknown-linux-gnu/reported.by
+new file mode 100644
+index 00000000..f4177a95
+--- /dev/null
++++ b/samples/aarch64_be-unknown-linux-gnu/reported.by
+@@ -0,0 +1,3 @@
++reporter_name="J. Neuschäfer"
++reporter_url="https://github.com/neuschaefer"
++reporter_comment="Generic aarch64_be toolchain"
+diff --git a/samples/aarch64_be-unknown-linux-musl/crosstool.config b/samples/aarch64_be-unknown-linux-musl/crosstool.config
+new file mode 100644
+index 00000000..7d0b530c
+--- /dev/null
++++ b/samples/aarch64_be-unknown-linux-musl/crosstool.config
+@@ -0,0 +1,11 @@
++CT_CONFIG_VERSION="4"
++CT_ARCH_ARM=y
++CT_ARCH_BE=y
++CT_ARCH_64=y
++CT_TARGET_VENDOR=""
++CT_KERNEL_LINUX=y
++CT_BINUTILS_PLUGINS=y
++CT_LIBC_MUSL=y
++CT_CC_LANG_CXX=y
++CT_DEBUG_GDB=y
++CT_GETTEXT_NEEDED=y
+diff --git a/samples/aarch64_be-unknown-linux-musl/reported.by b/samples/aarch64_be-unknown-linux-musl/reported.by
+new file mode 100644
+index 00000000..03f5a39c
+--- /dev/null
++++ b/samples/aarch64_be-unknown-linux-musl/reported.by
+@@ -0,0 +1,3 @@
++reporter_name="J. Neuschäfer"
++reporter_url="https://github.com/neuschaefer"
++reporter_comment=""
+-- 
+2.52.0.windows.1
+

@@ -1,0 +1,28 @@
+From d5a541a22be7983381a6b0e5a2880c93062deef7 Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Thu, 18 Dec 2025 18:45:30 +0800
+Subject: [PATCH 18/36] Update patch to accept binary
+
+So that ncurses-6.5 patches can be applied
+
+Signed-off-by: Yonggang Luo <luoyonggang@gmail.com>
+---
+ scripts/functions | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/scripts/functions b/scripts/functions
+index ff536c8b..da58f9ca 100644
+--- a/scripts/functions
++++ b/scripts/functions
+@@ -2341,7 +2341,7 @@ CT_DoExtractPatch()
+                 if [ -n "${d}" -a -d "${d}" ]; then
+                     for p in "${d}"/*.patch; do
+                         if [ -f "${p}" ]; then
+-                            CT_DoExecLog ALL ${patch} --no-backup-if-mismatch -g0 -F1 -p1 -f -i "${p}"
++                            CT_DoExecLog ALL ${patch} --no-backup-if-mismatch --binary -g0 -F1 -p1 -f -i "${p}"
+                         fi
+                     done
+                 fi
+-- 
+2.52.0.windows.1
+

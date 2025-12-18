@@ -1,0 +1,53 @@
+From c5e535c9dc20c7f9cc88a609f37379c3f5516d4c Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Fri, 19 Dec 2025 08:48:05 +0800
+Subject: [PATCH 20/36] Deal with zlib compile random failure
+
+Signed-off-by: Yonggang Luo <luoyonggang@gmail.com>
+---
+ ...-appeared-unable-to-copy-file-zlib1..patch | 33 +++++++++++++++++++
+ 1 file changed, 33 insertions(+)
+ create mode 100644 packages/zlib/1.3.1/0001-deal-with-random-appeared-unable-to-copy-file-zlib1..patch
+
+diff --git a/packages/zlib/1.3.1/0001-deal-with-random-appeared-unable-to-copy-file-zlib1..patch b/packages/zlib/1.3.1/0001-deal-with-random-appeared-unable-to-copy-file-zlib1..patch
+new file mode 100644
+index 00000000..b19e5078
+--- /dev/null
++++ b/packages/zlib/1.3.1/0001-deal-with-random-appeared-unable-to-copy-file-zlib1..patch
+@@ -0,0 +1,33 @@
++From 3d23bc2f242858be73553a4df249c3016e1cf276 Mon Sep 17 00:00:00 2001
++From: Yonggang Luo <luoyonggang@gmail.com>
++Date: Thu, 18 Dec 2025 23:13:51 +0800
++Subject: [PATCH] deal with random appeared unable to copy file 'zlib1.dll';
++ reason: Permission denied
++
++x86_64-build_w64-mingw32-gcc  -o minigzip.exe minigzip.o libz.a
++x86_64-build_w64-mingw32-strip zlib1.dll
++C:\CI-Tools\msys64\mingw64\bin\strip.exe: unable to copy file 'zlib1.dll'; reason: Permission denied
++x86_64-build_w64-mingw32-strip minigzip.exe
++
++This is present when use crosstool-ng to build cross-gcc
++
++Signed-off-by: Yonggang Luo <luoyonggang@gmail.com>
++---
++ win32/Makefile.gcc | 1 +
++ 1 file changed, 1 insertion(+)
++
++diff --git a/win32/Makefile.gcc b/win32/Makefile.gcc
++index 081e391..14f96f8 100644
++--- a/win32/Makefile.gcc
+++++ b/win32/Makefile.gcc
++@@ -90,6 +90,7 @@ $(IMPLIB): $(SHAREDLIB)
++ $(SHAREDLIB): win32/zlib.def $(OBJS) $(OBJA) zlibrc.o
++ 	$(CC) -shared -Wl,--out-implib,$(IMPLIB) $(LDFLAGS) \
++ 	-o $@ win32/zlib.def $(OBJS) $(OBJA) zlibrc.o
+++	sleep 1
++ 	$(STRIP) $@
++ 
++ example.exe: example.o $(STATICLIB)
++-- 
++2.51.0.windows.1
++
+-- 
+2.52.0.windows.1
+

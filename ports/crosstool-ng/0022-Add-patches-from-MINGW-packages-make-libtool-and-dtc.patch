@@ -1,0 +1,664 @@
+From d640c0ae7ac56c94dbd7d61bac49190f5c860b0f Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Fri, 19 Dec 2025 19:11:51 +0800
+Subject: [PATCH 22/36] Add patches from MINGW-packages make libtool and dtc
+
+---
+ .../1.7.2/0001-remove-setup-py-install.patch  | 13 +++
+ ...gwin-mingw-Create-UAC-manifest-files.patch | 96 +++++++++++++++++++
+ .../2.5.4/0002-Fix-seems-to-be-moved.patch    | 23 +++++
+ .../2.5.4/0003-Fix-STRICT_ANSI-vs-POSIX.patch | 21 ++++
+ ...-linking-Flang-support-libraries-whe.patch | 27 ++++++
+ .../0005-libtool-include-process.h.patch      | 18 ++++
+ .../0006-Pass-various-flags-to-GCC.patch      | 29 ++++++
+ packages/libtool/2.5.4/0007-msysize.patch     | 63 ++++++++++++
+ ...-static-archives-compiler-internal-l.patch | 29 ++++++
+ ...-linking-compiler-support-libraries-.patch | 38 ++++++++
+ .../0014-Support-llvm-objdump-f-output.patch  | 36 +++++++
+ packages/make/4.4.1/005-fix-default-cxx.patch | 11 +++
+ .../4.4.1/006-fix-build-with-gcc-15.patch     | 39 ++++++++
+ ....am-gcc-only-link-libgnumake-1.dll.a.patch | 12 +++
+ ...-4.3_undef-HAVE_STRUCT_DIRENT_D_TYPE.patch | 11 +++
+ packages/make/4.4.1/make-4.4-timestamps.patch | 37 +++++++
+ packages/make/4.4.1/make-linebuf-mingw.patch  | 14 +++
+ 17 files changed, 517 insertions(+)
+ create mode 100644 packages/dtc/1.7.2/0001-remove-setup-py-install.patch
+ create mode 100644 packages/libtool/2.5.4/0001-cygwin-mingw-Create-UAC-manifest-files.patch
+ create mode 100644 packages/libtool/2.5.4/0002-Fix-seems-to-be-moved.patch
+ create mode 100644 packages/libtool/2.5.4/0003-Fix-STRICT_ANSI-vs-POSIX.patch
+ create mode 100644 packages/libtool/2.5.4/0004-Allow-statically-linking-Flang-support-libraries-whe.patch
+ create mode 100644 packages/libtool/2.5.4/0005-libtool-include-process.h.patch
+ create mode 100644 packages/libtool/2.5.4/0006-Pass-various-flags-to-GCC.patch
+ create mode 100644 packages/libtool/2.5.4/0007-msysize.patch
+ create mode 100644 packages/libtool/2.5.4/0011-Pick-up-clang_rt-static-archives-compiler-internal-l.patch
+ create mode 100644 packages/libtool/2.5.4/0013-Allow-statically-linking-compiler-support-libraries-.patch
+ create mode 100644 packages/libtool/2.5.4/0014-Support-llvm-objdump-f-output.patch
+ create mode 100644 packages/make/4.4.1/005-fix-default-cxx.patch
+ create mode 100644 packages/make/4.4.1/006-fix-build-with-gcc-15.patch
+ create mode 100644 packages/make/4.4.1/make-4.2.1-Makefile.am-gcc-only-link-libgnumake-1.dll.a.patch
+ create mode 100644 packages/make/4.4.1/make-4.3_undef-HAVE_STRUCT_DIRENT_D_TYPE.patch
+ create mode 100644 packages/make/4.4.1/make-4.4-timestamps.patch
+ create mode 100644 packages/make/4.4.1/make-linebuf-mingw.patch
+
+diff --git a/packages/dtc/1.7.2/0001-remove-setup-py-install.patch b/packages/dtc/1.7.2/0001-remove-setup-py-install.patch
+new file mode 100644
+index 00000000..2c5f29d0
+--- /dev/null
++++ b/packages/dtc/1.7.2/0001-remove-setup-py-install.patch
+@@ -0,0 +1,13 @@
++--- dtc-1.7.1/meson.build.orig	2024-08-17 10:22:16.000000000 +0200
+++++ dtc-1.7.1/meson.build	2024-11-05 08:39:01.183531100 +0100
++@@ -127,10 +127,6 @@
++   )
++ endif
++ 
++-if pylibfdt_enabled
++-  subdir('pylibfdt')
++-endif
++-
++ if get_option('tests')
++   subdir('tests')
++ endif
+diff --git a/packages/libtool/2.5.4/0001-cygwin-mingw-Create-UAC-manifest-files.patch b/packages/libtool/2.5.4/0001-cygwin-mingw-Create-UAC-manifest-files.patch
+new file mode 100644
+index 00000000..78bcd4f5
+--- /dev/null
++++ b/packages/libtool/2.5.4/0001-cygwin-mingw-Create-UAC-manifest-files.patch
+@@ -0,0 +1,96 @@
++[PATCH] [cygwin|mingw] Create UAC manifest files.
++
++* build-aux/ltmain.in (func_emit_exe_manifest): New function.
++(func_mode_link) [cygwin|mingw]: Create manifest files for wrapper
++and target exe when target name matches heuristic that triggers
++UAC problems for newer win32 OSs. Clean up $cwrapper.manifest on
++error. Ensure manifest files have executable permission.
++(func_mode_uninstall): Clean up manifest files.
++Various reports by Eric Blake, Kai Tietz, and Cesar Strauss.
++---
++ build-aux/ltmain.in | 50 +++++++++++++++++++++++++++++++++++++++++++--
++ 1 file changed, 48 insertions(+), 2 deletions(-)
++
++diff --git a/build-aux/ltmain.in b/build-aux/ltmain.in
++index 68aca605..8e6bf480 100644
++--- a/build-aux/ltmain.in
+++++ b/build-aux/ltmain.in
++@@ -4572,6 +4572,41 @@ EOF
++ }
++ # end: func_emit_cwrapperexe_src
++ 
+++# func_emit_exe_manifest
+++# emit a Win32 UAC manifest for executable on stdout
+++# Must ONLY be called from within func_mode_link because
+++# it depends on a number of variable set therein.
+++func_emit_exe_manifest ()
+++{
+++    cat <<EOF
+++<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+++<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
+++  <assemblyIdentity version="1.0.0.0"
+++EOF
+++
+++    case $host in
+++    i?86-*-* )   echo '     processorArchitecture="x86"' ;;
+++    ia64-*-* )   echo '     processorArchitecture="ia64"' ;;
+++    x86_64-*-* ) echo '     processorArchitecture="amd64"' ;;
+++    *)           echo '     processorArchitecture="*"' ;;
+++    esac
+++
+++    cat <<EOF
+++     name="$host_os.$PROGRAM.$outputname"
+++     type="win32"/>
+++
+++  <!-- Identify the application security requirements. -->
+++  <trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
+++    <security>
+++      <requestedPrivileges>
+++        <requestedExecutionLevel level="asInvoker" uiAccess="false"/>
+++      </requestedPrivileges>
+++    </security>
+++  </trustInfo>
+++</assembly>
+++EOF
+++}
+++
++ # func_win32_import_lib_p ARG
++ # True if ARG is an import lib, as indicated by $file_magic_cmd
++ func_win32_import_lib_p ()
++@@ -8610,7 +8645,7 @@ func_mode_link ()
++ 	    cwrappersource=$output_path/$objdir/lt-$output_name.c
++ 	    cwrapper=$output_path/$output_name.exe
++ 	    $RM $cwrappersource $cwrapper
++-	    trap "$RM $cwrappersource $cwrapper; exit $EXIT_FAILURE" 1 2 15
+++	    trap "$RM $cwrappersource $cwrapper $cwrapper.manifest; exit $EXIT_FAILURE" 1 2 15
++ 
++ 	    func_emit_cwrapperexe_src > $cwrappersource
++ 
++@@ -8630,6 +8665,16 @@ func_mode_link ()
++ 	    $opt_dry_run || {
++ 	      # note: this script will not be executed, so do not chmod.
++ 	      if test "x$build" = "x$host"; then
+++		# Create the UAC manifests first if necessary (but the
+++		# manifest files must have executable permission regardless).
+++		case $output_name in
+++		  *instal*|*patch*|*setup*|*update*)
+++		    func_emit_exe_manifest > $cwrapper.manifest
+++		    func_emit_exe_manifest > $output_path/$objdir/$output_name.exe.manifest
+++		    chmod +x $cwrapper.manifest
+++		    chmod +x $output_path/$objdir/$output_name.exe.manifest
+++		  ;;
+++		esac
++ 		$cwrapper --lt-dump-script > $func_ltwrapper_scriptname_result
++ 	      else
++ 		func_emit_wrapper no > $func_ltwrapper_scriptname_result
++@@ -9156,8 +9201,9 @@ func_mode_uninstall ()
++ 	    # note $name still contains .exe if it was in $file originally
++ 	    # as does the version of $file that was added into $rmfiles
++ 	    func_append rmfiles " $odir/$name $odir/${name}S.$objext"
+++	    func_append rmfiles " ${name}.manifest $objdir/${name}.manifest"
++ 	    if test yes = "$fast_install" && test -n "$relink_command"; then
++-	      func_append rmfiles " $odir/lt-$name"
+++	      func_append rmfiles " $odir/lt-$name $objdir/lt-${name}.manifest"
++ 	    fi
++ 	    if test "X$noexename" != "X$name"; then
++ 	      func_append rmfiles " $odir/lt-$noexename.c"
+diff --git a/packages/libtool/2.5.4/0002-Fix-seems-to-be-moved.patch b/packages/libtool/2.5.4/0002-Fix-seems-to-be-moved.patch
+new file mode 100644
+index 00000000..d5d319eb
+--- /dev/null
++++ b/packages/libtool/2.5.4/0002-Fix-seems-to-be-moved.patch
+@@ -0,0 +1,23 @@
++[PATCH] Fix "seems to be moved"
++
++* build-aux/ltmain.in (func_mode_link): Compare files by inode
++to fix "seems to be moved" warning.
++---
++ build-aux/ltmain.in | 4 +++-
++ 1 file changed, 3 insertions(+), 1 deletion(-)
++
++diff --git a/build-aux/ltmain.in b/build-aux/ltmain.in
++index 8e6bf480..3e2adfb1 100644
++--- a/build-aux/ltmain.in
+++++ b/build-aux/ltmain.in
++@@ -6734,7 +6734,9 @@ func_mode_link ()
++ 		  eval libdir=`$SED -n -e 's/^libdir=\(.*\)$/\1/p' $deplib`
++ 		  test -z "$libdir" && \
++ 		    func_fatal_error "'$deplib' is not a valid libtool archive"
++-		  test "$absdir" != "$libdir" && \
+++		  abs_inode=`ls -i "$deplib" | awk '{print $1}'`
+++		    lib_inode=`ls -i "$libdir/$(basename $deplib)" | awk '{print $1}'`
+++		  test "$abs_inode" != "$lib_inode" && \
++ 		    func_warning "'$deplib' seems to be moved"
++ 
++ 		  path=-L$absdir
+diff --git a/packages/libtool/2.5.4/0003-Fix-STRICT_ANSI-vs-POSIX.patch b/packages/libtool/2.5.4/0003-Fix-STRICT_ANSI-vs-POSIX.patch
+new file mode 100644
+index 00000000..f0fe7f9f
+--- /dev/null
++++ b/packages/libtool/2.5.4/0003-Fix-STRICT_ANSI-vs-POSIX.patch
+@@ -0,0 +1,21 @@
++[PATCH] Fix STRICT_ANSI vs POSIX
++
++* build-aux/ltmain.in (func_mode_link): Also check for _POSIX
++as well as __STRICT_ANSI__ to avoid re-definitions.
++---
++ build-aux/ltmain.in | 2 +-
++ 1 file changed, 1 insertion(+), 1 deletion(-)
++
++diff --git a/build-aux/ltmain.in b/build-aux/ltmain.in
++index 3e2adfb1..5f9af8c2 100644
++--- a/build-aux/ltmain.in
+++++ b/build-aux/ltmain.in
++@@ -3670,7 +3670,7 @@ EOF
++ 
++ /* declarations of non-ANSI functions */
++ #if defined __MINGW32__
++-# ifdef __STRICT_ANSI__
+++# if defined(__STRICT_ANSI__) && !defined(__MINGW64_VERSION_MAJOR) || defined(_POSIX_)
++ _CRTIMP int __cdecl _putenv (const char *);
++ # endif
++ #elif defined __CYGWIN__
+diff --git a/packages/libtool/2.5.4/0004-Allow-statically-linking-Flang-support-libraries-whe.patch b/packages/libtool/2.5.4/0004-Allow-statically-linking-Flang-support-libraries-whe.patch
+new file mode 100644
+index 00000000..d8179a75
+--- /dev/null
++++ b/packages/libtool/2.5.4/0004-Allow-statically-linking-Flang-support-libraries-whe.patch
+@@ -0,0 +1,27 @@
++[PATCH] Allow statically linking Flang support libraries when linking
++  a library
++
++---
++ build-aux/ltmain.in | 9 +++++++++
++ 1 file changed, 9 insertions(+)
++
++diff --git a/build-aux/ltmain.in b/build-aux/ltmain.in
++index 5f9af8c2..97810d08 100644
++--- a/build-aux/ltmain.in
+++++ b/build-aux/ltmain.in
++@@ -7439,6 +7439,15 @@ func_mode_link ()
++ 			a_deplib=
++ 			break 2
++ 		      fi
+++		      # Linking compiler provided static libraries into shared
+++		      # libraries is allowed, but linking other static libraries is
+++		      # non-portable.
+++		      case $potlib in
+++		        */libFortran*.$libext | */libflang_rt*.$libext)
+++		          func_append newdeplibs " $potlib"
+++		          a_deplib=
+++		          ;;
+++		      esac
++ 		  done
++ 		done
++ 	      fi
+diff --git a/packages/libtool/2.5.4/0005-libtool-include-process.h.patch b/packages/libtool/2.5.4/0005-libtool-include-process.h.patch
+new file mode 100644
+index 00000000..00eba933
+--- /dev/null
++++ b/packages/libtool/2.5.4/0005-libtool-include-process.h.patch
+@@ -0,0 +1,18 @@
++[PATCH] libtool: include process.h
++
++---
++ build-aux/ltmain.in | 1 +
++ 1 file changed, 1 insertion(+)
++
++diff --git a/build-aux/ltmain.in b/build-aux/ltmain.in
++index 97810d08..e3c77f29 100644
++--- a/build-aux/ltmain.in
+++++ b/build-aux/ltmain.in
++@@ -3654,6 +3654,7 @@ EOF
++ # include <unistd.h>
++ # include <stdint.h>
++ # ifdef __CYGWIN__
+++#  include <process.h>
++ #  include <io.h>
++ # endif
++ #endif
+diff --git a/packages/libtool/2.5.4/0006-Pass-various-flags-to-GCC.patch b/packages/libtool/2.5.4/0006-Pass-various-flags-to-GCC.patch
+new file mode 100644
+index 00000000..87e67adc
+--- /dev/null
++++ b/packages/libtool/2.5.4/0006-Pass-various-flags-to-GCC.patch
+@@ -0,0 +1,29 @@
++[PATCH] Pass various flags to GCC
++
++* build-aux/ltmain.in (func_mode_link): Pass various flags to GCC.
++
++See https://gcc.gnu.org/onlinedocs/gcc/Link-Options.html#DOCF1
++---
++ build-aux/ltmain.in | 2 ++
++ 1 file changed, 2 insertions(+)
++
++diff --git a/build-aux/ltmain.in b/build-aux/ltmain.in
++index e3c77f29..0560159b 100644
++--- a/build-aux/ltmain.in
+++++ b/build-aux/ltmain.in
++@@ -5460,6 +5460,7 @@ func_mode_link ()
++       # -static-libsan       Link with static sanitizer runtimes (Clang)
++       # -no-canonical-prefixes Do not expand any symbolic links
++       # -fuse-ld=*           Linker select flags for GCC
+++      # -shared-*            direct GCC to link specific libraries dynamically
++       # -static-*            direct GCC to link specific libraries statically
++       # -fcilkplus           Cilk Plus language extension features for C/C++
++       # -rtlib=*             select c runtime lib with clang
++@@ -5474,6 +5475,7 @@ func_mode_link ()
++       -specs=*|-fsanitize=*|-fno-sanitize*|-shared-libsan|-static-libsan| \
++       -ffile-prefix-map=*|-fdebug-prefix-map=*|-fmacro-prefix-map=*|-fprofile-prefix-map=*| \
++       -fdiagnostics-color*|-frecord-gcc-switches| \
+++      -ffast-math|-fgnu-tm|-ftree-parallelize-loops=*|-funsafe-math-optimizations|-fvtable-verify*|-shared-*| \
++       -fuse-ld=*|-static-*|-fcilkplus|-Wa,*|-Werror|-Werror=*)
++         func_quote_arg pretty "$arg"
++ 	arg=$func_quote_arg_result
+diff --git a/packages/libtool/2.5.4/0007-msysize.patch b/packages/libtool/2.5.4/0007-msysize.patch
+new file mode 100644
+index 00000000..1d437a52
+--- /dev/null
++++ b/packages/libtool/2.5.4/0007-msysize.patch
+@@ -0,0 +1,63 @@
++diff -Nur libtool-2.5.4.orig/configure libtool-2.5.4/configure
++--- libtool-2.5.4.orig/configure	2025-06-10 08:17:21.269872200 +0200
+++++ libtool-2.5.4/configure	2025-06-10 08:18:07.824248200 +0200
++@@ -13566,7 +13566,7 @@
++     case $host_os in
++     cygwin*)
++       # Cygwin DLLs use 'cyg' prefix rather than 'lib'
++-      soname_spec='`echo $libname | $SED -e 's/^lib/cyg/'``echo $release | $SED -e 's/[.]/-/g'`$versuffix$shared_ext'
+++      soname_spec='`echo $libname | $SED -e 's/^lib/msys-/'``echo $release | $SED -e 's/[.]/-/g'`$versuffix$shared_ext'
++ 
++       sys_lib_search_path_spec="$sys_lib_search_path_spec /usr/lib/w32api"
++       ;;
++@@ -19822,7 +19822,7 @@
++     case $host_os in
++     cygwin*)
++       # Cygwin DLLs use 'cyg' prefix rather than 'lib'
++-      soname_spec='`echo $libname | $SED -e 's/^lib/cyg/'``echo $release | $SED -e 's/[.]/-/g'`$versuffix$shared_ext'
+++      soname_spec='`echo $libname | $SED -e 's/^lib/msys-/'``echo $release | $SED -e 's/[.]/-/g'`$versuffix$shared_ext'
++ 
++       ;;
++     mingw* | windows* | cegcc*)
++@@ -23635,7 +23635,7 @@
++     case $host_os in
++     cygwin*)
++       # Cygwin DLLs use 'cyg' prefix rather than 'lib'
++-      soname_spec='`echo $libname | $SED -e 's/^lib/cyg/'``echo $release | $SED -e 's/[.]/-/g'`$versuffix$shared_ext'
+++      soname_spec='`echo $libname | $SED -e 's/^lib/msys-/'``echo $release | $SED -e 's/[.]/-/g'`$versuffix$shared_ext'
++ 
++       ;;
++     mingw* | windows* | cegcc*)
++@@ -27600,7 +27600,7 @@
++     case $host_os in
++     cygwin*)
++       # Cygwin DLLs use 'cyg' prefix rather than 'lib'
++-      soname_spec='`echo $libname | $SED -e 's/^lib/cyg/'``echo $release | $SED -e 's/[.]/-/g'`$versuffix$shared_ext'
+++      soname_spec='`echo $libname | $SED -e 's/^lib/msys-/'``echo $release | $SED -e 's/[.]/-/g'`$versuffix$shared_ext'
++ 
++       ;;
++     mingw* | windows* | cegcc*)
++diff -Nur libtool-2.5.4.orig/libltdl/configure libtool-2.5.4/libltdl/configure
++--- libtool-2.5.4.orig/libltdl/configure	2025-06-10 08:17:21.237899700 +0200
+++++ libtool-2.5.4/libltdl/configure	2025-06-10 08:18:14.340828300 +0200
++@@ -12001,7 +12001,7 @@
++     case $host_os in
++     cygwin*)
++       # Cygwin DLLs use 'cyg' prefix rather than 'lib'
++-      soname_spec='`echo $libname | $SED -e 's/^lib/cyg/'``echo $release | $SED -e 's/[.]/-/g'`$versuffix$shared_ext'
+++      soname_spec='`echo $libname | $SED -e 's/^lib/msys-/'``echo $release | $SED -e 's/[.]/-/g'`$versuffix$shared_ext'
++ 
++       sys_lib_search_path_spec="$sys_lib_search_path_spec /usr/lib/w32api"
++       ;;
++diff -Nur libtool-2.5.4.orig/m4/libtool.m4 libtool-2.5.4/m4/libtool.m4
++--- libtool-2.5.4.orig/m4/libtool.m4	2025-06-10 08:17:21.269872200 +0200
+++++ libtool-2.5.4/m4/libtool.m4	2025-06-10 08:17:49.112292900 +0200
++@@ -2612,7 +2612,7 @@
++     case $host_os in
++     cygwin*)
++       # Cygwin DLLs use 'cyg' prefix rather than 'lib'
++-      soname_spec='`echo $libname | $SED -e 's/^lib/cyg/'``echo $release | $SED -e 's/[[.]]/-/g'`$versuffix$shared_ext'
+++      soname_spec='`echo $libname | $SED -e 's/^lib/msys-/'``echo $release | $SED -e 's/[[.]]/-/g'`$versuffix$shared_ext'
++ m4_if([$1], [],[
++       sys_lib_search_path_spec="$sys_lib_search_path_spec /usr/lib/w32api"])
++       ;;
+diff --git a/packages/libtool/2.5.4/0011-Pick-up-clang_rt-static-archives-compiler-internal-l.patch b/packages/libtool/2.5.4/0011-Pick-up-clang_rt-static-archives-compiler-internal-l.patch
+new file mode 100644
+index 00000000..ca70d967
+--- /dev/null
++++ b/packages/libtool/2.5.4/0011-Pick-up-clang_rt-static-archives-compiler-internal-l.patch
+@@ -0,0 +1,29 @@
++From fc658ffc5fed2dfbf35a85f8e60742f63b7cf203 Mon Sep 17 00:00:00 2001
++From: Manoj Gupta <manojgupta@chromium.org>
++Date: Wed, 10 Oct 2018 10:50:23 +0300
++Subject: [PATCH] Pick up clang_rt static archives compiler internal libraries
++
++Libtool checks only for libraries linked as -l* when trying to
++find internal compiler libraries. Clang, however uses the absolute
++path to link its internal libraries e.g. compiler_rt. This patch
++handles clang's statically linked libraries when finding internal
++compiler libraries.
++https://crbug.com/749263
++https://debbugs.gnu.org/cgi/bugreport.cgi?bug=27866
++---
++ m4/libtool.m4 | 2 +-
++ 1 file changed, 1 insertion(+), 1 deletion(-)
++
++diff --git a/m4/libtool.m4 b/m4/libtool.m4
++index 93a54713..2457eec5 100644
++--- a/m4/libtool.m4
+++++ b/m4/libtool.m4
++@@ -7601,7 +7601,7 @@ if AC_TRY_EVAL(ac_compile); then
++   for p in `eval "$output_verbose_link_cmd"`; do
++     case $prev$p in
++ 
++-    -L* | -R* | -l*)
+++    -L* | -R* | -l* | */libclang_rt.*.a)
++        # Some compilers place space between "-{L,R,l}" and the path.
++        # Remove the space.
++        if test x-L = x"$p" ||
+diff --git a/packages/libtool/2.5.4/0013-Allow-statically-linking-compiler-support-libraries-.patch b/packages/libtool/2.5.4/0013-Allow-statically-linking-compiler-support-libraries-.patch
+new file mode 100644
+index 00000000..b75b191a
+--- /dev/null
++++ b/packages/libtool/2.5.4/0013-Allow-statically-linking-compiler-support-libraries-.patch
+@@ -0,0 +1,38 @@
++From b9f77cae8cfbe850e58cac686fcb4d246b5bfc51 Mon Sep 17 00:00:00 2001
++From: =?UTF-8?q?Martin=20Storsj=C3=B6?= <martin@martin.st>
++Date: Mon, 19 Aug 2019 13:34:51 +0300
++Subject: [PATCH] Allow statically linking compiler support libraries when
++ linking a library
++
++For cases with deplibs_check_method="file_magic ..." (as it is for mingw),
++there were previously no way that a static library could be accepted
++here.
++---
++ build-aux/ltmain.in | 11 +++++++++--
++ 1 file changed, 9 insertions(+), 2 deletions(-)
++
++diff --git a/build-aux/ltmain.in b/build-aux/ltmain.in
++index e2fb2633..db4d775c 100644
++--- a/build-aux/ltmain.in
+++++ b/build-aux/ltmain.in
++@@ -5870,8 +5870,15 @@ func_mode_link ()
++ 	  fi
++ 	  case $linkmode in
++ 	  lib)
++-	    # Linking convenience modules into shared libraries is allowed,
++-	    # but linking other static libraries is non-portable.
+++	    # Linking convenience modules and compiler provided static libraries
+++	    # into shared libraries is allowed, but linking other static
+++	    # libraries is non-portable.
+++	    case $deplib in
+++	      */libgcc*.$libext | */libclang_rt*.$libext)
+++		deplibs="$deplib $deplibs"
+++		continue
+++	      ;;
+++	    esac
++ 	    case " $dlpreconveniencelibs " in
++ 	    *" $deplib "*) ;;
++ 	    *)
++-- 
++2.17.1
++
+diff --git a/packages/libtool/2.5.4/0014-Support-llvm-objdump-f-output.patch b/packages/libtool/2.5.4/0014-Support-llvm-objdump-f-output.patch
+new file mode 100644
+index 00000000..710eec0d
+--- /dev/null
++++ b/packages/libtool/2.5.4/0014-Support-llvm-objdump-f-output.patch
+@@ -0,0 +1,36 @@
++From 32d1a16e1ba9b73591fb4f17180459a0a8d4a154 Mon Sep 17 00:00:00 2001
++From: =?UTF-8?q?Mateusz=20Miku=C5=82a?= <mati865@gmail.com>
++Date: Mon, 12 Apr 2021 23:44:10 +0200
++Subject: [PATCH] Support llvm-objdump -f output
++
++---
++ build-aux/ltmain.in | 2 +-
++ m4/libtool.m4       | 2 +-
++ 2 files changed, 2 insertions(+), 2 deletions(-)
++
++diff --git a/build-aux/ltmain.in b/build-aux/ltmain.in
++index 860c6a09..e37abbb1 100644
++--- a/build-aux/ltmain.in
+++++ b/build-aux/ltmain.in
++@@ -3046,7 +3046,7 @@ func_win32_libid ()
++   *ar\ archive*) # could be an import, or static
++     # Keep the egrep pattern in sync with the one in _LT_CHECK_MAGIC_METHOD.
++     if eval $OBJDUMP -f $1 | $SED -e '10q' 2>/dev/null |
++-       $EGREP 'file format (pei*-i386(.*architecture: i386)?|pe-arm-wince|pe-x86-64|pe-aarch64)' >/dev/null; then
+++       $EGREP 'file format (pei*-i386(.*architecture: i386)?|pe-arm-wince|pe-x86-64|pe-aarch64|coff-arm|coff-arm64|coff-i386|coff-x86-64)' >/dev/null; then
++       case $nm_interface in
++       "MS dumpbin")
++ 	if func_cygming_ms_implib_p "$1" ||
++diff --git a/m4/libtool.m4 b/m4/libtool.m4
++index 2457eec5..8cd75666 100644
++--- a/m4/libtool.m4
+++++ b/m4/libtool.m4
++@@ -3535,7 +3535,7 @@ mingw* | windows* | pw32*)
++     lt_cv_file_magic_cmd='func_win32_libid'
++   else
++     # Keep this pattern in sync with the one in func_win32_libid.
++-    lt_cv_deplibs_check_method='file_magic file format (pei*-i386(.*architecture: i386)?|pe-arm-wince|pe-x86-64|pe-aarch64)'
+++    lt_cv_deplibs_check_method='file_magic file format (pei*-i386(.*architecture: i386)?|pe-arm-wince|pe-x86-64|pe-aarch64|coff-arm|coff-arm64|coff-i386|coff-x86-64)'
++     lt_cv_file_magic_cmd='$OBJDUMP -f'
++   fi
++   ;;
+diff --git a/packages/make/4.4.1/005-fix-default-cxx.patch b/packages/make/4.4.1/005-fix-default-cxx.patch
+new file mode 100644
+index 00000000..2202ca19
+--- /dev/null
++++ b/packages/make/4.4.1/005-fix-default-cxx.patch
+@@ -0,0 +1,11 @@
++--- a/src/default.c
+++++ b/src/default.c
++@@ -542,7 +542,7 @@
++     "CXX", "gcc",
++ #  endif /* __MSDOS__ */
++ # else
++-    "CXX", "g++",
+++    "CXX", "c++",
++ # endif
++ #endif
++     /* This expands to $(CO) $(COFLAGS) $< $@ if $@ does not exist,
+diff --git a/packages/make/4.4.1/006-fix-build-with-gcc-15.patch b/packages/make/4.4.1/006-fix-build-with-gcc-15.patch
+new file mode 100644
+index 00000000..8f7cdeaf
+--- /dev/null
++++ b/packages/make/4.4.1/006-fix-build-with-gcc-15.patch
+@@ -0,0 +1,39 @@
++--- a/lib/fnmatch.c
+++++ b/lib/fnmatch.c
++@@ -121,7 +121,7 @@ USA.  */
++    whose names are inconsistent.  */
++ 
++ # if !defined _LIBC && !defined getenv
++-extern char *getenv ();
+++extern char *getenv (const char*);
++ # endif
++ 
++ # ifndef errno
++--- a/src/getopt.c
+++++ b/src/getopt.c
++@@ -202,7 +202,7 @@ static char *posixly_correct;
++    whose names are inconsistent.  */
++ 
++ #ifndef getenv
++-extern char *getenv ();
+++extern char *getenv (const char*);
++ #endif
++ 
++ static char *
++--- a/src/getopt.h
+++++ b/src/getopt.h
++@@ -96,14 +96,7 @@ struct option
++ #define optional_argument	2
++ 
++ #if defined (__STDC__) && __STDC__
++-#ifdef __GNU_LIBRARY__
++-/* Many other libraries have conflicting prototypes for getopt, with
++-   differences in the consts, in stdlib.h.  To avoid compilation
++-   errors, only prototype getopt for the GNU C library.  */
++ extern int getopt (int argc, char *const *argv, const char *shortopts);
++-#else /* not __GNU_LIBRARY__ */
++-extern int getopt ();
++-#endif /* __GNU_LIBRARY__ */
++ extern int getopt_long (int argc, char *const *argv, const char *shortopts,
++ 		        const struct option *longopts, int *longind);
++ extern int getopt_long_only (int argc, char *const *argv,
+diff --git a/packages/make/4.4.1/make-4.2.1-Makefile.am-gcc-only-link-libgnumake-1.dll.a.patch b/packages/make/4.4.1/make-4.2.1-Makefile.am-gcc-only-link-libgnumake-1.dll.a.patch
+new file mode 100644
+index 00000000..4e83b3dc
+--- /dev/null
++++ b/packages/make/4.4.1/make-4.2.1-Makefile.am-gcc-only-link-libgnumake-1.dll.a.patch
+@@ -0,0 +1,12 @@
++diff --git "a/Makefile.am" "b/Makefile.am"
++index c88c465..9c1bb4d 100644
++--- "a/Makefile.am"
+++++ "b/Makefile.am"
++@@ -86,6 +86,7 @@ MAKE_HOST =	@MAKE_HOST@
++ if WINDOWSENV
++   make_SOURCES += $(w32_SRCS)
++   AM_CPPFLAGS  += -I $(top_srcdir)/src/w32/include
+++  make_LDFLAGS = -Wl,--out-implib=libgnumake-1.dll.a
++ else
++   make_SOURCES += src/posixos.c
++ endif
+diff --git a/packages/make/4.4.1/make-4.3_undef-HAVE_STRUCT_DIRENT_D_TYPE.patch b/packages/make/4.4.1/make-4.3_undef-HAVE_STRUCT_DIRENT_D_TYPE.patch
+new file mode 100644
+index 00000000..8d31d868
+--- /dev/null
++++ b/packages/make/4.4.1/make-4.3_undef-HAVE_STRUCT_DIRENT_D_TYPE.patch
+@@ -0,0 +1,11 @@
++--- a/src/config.h.W32
+++++ b/src/config.h.W32
++@@ -348,7 +348,7 @@
++ /* Define to 1 if `d_type' is a member of `struct dirent'. */
++ /* SV 57152: MinGW64 version of dirent doesn't support d_type. */
++-#ifndef __MINGW64__
+++#ifndef __MINGW32__
++ # define HAVE_STRUCT_DIRENT_D_TYPE 1
++ #endif
++ 
++ /* Define to 1 if 'n_un.n_name' is a member of 'struct nlist'. */
+diff --git a/packages/make/4.4.1/make-4.4-timestamps.patch b/packages/make/4.4.1/make-4.4-timestamps.patch
+new file mode 100644
+index 00000000..7908c5ab
+--- /dev/null
++++ b/packages/make/4.4.1/make-4.4-timestamps.patch
+@@ -0,0 +1,37 @@
++From 1f542f915d6a3f8a69a4acae94b01185df7ee2a6 Mon Sep 17 00:00:00 2001
++From: Orgad Shaneh <orgads@gmail.com>
++Date: Wed, 2 Nov 2022 18:23:57 +0200
++Subject: [PATCH] Fix reading file timestamp as 64-bit on MinGW32
++
++Commit 01142a53c9d (Add support for intmax_t) added support for 64-bit
++time_t by defining __MINGW_USE_VC2005_COMPAT. But this only works with
++_stat64 as expected. When stat is used on 32-bit systems, it returns a
++bad timestamp (for example, 72586185920376753).
++
++This triggers the following errors every time make is executed:
++mingw32-make: Warning: File 'Makefile' has modification time 7.3e+16 s in the future
++mingw32-make: warning:  Clock skew detected.  Your build may be incomplete.
++
++and of course, dependencies are completely broken.
++
++Fix by enabling _stat64 also for MinGW.
++---
++ src/remake.c | 2 +-
++ 1 file changed, 1 insertion(+), 1 deletion(-)
++
++diff --git a/src/remake.c b/src/remake.c
++index 4ce3d2a3..83b0b79d 100644
++--- a/src/remake.c
+++++ b/src/remake.c
++@@ -37,7 +37,7 @@ this program.  If not, see <https://www.gnu.org/licenses/>.  */
++ #include <windows.h>
++ #include <io.h>
++ #include <sys/stat.h>
++-#if defined(_MSC_VER) && _MSC_VER > 1200
+++#if defined(__MINGW32__) || (defined(_MSC_VER) && _MSC_VER > 1200)
++ /* VC7 or later supports _stat64 to access 64-bit file size. */
++ #define STAT _stat64
++ #else
++-- 
++2.38.1.windows.1.1.gfa087c7d8f
++
+diff --git a/packages/make/4.4.1/make-linebuf-mingw.patch b/packages/make/4.4.1/make-linebuf-mingw.patch
+new file mode 100644
+index 00000000..feb17dc5
+--- /dev/null
++++ b/packages/make/4.4.1/make-linebuf-mingw.patch
+@@ -0,0 +1,14 @@
++--- a/src/main.c
+++++ b/src/main.c
++@@ -1241,8 +1241,11 @@
++ 
++ #endif
++ 
+++/* setlocale interferes with line buffering if using parallel make on MinGW */
+++#ifndef __MINGW32__
++   /* Set up gettext/internationalization support.  */
++   setlocale (LC_ALL, "");
+++#endif
++   /* The cast to void shuts up compiler warnings on systems that
++      disable NLS.  */
++   (void)bindtextdomain (PACKAGE, LOCALEDIR);
+-- 
+2.52.0.windows.1
+

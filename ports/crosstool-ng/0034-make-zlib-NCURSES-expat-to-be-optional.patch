@@ -1,0 +1,65 @@
+From 24cc2eef6689c67490b0c19eded9000ff477b486 Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Tue, 27 Jan 2026 22:47:59 +0800
+Subject: [PATCH 34/36] make zlib NCURSES expat to be optional
+
+---
+ config/binutils/binutils.in | 1 -
+ config/cc/gcc.in            | 1 -
+ config/debug/gdb.in.cross   | 2 --
+ config/debug/gdb.in.native  | 2 --
+ 4 files changed, 6 deletions(-)
+
+diff --git a/config/binutils/binutils.in b/config/binutils/binutils.in
+index 623c5942..60c0d237 100644
+--- a/config/binutils/binutils.in
++++ b/config/binutils/binutils.in
+@@ -220,7 +220,6 @@ comment "elf2flt"
+ 
+ config ELF2FLT_REQUIRES
+     def_bool y
+-    select ZLIB_NEEDED
+     select BINUTILS_FORCE_LD_BFD_ONLY
+ 
+ source "config/versions/elf2flt.in"
+diff --git a/config/cc/gcc.in b/config/cc/gcc.in
+index 58f979b9..b3a7ab8b 100644
+--- a/config/cc/gcc.in
++++ b/config/cc/gcc.in
+@@ -184,7 +184,6 @@ config CC_GCC_USE_GRAPHITE
+ config CC_GCC_USE_LTO
+     bool "Enable LTO"
+     default y
+-    select ZLIB_NEEDED
+     help
+       Enable the Link Time Optimisations.
+ 
+diff --git a/config/debug/gdb.in.cross b/config/debug/gdb.in.cross
+index 7ecc2e3b..f0f0ecc0 100644
+--- a/config/debug/gdb.in.cross
++++ b/config/debug/gdb.in.cross
+@@ -7,8 +7,6 @@ config GDB_CROSS
+     bool
+     prompt "Cross-gdb"
+     default y
+-    select EXPAT_NEEDED
+-    select NCURSES_NEEDED
+     help
+       Build and install a cross-gdb for the target, to run on host.
+ 
+diff --git a/config/debug/gdb.in.native b/config/debug/gdb.in.native
+index 20abb1ec..17889728 100644
+--- a/config/debug/gdb.in.native
++++ b/config/debug/gdb.in.native
+@@ -8,8 +8,6 @@ config GDB_NATIVE
+     select LIBC_UCLIBC_WCHAR if LIBC_UCLIBC_NG
+     select LIBC_UCLIBC_IPV6 if LIBC_UCLIBC_NG && GDB_8_3_or_later
+     select LIBC_UCLIBC_LIBICONV if LIBC_UCLIBC_NG && GDB_15_or_later
+-    select EXPAT_TARGET
+-    select NCURSES_TARGET
+     select GMP_TARGET if GDB_11_or_later
+     select MPFR_TARGET if GDB_13_or_later
+     help
+-- 
+2.52.0.windows.1
+
