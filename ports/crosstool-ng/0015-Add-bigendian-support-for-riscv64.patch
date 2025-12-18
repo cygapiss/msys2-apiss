@@ -1,0 +1,37 @@
+From b214429ec2da6091a05660d5a76dc9aacc75f397 Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Thu, 18 Dec 2025 16:29:18 +0800
+Subject: [PATCH 15/36] Add bigendian support for riscv64
+
+---
+ config/arch/riscv.in        | 2 ++
+ scripts/build/arch/riscv.sh | 2 +-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/config/arch/riscv.in b/config/arch/riscv.in
+index e7a54dd1..206dee52 100644
+--- a/config/arch/riscv.in
++++ b/config/arch/riscv.in
+@@ -6,6 +6,8 @@
+ ## select ARCH_SUPPORTS_64
+ ## select ARCH_DEFAULT_32
+ ## select ARCH_SUPPORTS_BOTH_MMU
++## select ARCH_SUPPORTS_EITHER_ENDIAN
++## select ARCH_DEFAULT_LE
+ ## select ARCH_SUPPORTS_WITH_ABI
+ ## select ARCH_SUPPORTS_WITH_ARCH
+ ## select ARCH_SUPPORTS_WITH_TUNE
+diff --git a/scripts/build/arch/riscv.sh b/scripts/build/arch/riscv.sh
+index a0a5ba4f..0e60349d 100644
+--- a/scripts/build/arch/riscv.sh
++++ b/scripts/build/arch/riscv.sh
+@@ -1,5 +1,5 @@
+ # Compute RISC-V-specific values
+ 
+ CT_DoArchTupleValues() {
+-    CT_TARGET_ARCH="riscv${CT_ARCH_BITNESS}"
++    CT_TARGET_ARCH="riscv${CT_ARCH_BITNESS}${target_endian_be}"
+ }
+-- 
+2.52.0.windows.1
+

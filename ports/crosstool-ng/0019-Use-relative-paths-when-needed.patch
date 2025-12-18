@@ -1,0 +1,146 @@
+From 60bce45431d52ae1ce29ab042ba3cc8fac93fbae Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Thu, 18 Dec 2025 21:55:40 +0800
+Subject: [PATCH 19/36] Use relative paths when needed
+
+Turn GMP building with relative path for resolve compile issue with mingw64
+
+The compile error is:
+[ERROR]    configure: error: Oops, mp_limb_t doesn't seem to work
+
+because include absolute path.
+
+Signed-off-by: Yonggang Luo <luoyonggang@gmail.com>
+---
+ scripts/build/cc/gcc.sh                       | 2 ++
+ scripts/build/companion_libs/100-gmp.sh       | 2 ++
+ scripts/build/companion_tools/050-make.sh     | 2 ++
+ scripts/build/companion_tools/100-m4.sh       | 2 ++
+ scripts/build/companion_tools/200-autoconf.sh | 2 ++
+ scripts/build/companion_tools/300-automake.sh | 2 ++
+ scripts/build/companion_tools/400-libtool.sh  | 3 +++
+ scripts/build/companion_tools/500-dtc.sh      | 2 ++
+ scripts/build/companion_tools/510-bison.sh    | 2 ++
+ 9 files changed, 19 insertions(+)
+
+diff --git a/scripts/build/cc/gcc.sh b/scripts/build/cc/gcc.sh
+index 57f5f222..5f873197 100644
+--- a/scripts/build/cc/gcc.sh
++++ b/scripts/build/cc/gcc.sh
+@@ -640,6 +640,8 @@ do_gcc_core_backend() {
+         cxxflags_for_target="${cxxflags_for_target} ${extra_cxxflags_for_target}"
+     fi
+ 
++    CT_SRC_DIR=$(realpath --relative-to="$PWD" "$CT_SRC_DIR")
++
+     # Use --with-local-prefix so older gccs don't look in /usr/local (http://gcc.gnu.org/PR10532).
+     # Pass only user-specified CFLAGS/LDFLAGS in CFLAGS_FOR_TARGET/LDFLAGS_FOR_TARGET: during
+     # the build of, for example, libatomic, GCC tried to compile multiple variants for runtime
+diff --git a/scripts/build/companion_libs/100-gmp.sh b/scripts/build/companion_libs/100-gmp.sh
+index 44937522..c270f9b7 100644
+--- a/scripts/build/companion_libs/100-gmp.sh
++++ b/scripts/build/companion_libs/100-gmp.sh
+@@ -122,6 +122,8 @@ do_gmp_backend() {
+         extra_config+=("--with-pic")
+     fi
+ 
++    CT_SRC_DIR=$(realpath --relative-to="$PWD" "$CT_SRC_DIR")
++
+     # GMP's configure script doesn't respect the host parameter
+     # when not cross-compiling, ie when build == host so set
+     # CC_FOR_BUILD and CPP_FOR_BUILD.
+diff --git a/scripts/build/companion_tools/050-make.sh b/scripts/build/companion_tools/050-make.sh
+index df77d5ba..4014c42b 100644
+--- a/scripts/build/companion_tools/050-make.sh
++++ b/scripts/build/companion_tools/050-make.sh
+@@ -64,6 +64,8 @@ do_make_backend()
+         extra_config+=( --without-guile )
+     fi
+ 
++    CT_SRC_DIR=$(realpath --relative-to="$PWD" "$CT_SRC_DIR")
++
+     CT_DoLog EXTRA "Configuring make"
+     CT_DoExecLog CFG \
+                      CFLAGS="${cflags}" \
+diff --git a/scripts/build/companion_tools/100-m4.sh b/scripts/build/companion_tools/100-m4.sh
+index 7d9044f8..cfaee91b 100644
+--- a/scripts/build/companion_tools/100-m4.sh
++++ b/scripts/build/companion_tools/100-m4.sh
+@@ -63,6 +63,8 @@ do_m4_backend()
+             ;;
+     esac
+ 
++    CT_SRC_DIR=$(realpath --relative-to="$PWD" "$CT_SRC_DIR")
++
+     CT_DoLog EXTRA "Configuring m4"
+     CT_DoExecLog CFG \
+                      CFLAGS="${cflags}" \
+diff --git a/scripts/build/companion_tools/200-autoconf.sh b/scripts/build/companion_tools/200-autoconf.sh
+index 28ff6513..215e081c 100644
+--- a/scripts/build/companion_tools/200-autoconf.sh
++++ b/scripts/build/companion_tools/200-autoconf.sh
+@@ -37,6 +37,8 @@ do_autoconf_backend()
+         eval "${arg// /\\ }"
+     done
+ 
++    CT_SRC_DIR=$(realpath --relative-to="$PWD" "$CT_SRC_DIR")
++
+     # Ensure configure gets run using the CONFIG_SHELL as configure seems to
+     # have trouble when CONFIG_SHELL is set and /bin/sh isn't bash
+     # For reference see:
+diff --git a/scripts/build/companion_tools/300-automake.sh b/scripts/build/companion_tools/300-automake.sh
+index 9f7dd49e..85fd4dc7 100644
+--- a/scripts/build/companion_tools/300-automake.sh
++++ b/scripts/build/companion_tools/300-automake.sh
+@@ -37,6 +37,8 @@ do_automake_backend()
+         eval "${arg// /\\ }"
+     done
+ 
++    CT_SRC_DIR=$(realpath --relative-to="$PWD" "$CT_SRC_DIR")
++
+     CT_DoLog EXTRA "Configuring automake"
+     CT_DoExecLog CFG \
+                      ${CONFIG_SHELL} \
+diff --git a/scripts/build/companion_tools/400-libtool.sh b/scripts/build/companion_tools/400-libtool.sh
+index f7aeb6c8..abcbd1d1 100644
+--- a/scripts/build/companion_tools/400-libtool.sh
++++ b/scripts/build/companion_tools/400-libtool.sh
+@@ -38,6 +38,9 @@ do_libtool_backend()
+     done
+ 
+     CT_DoLog EXTRA "Configuring libtool"
++
++    CT_SRC_DIR=$(realpath --relative-to="$PWD" "$CT_SRC_DIR")
++
+     CT_DoExecLog CFG \
+                      ${CONFIG_SHELL} \
+                      "${CT_SRC_DIR}/libtool/configure" \
+diff --git a/scripts/build/companion_tools/500-dtc.sh b/scripts/build/companion_tools/500-dtc.sh
+index a16ff625..790c1012 100644
+--- a/scripts/build/companion_tools/500-dtc.sh
++++ b/scripts/build/companion_tools/500-dtc.sh
+@@ -48,6 +48,8 @@ do_dtc_backend()
+         eval "${arg// /\\ }"
+     done
+ 
++    prefix=$(realpath --relative-to="$PWD" "$prefix")
++
+     # Override PKG_CONFIG: if pkg-config is not installed, DTC's makefile
+     # misinterprets the error code and tries to enable YAML support while
+     # not linking against libyaml. NO_YAML=1 is sufficient to make the build
+diff --git a/scripts/build/companion_tools/510-bison.sh b/scripts/build/companion_tools/510-bison.sh
+index 90bf9ec7..3c73d037 100644
+--- a/scripts/build/companion_tools/510-bison.sh
++++ b/scripts/build/companion_tools/510-bison.sh
+@@ -48,6 +48,8 @@ do_bison_backend()
+         eval "${arg// /\\ }"
+     done
+ 
++    CT_SRC_DIR=$(realpath --relative-to="$PWD" "$CT_SRC_DIR")
++
+     CT_DoLog EXTRA "Configuring bison"
+     CT_DoExecLog CFG \
+                      CFLAGS="${cflags}" \
+-- 
+2.52.0.windows.1
+

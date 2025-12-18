@@ -1,0 +1,46 @@
+From 4ed3f86472923d6415cd6f51a9f8e94f1f81050a Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Sat, 20 Dec 2025 23:07:19 +0800
+Subject: [PATCH 25/36] Support for python properly
+
+---
+ scripts/crosstool-NG.sh | 6 ++++++
+ scripts/functions       | 5 +++++
+ 2 files changed, 11 insertions(+)
+
+diff --git a/scripts/crosstool-NG.sh b/scripts/crosstool-NG.sh
+index bfada4f6..654802d2 100644
+--- a/scripts/crosstool-NG.sh
++++ b/scripts/crosstool-NG.sh
+@@ -136,6 +136,12 @@ cat "${paths_sh_location}" |while read trash line; do
+     tool="${line%%=*}"
+     # Suppress extra quoting
+     eval path=${line#*=}
++    if [ "${MSYSTEM}" = "MINGW64" ]; then
++        # For mingw64, python link to '/mingw64/bin/python' instead
++        if [ "${tool}" = "python" ]; then
++            path="/mingw64/bin/python"
++        fi
++    fi
+     if [ ! -r "${CT_LIB_DIR}/scripts/override/$tool" ]; then
+          if [ -n "${path}" ]; then
+              CT_DoExecLog ALL rm -f "${CT_TOOLS_OVERRIDE_DIR}/bin/${tool}"
+diff --git a/scripts/functions b/scripts/functions
+index da58f9ca..1c161408 100644
+--- a/scripts/functions
++++ b/scripts/functions
+@@ -2509,6 +2509,11 @@ else
+ fi
+ . "${paths_sh_location}"
+ 
++if [ "${MSYSTEM}" = "MINGW64" ]; then
++    # For mingw64, python link to '/mingw64/bin/python' instead
++    export python="/mingw64/bin/python"
++fi
++
+ CT_InstallCopyingInformation()
+ {
+     local licfile
+-- 
+2.52.0.windows.1
+

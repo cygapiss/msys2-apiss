@@ -1,0 +1,26 @@
+From e046a5a5bc3dc307c1d23deafb4dbf5eee6f3044 Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Tue, 30 Dec 2025 04:19:36 +0800
+Subject: [PATCH 33/36] Revert "gcc: Disable CC_GCC_ENABLE_DEFAULT_PIE on
+ RISC-V bare metal builds"
+
+This reverts commit 4b60bea2e98780a2971cd87142297358f41161ec.
+---
+ config/cc/gcc.in | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/config/cc/gcc.in b/config/cc/gcc.in
+index 7928468c..58f979b9 100644
+--- a/config/cc/gcc.in
++++ b/config/cc/gcc.in
+@@ -215,7 +215,6 @@ config CC_GCC_ENABLE_DEFAULT_PIE
+     prompt "Enable Position Independent Executable as default"
+     default n
+     depends on GCC_6_or_later && ! WINDOWS && ! ARCH_MIPS && ! ARCH_AVR && ! ARCH_PRU
+-    depends on !(ARCH_RISCV && BARE_METAL)
+     help
+       Pass --enable-default-pie to crossgcc's configure.
+       
+-- 
+2.52.0.windows.1
+

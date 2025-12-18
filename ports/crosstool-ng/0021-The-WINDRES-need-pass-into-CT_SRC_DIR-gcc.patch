@@ -1,0 +1,50 @@
+From f9567c70b9fe3a85bc505bc5de6531ee66d2247f Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Fri, 19 Dec 2025 13:27:09 +0800
+Subject: [PATCH 21/36] The WINDRES need pass into ${CT_SRC_DIR}/gcc/
+
+Fixes compile error:
+[ALL  ]    ../../../src/gcc/gcc/config/i386/utf8-mingw32.rc utf8rc-mingw32.o
+[ALL  ]    x86_64-build_w64-mingw32-g++  -fno-PIE -c   -g -I/home/lygstate/crosstools-ng-mingw64/.build/riscv64be-unknown-elf/buildtools/include  -DIN_GCC -DCROSS_DIRECTORY_STRUCTURE   -fno-exceptions -fno-rtti -fasynchronous-unwind-tables -W -Wall -Wno-error=narrowing -Wwrite-strings -Wcast-qual -Wmissing-format-attribute -Wconditionally-supported -Woverloaded-virtual -pedantic -Wno-long-long -Wno-variadic-macros -Wno-overlength-strings  -DHAVE_CONFIG_H -fno-PIE -I. -I. -I../../../src/gcc/gcc -I../../../src/gcc/gcc/. -I../../../src/gcc/gcc/../include  -I../../../src/gcc/gcc/../libcpp/include -I../../../src/gcc/gcc/../libcody -I/home/lygstate/crosstools-ng-mingw64/.build/riscv64be-unknown-elf/buildtools/include -I/home/lygstate/crosstools-ng-mingw64/.build/riscv64be-unknown-elf/buildtools/include -I/home/lygstate/crosstools-ng-mingw64/.build/riscv64be-unknown-elf/buildtools/include  -I../../../src/gcc/gcc/../libdecnumber -I../../../src/gcc/gcc/../libdecnumber/dpd -I../libdecnumber -I../../../src/gcc/gcc/../libbacktrace -I/home/lygstate/crosstools-ng-mingw64/.build/riscv64be-unknown-elf/buildtools/include  -I. -I. -I../../../src/gcc/gcc -I../../../src/gcc/gcc/. -I../../../src/gcc/gcc/../include  -I../../../src/gcc/gcc/../libcpp/include -I../../../src/gcc/gcc/../libcody -I/home/lygstate/crosstools-ng-mingw64/.build/riscv64be-unknown-elf/buildtools/include -I/home/lygstate/crosstools-ng-mingw64/.build/riscv64be-unknown-elf/buildtools/include -I/home/lygstate/crosstools-ng-mingw64/.build/riscv64be-unknown-elf/buildtools/include  -I../../../src/gcc/gcc/../libdecnumber -I../../../src/gcc/gcc/../libdecnumber/dpd -I../libdecnumber -I../../../src/gcc/gcc/../libbacktrace -I/home/lygstate/crosstools-ng-mingw64/.build/riscv64be-unknown-elf/buildtools/include ../../../src/gcc/gcc/config/i386/driver-mingw32.cc
+[ALL  ]    ../../../src/gcc/gcc/config/i386/utf8-mingw32.rc: line 3: CREATEPROCESS_MANIFEST_RESOURCE_ID: command not found
+[ERROR]    make[1]: *** [../../../src/gcc/gcc/config/i386/x-mingw32-utf8:32: utf8rc-mingw32.o] Error 127
+
+Signed-off-by: Yonggang Luo <luoyonggang@gmail.com>
+---
+ scripts/build/cc/gcc.sh | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/scripts/build/cc/gcc.sh b/scripts/build/cc/gcc.sh
+index 5f873197..fb51e097 100644
+--- a/scripts/build/cc/gcc.sh
++++ b/scripts/build/cc/gcc.sh
+@@ -206,7 +206,7 @@ do_cc_core() {
+     core_opts+=( "mode=static" )
+     core_opts+=( "build_libgcc=yes" )
+ 
+-    CT_DoStep INFO "Installing core C gcc compiler"
++    CT_DoStep INFO "Installing core C gcc compiler with jobs flags:${CT_JOBSFLAGS}"
+     CT_mkdir_pushd "${CT_BUILD_DIR}/build-cc-gcc-core"
+ 
+     do_gcc_core_backend "${core_opts[@]}"
+@@ -715,7 +715,7 @@ do_gcc_core_backend() {
+         libgcc_rule="libgcc.mvars"
+         core_targets=( gcc target-libgcc )
+ 
+-        CT_DoExecLog ALL make ${CT_JOBSFLAGS} -C gcc ${libgcc_rule}
++        CT_DoExecLog ALL make ${CT_JOBSFLAGS} -C gcc ${libgcc_rule} WINDRES=${CT_BUILD}-windres
+ 
+         sed -r -i -e 's@-lc@@g' gcc/${libgcc_rule}
+     else # build_libgcc
+@@ -754,7 +754,7 @@ do_gcc_core_backend() {
+          -a "${CT_CC_LANG_ADA}"  = "y"    \
+        ]; then
+         CT_DoLog EXTRA "Building gnattools for baremetal"
+-        CT_DoExecLog ALL make -C gcc ${CT_JOBSFLAGS} cross-gnattools
++        CT_DoExecLog ALL make -C gcc ${CT_JOBSFLAGS} cross-gnattools WINDRES=${CT_BUILD}-windres
+     fi
+ 
+     # Do not pass ${CT_JOBSFLAGS} here: recent GCC builds have been failing
+-- 
+2.52.0.windows.1
+

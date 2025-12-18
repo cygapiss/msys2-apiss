@@ -1,0 +1,176 @@
+From 9f55f16512f326ea8335c659aa051af7cd8e7306 Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Wed, 28 Jan 2026 01:30:47 +0800
+Subject: [PATCH 36/36] Add ncurses 6.6
+
+---
+ packages/ncurses/6.6/chksum                   |  4 ++
+ .../mingw/0001-ncurses-config-win-paths.patch | 61 +++++++++++++++++++
+ .../ncurses/6.6/mingw/0002-pkgconfig.patch    | 39 ++++++++++++
+ .../6.6/mingw/0003-cflags-private.patch       | 24 ++++++++
+ packages/ncurses/6.6/version.desc             |  0
+ 5 files changed, 128 insertions(+)
+ create mode 100644 packages/ncurses/6.6/chksum
+ create mode 100644 packages/ncurses/6.6/mingw/0001-ncurses-config-win-paths.patch
+ create mode 100644 packages/ncurses/6.6/mingw/0002-pkgconfig.patch
+ create mode 100644 packages/ncurses/6.6/mingw/0003-cflags-private.patch
+ create mode 100644 packages/ncurses/6.6/version.desc
+
+diff --git a/packages/ncurses/6.6/chksum b/packages/ncurses/6.6/chksum
+new file mode 100644
+index 00000000..f6737513
+--- /dev/null
++++ b/packages/ncurses/6.6/chksum
+@@ -0,0 +1,4 @@
++md5 ncurses-6.5.tar.gz dd45bf6854430af403452a7a6a40652c
++sha1 ncurses-6.5.tar.gz 99bf17b2b750958ce368fd69dbf8ca9113040472
++sha256 ncurses-6.5.tar.gz 355b4cbbed880b0381a04c46617b7656e362585d52e9cf84a67e2009b749ff11
++sha512 ncurses-6.5.tar.gz 02647baae53abc844fbadee5b0a2187ad073125c4e8950df6d1c4feb781cb74ba64fb838cedfee2c246c39932187f6775b1df124f18b99a4233f0d98c72191de
+diff --git a/packages/ncurses/6.6/mingw/0001-ncurses-config-win-paths.patch b/packages/ncurses/6.6/mingw/0001-ncurses-config-win-paths.patch
+new file mode 100644
+index 00000000..6b2e37b8
+--- /dev/null
++++ b/packages/ncurses/6.6/mingw/0001-ncurses-config-win-paths.patch
+@@ -0,0 +1,61 @@
++From 46cce7aa3e74077e6396ff38425996ad00eb49bd Mon Sep 17 00:00:00 2001
++From: Yonggang Luo <luoyonggang@gmail.com>
++Date: Wed, 28 Jan 2026 01:24:38 +0800
++Subject: [PATCH 1/3] ncurses config win paths
++
++---
++ misc/ncurses-config.in | 13 ++++++++-----
++ 1 file changed, 8 insertions(+), 5 deletions(-)
++
++diff --git a/misc/ncurses-config.in b/misc/ncurses-config.in
++index ea3ad0d2..fddab7a5 100644
++--- a/misc/ncurses-config.in
+++++ b/misc/ncurses-config.in
++@@ -36,7 +36,7 @@ LANGUAGE=C;	export LANGUAGE
++ LC_ALL=C;	export LC_ALL
++ LC_CTYPE=C;	export LC_CTYPE
++ 
++-prefix="@prefix@"
+++prefix="$(cygpath -m "@prefix@")"
++ exec_prefix="@exec_prefix@"
++ 
++ bindir="@bindir@"
++@@ -44,7 +44,7 @@ includedir="@includedir@"
++ libdir="@libdir@"
++ datarootdir="@datarootdir@"
++ datadir="@datadir@"
++-mandir="@mandir@"
+++mandir="$(cygpath -m "@mandir@")"
++ 
++ CURSES_LIB="@LIB_NAME@@ABI_SUFFIX@"
++ TINFO_LIB="@TINFO_ARG_SUFFIX@"
++@@ -164,6 +164,9 @@ do
++ 				continue
++ 			fi
++ 			;;
+++		$libdir) # skip standard libdir
+++			continue
+++			;;
++ 		*)
++ 			found=no
++ 			for check in $lib_flags
++@@ -330,13 +333,13 @@ while [ $# -gt 0 ]; do
++ 		echo "${mandir}"
++ 		;;
++ 	--terminfo)
++-		echo "@TERMINFO@"
+++		echo "$(cygpath -m "@TERMINFO@")"
++ 		;;
++ 	--terminfo-dirs)
++-		echo "@TERMINFO_DIRS@"
+++		echo "$(cygpath -m "@TERMINFO_DIRS@")"
++ 		;;
++ 	--termpath)
++-		echo "@TERMPATH@"
+++		echo "$(cygpath -m "@TERMPATH@")"
++ 		;;
++ 	# general info
++ 	--help)
++-- 
++2.52.0.windows.1
++
+diff --git a/packages/ncurses/6.6/mingw/0002-pkgconfig.patch b/packages/ncurses/6.6/mingw/0002-pkgconfig.patch
+new file mode 100644
+index 00000000..d2a74f89
+--- /dev/null
++++ b/packages/ncurses/6.6/mingw/0002-pkgconfig.patch
+@@ -0,0 +1,39 @@
++From 588f1f05609b783259fe75c2a6d65622ff3644b5 Mon Sep 17 00:00:00 2001
++From: Yonggang Luo <luoyonggang@gmail.com>
++Date: Wed, 28 Jan 2026 01:25:21 +0800
++Subject: [PATCH 2/3] pkgconfig
++
++---
++ misc/gen-pkgconfig.in  | 2 +-
++ misc/ncurses-config.in | 2 +-
++ 2 files changed, 2 insertions(+), 2 deletions(-)
++
++diff --git a/misc/gen-pkgconfig.in b/misc/gen-pkgconfig.in
++index c369dd26..abca88fe 100644
++--- a/misc/gen-pkgconfig.in
+++++ b/misc/gen-pkgconfig.in
++@@ -83,7 +83,7 @@ if [ "$includedir" != "/usr/include" ]; then
++ fi
++ 
++ lib_flags=
++-for opt in -L$libdir @EXTRA_PKG_LDFLAGS@ @LIBS@
+++for opt in -L$libdir @LIBS@
++ do
++ 	case $opt in
++ 	-l*) # LIBS is handled specially below
++diff --git a/misc/ncurses-config.in b/misc/ncurses-config.in
++index fddab7a5..13c6c149 100644
++--- a/misc/ncurses-config.in
+++++ b/misc/ncurses-config.in
++@@ -110,7 +110,7 @@ fi
++ # There is no portable way to find the list of standard library directories.
++ # Require a POSIX shell anyway, to keep this simple.
++ lib_flags=
++-for opt in -L$libdir @EXTRA_PKG_LDFLAGS@ $LIBS
+++for opt in -L$libdir $LIBS
++ do
++ 	case $opt in
++ 	-specs*) # ignore linker specs-files which were used to build library
++-- 
++2.52.0.windows.1
++
+diff --git a/packages/ncurses/6.6/mingw/0003-cflags-private.patch b/packages/ncurses/6.6/mingw/0003-cflags-private.patch
+new file mode 100644
+index 00000000..e08431cf
+--- /dev/null
++++ b/packages/ncurses/6.6/mingw/0003-cflags-private.patch
+@@ -0,0 +1,24 @@
++From b029789049b5eb0afccdbe12fddb7b9a68b00a51 Mon Sep 17 00:00:00 2001
++From: Yonggang Luo <luoyonggang@gmail.com>
++Date: Wed, 28 Jan 2026 01:25:51 +0800
++Subject: [PATCH 3/3] cflags-private
++
++---
++ misc/gen-pkgconfig.in | 1 +
++ 1 file changed, 1 insertion(+)
++
++diff --git a/misc/gen-pkgconfig.in b/misc/gen-pkgconfig.in
++index abca88fe..2455e57f 100644
++--- a/misc/gen-pkgconfig.in
+++++ b/misc/gen-pkgconfig.in
++@@ -245,6 +245,7 @@ Requires.private: $reqs
++ Libs: $lib_flags $LIBS
++ Libs.private: @LIBS@ $main_libs
++ Cflags: $CFLAGS
+++Cflags.private: -DNCURSES_STATIC
++ EOF
++ 
++ done
++-- 
++2.52.0.windows.1
++
+diff --git a/packages/ncurses/6.6/version.desc b/packages/ncurses/6.6/version.desc
+new file mode 100644
+index 00000000..e69de29b
+-- 
+2.52.0.windows.1
+

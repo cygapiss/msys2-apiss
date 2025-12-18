@@ -1,0 +1,58 @@
+From be4950c7b990cae3ebabf8ba235d3519ba457913 Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Mon, 29 Dec 2025 19:57:17 +0800
+Subject: [PATCH 31/36] Extract msys2 and mingw patches and building bfd LTO
+ plugins properly
+
+---
+ scripts/crosstool-NG.sh |  2 +-
+ scripts/functions       | 14 ++++++++------
+ 2 files changed, 9 insertions(+), 7 deletions(-)
+
+diff --git a/scripts/crosstool-NG.sh b/scripts/crosstool-NG.sh
+index 654802d2..b54828e3 100644
+--- a/scripts/crosstool-NG.sh
++++ b/scripts/crosstool-NG.sh
+@@ -276,7 +276,7 @@ CT_SYS_HOSTNAME=$(hostname -f 2>/dev/null || true)
+ CT_SYS_HOSTNAME="${CT_SYS_HOSTNAME:-$(uname -n)}"
+ CT_SYS_KERNEL=$(uname -s)
+ CT_SYS_REVISION=$(uname -r)
+-CT_SYS_OS=$(uname -s)
++CT_SYS_OS=$(uname -o)
+ CT_SYS_MACHINE=$(uname -m)
+ CT_SYS_PROCESSOR=$(uname -p)
+ CT_SYS_GCC=$(${CT_BUILD_PREFIX}gcc${CT_BUILD_SUFFIX} -dumpversion)
+diff --git a/scripts/functions b/scripts/functions
+index 1c161408..69698214 100644
+--- a/scripts/functions
++++ b/scripts/functions
+@@ -2320,18 +2320,20 @@ CT_DoExtractPatch()
+ 
+             bundled_patch_dir="${CT_LIB_DIR}/packages/${pkg_dir}"
+             bundled_exp_patch_dir="${CT_LIB_DIR}/packages/${pkg_dir}/experimental"
++            mingw_patch_dir="${CT_LIB_DIR}/packages/${pkg_dir}/mingw"
++            msys2_patch_dir="${CT_LIB_DIR}/packages/${pkg_dir}/msys2"
+             bundled_common_patch_dir="${CT_LIB_DIR}/packages/${pkg_name}"
+             local_patch_dir="${CT_LOCAL_PATCH_DIR}/${pkg_dir}"
+             local_common_patch_dir="${CT_LOCAL_PATCH_DIR}/${pkg_name}"
+ 
+             case "${patch_order}" in
+-                bundled)                    patch_dirs=("${bundled_patch_dir}" "${bundled_common_patch_dir}");;
++                bundled)                    patch_dirs=("${bundled_patch_dir}" "${mingw_patch_dir}" "${msys2_patch_dir}" "${bundled_common_patch_dir}");;
+                 local)                      patch_dirs=("${local_patch_dir}" "${local_common_patch_dir}");;
+-                bundled,local)              patch_dirs=("${bundled_patch_dir}" "${bundled_common_patch_dir}" "${local_patch_dir}" "${local_common_patch_dir}");;
+-                local,bundled)              patch_dirs=("${local_patch_dir}" "${local_common_patch_dir}" "${bundled_patch_dir}" "${bundled_common_patch_dir}");;
+-                bundled,bundled_exp)        patch_dirs=("${bundled_patch_dir}" "${bundled_common_patch_dir}" "${bundled_exp_patch_dir}");;
+-                bundled,bundled_exp,local)  patch_dirs=("${bundled_patch_dir}" "${bundled_common_patch_dir}" "${bundled_exp_patch_dir}" "${local_patch_dir}" "${local_common_patch_dir}");;
+-                local,bundled,bundled_exp)  patch_dirs=("${local_patch_dir}" "${local_common_patch_dir}" "${bundled_patch_dir}" "${bundled_common_patch_dir}" "${bundled_exp_patch_dir}");;
++                bundled,local)              patch_dirs=("${bundled_patch_dir}" "${mingw_patch_dir}" "${msys2_patch_dir}" "${bundled_common_patch_dir}" "${local_patch_dir}" "${local_common_patch_dir}");;
++                local,bundled)              patch_dirs=("${local_patch_dir}" "${local_common_patch_dir}" "${bundled_patch_dir}" "${mingw_patch_dir}" "${msys2_patch_dir}" "${bundled_common_patch_dir}");;
++                bundled,bundled_exp)        patch_dirs=("${bundled_patch_dir}" "${mingw_patch_dir}" "${msys2_patch_dir}" "${bundled_common_patch_dir}" "${bundled_exp_patch_dir}");;
++                bundled,bundled_exp,local)  patch_dirs=("${bundled_patch_dir}" "${mingw_patch_dir}" "${msys2_patch_dir}" "${bundled_common_patch_dir}" "${bundled_exp_patch_dir}" "${local_patch_dir}" "${local_common_patch_dir}");;
++                local,bundled,bundled_exp)  patch_dirs=("${local_patch_dir}" "${local_common_patch_dir}" "${bundled_patch_dir}" "${mingw_patch_dir}" "${msys2_patch_dir}" "${bundled_common_patch_dir}" "${bundled_exp_patch_dir}");;
+                 none)                       patch_dirs=;;
+             esac
+ 
+-- 
+2.52.0.windows.1
+
