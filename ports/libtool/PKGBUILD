@@ -65,7 +65,6 @@ prepare() {
     0004-Allow-statically-linking-Flang-support-libraries-whe.patch \
     0005-libtool-include-process.h.patch \
     0006-Pass-various-flags-to-GCC.patch \
-    0007-msysize.patch \
     0011-Pick-up-clang_rt-static-archives-compiler-internal-l.patch \
     0013-Allow-statically-linking-compiler-support-libraries-.patch \
     0014-Support-llvm-objdump-f-output.patch
