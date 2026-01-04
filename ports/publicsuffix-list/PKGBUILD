@@ -1,7 +1,7 @@
 # Maintainer: J. Peter Mugaas <jpmugaas@suddenlink.net>
 
 pkgname=publicsuffix-list
-pkgver=20240306.1440.9094af5
+pkgver=20240306.1440.9094af5c
 pkgrel=1
 pkgdesc='Cross-vendor public domain suffix database'
 url='https://github.com/publicsuffix/list'
