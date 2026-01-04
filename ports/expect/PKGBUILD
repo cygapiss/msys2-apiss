@@ -4,7 +4,7 @@
 
 pkgname=expect
 pkgver=5.45.4
-pkgrel=6
+pkgrel=7
 pkgdesc="A tool for automating interactive applications"
 arch=('i686' 'x86_64')
 url="https://www.nist.gov/el/msid/expect.cfm"
@@ -14,14 +14,90 @@ msys2_references=(
 license=('spdx:LicenseRef-Expect')
 depends=('tcl')
 makedepends=('autotools' 'gcc' 'tcl-devel')
-source=(https://downloads.sourceforge.net/project/expect/Expect/${pkgver}/expect${pkgver}.tar.gz
-        5.45-openpty.patch)
+
+patches=(
+  # patches from https://src.fedoraproject.org/rpms/enscript/blob/rawhide/f/enscript.spec
+  # Use regexp 'Patch\d+: ' to replace prefixes
+
+  # Patch0: fixes change log file permissions
+  expect-5.43.0-log_file.patch
+  # Patch1: fixes install location, change pkgIndex
+  # NOTE: cygwin do not need the pkgpath fixes
+  # expect-5.43.0-pkgpath.patch
+  # Patch2: fixes minor man page formatting issue
+  expect-5.45-man-page.patch
+  # Patch3: fixes segmentation fault during matching characters
+  expect-5.45-match-gt-numchars-segfault.patch
+  # Patch4: fixes memory leak when using -re, http://sourceforge.net/p/expect/patches/13/
+  expect-5.45-re-memleak.patch
+  # Patch5: use vsnprintf instead of vsprintf to avoid buffer overflow
+  expect-5.45-exp-log-buf-overflow.patch
+  # Patch6: fixes segfaults if Tcl is built with stubs and Expect is used directly
+  #   from C program rhbz#1091060
+  expect-5.45-segfault-with-stubs.patch
+  # Patch7: fixes leaked fd, patch by Matej Mu?ila, rhbz#1001220
+  expect-5.45-fd-leak.patch
+  # Patch8: unificates usage message of expect binary and man page, adds -h flag
+  expect-5.45.4-unification-of-usage-and-man-page.patch
+  # Patch9: fixes issues detected by static analysis
+  expect-5.45.4-covscan-fixes.patch
+  # examples patches
+  # Patch100: changes random function
+  expect-5.32.2-random.patch
+  # Patch101: fixes bz674184 - mkpasswd fails randomly
+  expect-5.45-mkpasswd-dash.patch
+  # Patch102: fixes bz703702 - let user know that telnet is needed for
+  # running some examples
+  expect-5.45-check-telnet.patch
+  # Patch103: use full path to 'su', it's safer
+  expect-5.45-passmass-su-full-path.patch
+  # Patch104: rhbz 963889, fixes inaccuracy in mkpasswd man page
+  expect-5.45-mkpasswd-man.patch
+  # Patch105: Fix error with -Werror=format-security
+  expect-5.45-format-security.patch
+  expect-configure-c99.patch
+  expect-c99.patch
+  # Patch108: fix tclsh path for 'example' binaries (tcl8 compat package has no 'tclsh')
+  expect-5.45.4-tclsh8.patch
+
+
+  # Fixes for cygwin
+  5.45-openpty.patch
+  0021-fixes-compile-with-c99-with-cygwin-gcc-15.2.patch
+)
+
+source=(https://sourceforge.net/projects/expect/files/Expect/${pkgver}/expect${pkgver}.tar.gz)
+source+=(${patches[@]})
+
 sha256sums=('49a7da83b0bdd9f46d04a04deec19c7767bb9a323e40c4781f89caf760b92c34'
-            '51767a9781b8844280265b290ac894fda176b7b92dad9b868f07b4e83b478207')
+            '594bac752c474f609e28671498f2a1ce1e191790518c72aa6898dbdf3ecc207a'
+            '7a2cae7cdb445a087d18818738c74219257787fb22e3387cc773ad5b70b8a2e8'
+            'd8a4f458f5e057bcb8fc264619b7c684bf94d7cd473dbdda46d8160b3ded6615'
+            '545d4026e56103a8130469af383eafd1bdf6b95120065d6327963506ee9af595'
+            '6671b31bdd67f2e41c38abe3221c05e1b46e5aba32cb2879cd1df36af5997c97'
+            '67d6bf2f99709630ca241db4bc32a9be4647df62c4105b754cd2bc76024ac262'
+            'f09f7c3f2f3a4f123e549776a0ca7787a6a776f756d3775440b15f842faa6be2'
+            '83d4b92bb39391339507731f25fb66288911bbc6e9d492dfd104b6d150e3c33b'
+            '60caefbec8190300e9e975bd5328281ab640ee7c74023956a79414c80b79d1d3'
+            'b1f898970f9a005bdfe02c97bc831012e5b44d0ae2704c652e4eb9c1ad9054d5'
+            'eef3801e26b03eb9ceccc046d266948ee1843122cfd0f742840118e195710f17'
+            '3b6fd310d94a75362bdcc8645886c31da82b593dd794fb8148b0c76943490937'
+            '9f662dc097adf52ddeafcb00e02d295b530a9f7f3db185e4f51e02a146bdbd48'
+            'ea236d51089eadc4eb396b4b97a2021335507d109cc36dd51761fbce8b9af161'
+            'b826c3a3f744e27337570cab5e6e487de0f3cf3831afb0b4aeaee4d214f1e1c1'
+            '26532d2eca40f97d5461eda3705f04d5d636e759268fe8b7b39ce4d7245aa622'
+            '5f218d18310052de3a05f1d795f7bb44fc9f058d26069a19e743194d35c49388'
+            '415c36ccb5a2fed10bf6692ca10fd78044207be25b8684a593c817a748e718b4'
+            '725b581b6dc103bf7df8dd4596ea3db5b78c984c018f4f87bc1f26ea59989c64'
+            '4a53a010a12f0b5bc074258a01de6708b401e5f3f0484f1dffbe4c5d69e49e5e')
 
 prepare() {
   cd ${srcdir}/expect${pkgver}
-  patch -p2 -i ${srcdir}/5.45-openpty.patch
+
+  for patch_filename in "${patches[@]}"; do
+    echo "Applying patch: '${patch_filename}'"
+    patch --binary --no-backup-if-mismatch -Np1 -i "${srcdir}/${patch_filename}"
+  done
 
   autoreconf -vfi
 }
