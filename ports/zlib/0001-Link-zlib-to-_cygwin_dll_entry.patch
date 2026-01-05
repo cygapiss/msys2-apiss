@@ -1,0 +1,38 @@
+From 9c514857807216e0fe39297a2ca116f211f2371c Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Sun, 12 Apr 2026 18:11:29 +0800
+Subject: [PATCH] Link zlib to _cygwin_dll_entry
+
+---
+ Makefile.in        | 2 +-
+ win32/Makefile.gcc | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/Makefile.in b/Makefile.in
+index ccb3c4f..08171fe 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -286,7 +286,7 @@ gzwrite.lo: $(SRCDIR)gzwrite.c
+ 
+ 
+ placebo $(SHAREDLIBV): $(PIC_OBJS) libz.a $(SRCDIR)zlib.map
+-	$(LDSHARED) $(SFLAGS) -o $@ $(PIC_OBJS) $(LDSHAREDLIBC) $(LDFLAGS)
++	$(LDSHARED) $(SFLAGS) -o $@ $(PIC_OBJS) $(LDSHAREDLIBC) $(LDFLAGS) -Wl,-e -Wl,_cygwin_dll_entry
+ 	rm -f $(SHAREDLIB) $(SHAREDLIBM)
+ 	ln -s $@ $(SHAREDLIB)
+ 	ln -s $@ $(SHAREDLIBM)
+diff --git a/win32/Makefile.gcc b/win32/Makefile.gcc
+index d1cdb9a..00fc2d6 100644
+--- a/win32/Makefile.gcc
++++ b/win32/Makefile.gcc
+@@ -89,6 +89,7 @@ $(IMPLIB): $(SHAREDLIB)
+ 
+ $(SHAREDLIB): win32/zlib.def $(OBJS) $(OBJA) zlibrc.o
+ 	$(CC) -shared -static-libgcc -Wl,--out-implib,$(IMPLIB) $(LDFLAGS) \
++	-Wl,-e -Wl,_cygwin_dll_entry \
+ 	-o $@ win32/zlib.def $(OBJS) $(OBJA) zlibrc.o
+ 	$(STRIP) $@
+ 
+-- 
+2.52.0.windows.1
+
