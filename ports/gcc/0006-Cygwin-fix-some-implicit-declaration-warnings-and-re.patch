@@ -4,31 +4,15 @@ Date: Sat, 28 Jun 2014 10:08:25 +0800
 Subject: [PATCH 06/13] Cygwin: fix some implicit declaration warnings and
  regenerate configure
 
-# Conflicts:
-#	libiberty/aclocal.m4
 ---
- libiberty/acinclude.m4 |  6 +++++-
- libiberty/configure    | 18 +++++++++++++++++-
- 2 files changed, 22 insertions(+), 2 deletions(-)
+ libiberty/configure | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-diff --git a/libiberty/acinclude.m4 b/libiberty/acinclude.m4
-index 6db0e508517..dfa4c6cac10 100644
---- a/libiberty/acinclude.m4
-+++ b/libiberty/acinclude.m4
-@@ -25,6 +25,8 @@ AC_CACHE_CHECK([for working strncmp], ac_cv_func_strncmp_works,
- /* Test by Jim Wilson and Kaveh Ghazi.
-    Check whether strncmp reads past the end of its string parameters. */
- #include <sys/types.h>
-+#include <string.h>
-+#include <stdlib.h>
- 
- #ifdef HAVE_FCNTL_H
- #include <fcntl.h>
 diff --git a/libiberty/configure b/libiberty/configure
-index e4d49732a09..ceb16cf16d9 100755
+index 02fbaabe89e..ca09700bc66 100755
 --- a/libiberty/configure
 +++ b/libiberty/configure
-@@ -681,6 +681,7 @@ infodir
+@@ -689,6 +689,7 @@ infodir
  docdir
  oldincludedir
  includedir
@@ -36,7 +20,7 @@ index e4d49732a09..ceb16cf16d9 100755
  localstatedir
  sharedstatedir
  sysconfdir
-@@ -760,6 +761,7 @@ datadir='${datarootdir}'
+@@ -768,6 +769,7 @@ datadir='${datarootdir}'
  sysconfdir='${prefix}/etc'
  sharedstatedir='${prefix}/com'
  localstatedir='${prefix}/var'
@@ -44,7 +28,7 @@ index e4d49732a09..ceb16cf16d9 100755
  includedir='${prefix}/include'
  oldincludedir='/usr/include'
  docdir='${datarootdir}/doc/${PACKAGE}'
-@@ -1012,6 +1014,15 @@ do
+@@ -1020,6 +1022,15 @@ do
    | -silent | --silent | --silen | --sile | --sil)
      silent=yes ;;
  
@@ -60,7 +44,7 @@ index e4d49732a09..ceb16cf16d9 100755
    -sbindir | --sbindir | --sbindi | --sbind | --sbin | --sbi | --sb)
      ac_prev=sbindir ;;
    -sbindir=* | --sbindir=* | --sbindi=* | --sbind=* | --sbin=* \
-@@ -1149,7 +1160,7 @@ fi
+@@ -1157,7 +1168,7 @@ fi
  for ac_var in	exec_prefix prefix bindir sbindir libexecdir datarootdir \
  		datadir sysconfdir sharedstatedir localstatedir includedir \
  		oldincludedir docdir infodir htmldir dvidir pdfdir psdir \
@@ -69,7 +53,7 @@ index e4d49732a09..ceb16cf16d9 100755
  do
    eval ac_val=\$$ac_var
    # Remove trailing slashes.
-@@ -1302,6 +1313,7 @@ Fine tuning of the installation directories:
+@@ -1310,6 +1321,7 @@ Fine tuning of the installation directories:
    --sysconfdir=DIR        read-only single-machine data [PREFIX/etc]
    --sharedstatedir=DIR    modifiable architecture-independent data [PREFIX/com]
    --localstatedir=DIR     modifiable single-machine data [PREFIX/var]
@@ -77,15 +61,6 @@ index e4d49732a09..ceb16cf16d9 100755
    --libdir=DIR            object code libraries [EPREFIX/lib]
    --includedir=DIR        C header files [PREFIX/include]
    --oldincludedir=DIR     C header files for non-gcc [/usr/include]
-@@ -7583,6 +7597,8 @@ else
- /* Test by Jim Wilson and Kaveh Ghazi.
-    Check whether strncmp reads past the end of its string parameters. */
- #include <sys/types.h>
-+#include <string.h>
-+#include <stdlib.h>
- 
- #ifdef HAVE_FCNTL_H
- #include <fcntl.h>
 -- 
-2.39.0
+2.52.0.windows.1
 
