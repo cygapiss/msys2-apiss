@@ -20,7 +20,7 @@ msys2_references=(
   "cpe: cpe:/a:gnu:gcc"
 )
 makedepends=('gcc' 'binutils' 'autotools'
-             'isl-devel' 'gmp-devel' 'mpc-devel' 'mpfr-devel' 'zlib-devel'
+             'isl-devel' 'gmp-devel' 'mpc-devel' 'mpfr-devel' 'zlib-devel' 'libzstd-devel'
              'windows-default-manifest' 'gperf')
 options=('!emptydirs') # '!strip' 'debug')
 source=(https://ftp.gnu.org/gnu/gcc/gcc-${pkgver}/gcc-${pkgver}.tar.xz
@@ -36,21 +36,22 @@ source=(https://ftp.gnu.org/gnu/gcc/gcc-${pkgver}/gcc-${pkgver}.tar.xz
         0010-Cygwin-g-time.patch
         0011-Cygwin-newlib-ftm.patch
         0012-Cygwin-define-STD_UNIX.patch
-        0101-Cygwin-enable-libgccjit-not-just-for-MingW.patch
-        0102-Cygwin-testsuite-fixes-for-libgccjit.patch
-        0301-libstdc-Implement-most-of-locale-features-for-newlib.patch
-        0401-fix-build-stage1-now-depends-on-libintl-libiconv.patch
-        0403-fix-build-pretty-print.patch
-        0404-fix-build-opts.patch
-        0950-11.2.0-configure-msys2.patch
-        0951-11.2.0-msys2-spec.patch)
+        0013-Cygwin-enable-libgccjit-not-just-for-MingW.patch
+        0014-Cygwin-testsuite-fixes-for-libgccjit.patch
+        0015-libstdc-Implement-most-of-locale-features-for-newlib.patch
+        0016-fix-build-stage1-now-depends-on-libintl-libiconv.patch
+        0017-fix-build-pretty-print.patch
+        0018-fix-build-opts.patch
+        0019-builtin_define-MSYS-and-update-t-cygwin-w64.patch
+        0020-gcc_libs-linkage-to-_msys_dll_entry.patch
+        0021-gcc_libs-linkage-to-_cygwin_dll_entry.patch)
 sha256sums=('fa59c1beef8995f27c4d71c1df227587189315d3e6faff1bb4306e61b0c530eb'
             'ae993ebe11402172611a9fa1550e0611dfc212ab9250a3eaff1022342c9bde71'
             '707faae90300f04fc48949f74af51f47f7505f44f9813bfc26660511ae93b6c1'
             '40871b6750e393b7627dc039c3460b39894fb7bb2514c71b39a1f163fe8e3f30'
             'de93958671c8230c2df79f7da7c406d4e0dfc53e119e9cb04ca44b8a02806671'
             '10365122aa55cdc32c4ff502a14229cb50ddf2b6a4b70521665ef2d6cb182c5a'
-            'a843c038042811265d6ce5917b0c76b709e2591822e5cab53a32b7e9c806da29'
+            '1a97354f3312285f823ce9664270491eb5c8d603688b651850095a0ad3ea7a7c'
             '6e9d2575d9897a9b996c3049b1d1dc1176d33e1373a81bee33c04e3954319124'
             'd9706816609b0154c369b3b8130f2af3e54be8a3e3463aca7eb6060b06cf476c'
             'efb1189f6b6da8ad8a345c567f1f9fe52f76c96a11912f3fc76dfe54cdd189e4'
@@ -63,8 +64,9 @@ sha256sums=('fa59c1beef8995f27c4d71c1df227587189315d3e6faff1bb4306e61b0c530eb'
             '4c637318e3cecc7ef6f05c03ec69444b255ee003f745ba3bdd6ca10780426195'
             '2a48b2a29652d7dee5578aed9e56dcd448d9f50b19387dfa462fc2ffb4ad5d9e'
             '25d1b2d4cd985cdf3e140b9724fd0c10590a7d06519aef6391c3f3029bffd6eb'
-            '646b6e802e46f932fa793e0e9348c7c98064e46a9bac76f4ad258b66b2b3bba9'
-            '82bc03f43fd7e103c1373433340d6654cbc771723db54430b18eff48a3935a45')
+            '616eecf1d89906a091326e1ace2afac590dc30eb2edec33e7fe649b2d9dcf387'
+            'e00d4df36a1a6f171006e8addbb2376935cdf542e79539b446ec615625984e2b'
+            'ddc4f44d8795e36d9b4decff2a3285c9986fca75f539912380e597055bcfc4b6')
 
 # Helper macros to help make tasks easier #
 apply_patch_with_msg() {
@@ -73,6 +75,14 @@ apply_patch_with_msg() {
     msg2 "Applying ${_fname}"
     patch -Nbp1 -i "${srcdir}"/${_fname}
   done
+}
+
+revert_patch_if_applied() {
+  local _fname="$1"
+  if patch -Rp1 --dry-run -i "${srcdir}"/${_fname} >/dev/null 2>&1; then
+    msg2 "Reverting ${_fname}"
+    patch -Rp1 -i "${srcdir}"/${_fname}
+  fi
 }
 
 del_file_exists() {
@@ -84,6 +94,9 @@ del_file_exists() {
   done
 }
 # =========================================== #
+
+currnent_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
+source "${currnent_script_dir}/../msys2-runtime/check-bootstrap.sh"
 
 prepare() {
   cd ${srcdir}/gcc-${pkgver}
@@ -106,23 +119,20 @@ prepare() {
     0010-Cygwin-g-time.patch \
     0011-Cygwin-newlib-ftm.patch \
     0012-Cygwin-define-STD_UNIX.patch \
-    0101-Cygwin-enable-libgccjit-not-just-for-MingW.patch \
-    0102-Cygwin-testsuite-fixes-for-libgccjit.patch \
-    0403-fix-build-pretty-print.patch \
-    0404-fix-build-opts.patch
+    0013-Cygwin-enable-libgccjit-not-just-for-MingW.patch \
+    0014-Cygwin-testsuite-fixes-for-libgccjit.patch \
+    0017-fix-build-pretty-print.patch \
+    0018-fix-build-opts.patch \
+    0019-builtin_define-MSYS-and-update-t-cygwin-w64.patch
 
   # Skipped Cygwin patches
   #
   # Would need a dependency on libiconv and libintl development files, see
   # https://github.com/msys2/MSYS2-packages/pull/5458#issuecomment-3008811572
   # https://cygwin.com/pipermail/cygwin-apps/2025-May/044326.html
-  # 0301-libstdc-Implement-most-of-locale-features-for-newlib.patch
-  # 0401-fix-build-stage1-now-depends-on-libintl-libiconv.patch
+  # 0015-libstdc-Implement-most-of-locale-features-for-newlib.patch
+  # 0016-fix-build-stage1-now-depends-on-libintl-libiconv.patch
 
-  # MSYS2 Patches
-  apply_patch_with_msg \
-    0950-11.2.0-configure-msys2.patch \
-    0951-11.2.0-msys2-spec.patch
 
   # Do not run fixincludes
   #sed -i 's@\./fixinc\.sh@-c true@' gcc/Makefile.in
@@ -132,6 +142,42 @@ prepare() {
 }
 
 build() {
+  cd ${srcdir}/gcc-${pkgver}
+  revert_patch_if_applied 0021-gcc_libs-linkage-to-_cygwin_dll_entry.patch
+  revert_patch_if_applied 0020-gcc_libs-linkage-to-_msys_dll_entry.patch
+
+  if [[ "$MSYS_BOOTSTRAP_STAGE" == "stage1-core" ]]; then
+    apply_patch_with_msg \
+      0020-gcc_libs-linkage-to-_msys_dll_entry.patch
+  fi
+
+  pushd ${srcdir}/gcc-${pkgver}/lto-plugin
+  WANT_AUTOCONF="2.69" autoreconf --force
+
+  pushd ${srcdir}/gcc-${pkgver}/libcpp
+  WANT_AUTOCONF="2.69" autoreconf --force
+
+  pushd ${srcdir}/gcc-${pkgver}/libatomic
+  WANT_AUTOCONF="2.69" autoreconf --force
+
+  pushd ${srcdir}/gcc-${pkgver}/libgcc
+  WANT_AUTOCONF="2.69" autoreconf --force
+
+  pushd ${srcdir}/gcc-${pkgver}/libgomp
+  WANT_AUTOCONF="2.69" autoreconf --force
+
+  pushd ${srcdir}/gcc-${pkgver}/libquadmath
+  WANT_AUTOCONF="2.69" autoreconf --force
+
+  pushd ${srcdir}/gcc-${pkgver}/libstdc++-v3
+  WANT_AUTOCONF="2.69" autoreconf --force
+
+  pushd ${srcdir}/gcc-${pkgver}/
+  WANT_AUTOCONF="2.69" autoreconf --force
+
+  cd ${srcdir}/gcc-${pkgver}
+  rm -rf ${srcdir}/build-MSYS
+
   mkdir -p ${srcdir}/build-MSYS && cd ${srcdir}/build-MSYS
 
   case ${CARCH} in
@@ -157,14 +203,30 @@ build() {
   CXXFLAGS=${CXXFLAGS/-pipe/}
 
   export lt_cv_deplibs_check_method='pass_all'
-
+  enable_bootstrap="--enable-bootstrap"
+  if [[ "$MSYS_BOOTSTRAP_STAGE" == "stage3" ]]; then
+    # stage3 gcc linkage to cygwin, gcc-libs linkage to cygwin without hack
+    enable_bootstrap="--enable-bootstrap"
+  elif [[ "$MSYS_BOOTSTRAP_STAGE" == "stage2" ]]; then
+    # stage2 gcc linkage to cygwin, gcc-libs linkage to cygwin without hack
+    enable_bootstrap="--enable-bootstrap"
+  elif [[ "$MSYS_BOOTSTRAP_STAGE" == "stage1" ]]; then
+    # stage1 gcc linkage to cygwin, gcc-libs use the one comes from stage1-core that linkage to cygwin
+    enable_bootstrap="--disable-bootstrap"
+  elif [[ "$MSYS_BOOTSTRAP_STAGE" == "stage1-core" ]]; then
+    # stage1-core gcc linkage to msys, gcc-libs linkage to cygwin
+    enable_bootstrap="--disable-bootstrap"
+  else
+    echo "Invalid stage $MSYS_BOOTSTRAP_STAGE for enable_bootstrap"
+    exit -1
+  fi
   export MSYSTEM=CYGWIN
 
   ${srcdir}/gcc-${pkgver}/configure \
     --build=${CHOST} \
     --prefix=/usr \
     --libexecdir=/usr/lib \
-    --enable-bootstrap \
+    ${enable_bootstrap} \
     --enable-static \
     --enable-shared \
     --enable-shared-libgcc \
@@ -195,8 +257,63 @@ build() {
     --with-system-zlib \
     --enable-linker-build-id \
     --enable-libstdcxx-filesystem-ts
+  if [[ "$MSYS_BOOTSTRAP_STAGE" == "stage3" ]]; then
+    # stage3 gcc linkage to cygwin, gcc-libs linkage to cygwin without hack
+    make
+  elif [[ "$MSYS_BOOTSTRAP_STAGE" == "stage2" ]]; then
+    # stage2 gcc linkage to cygwin, gcc-libs linkage to cygwin without hack
+    make
+  elif [[ "$MSYS_BOOTSTRAP_STAGE" == "stage1" ]]; then
+    # stage1 gcc linkage to cygwin, do not build gcc-libs
+    make all-host
+    rm -rf ${srcdir}/dest-install
+    DESTDIR=${srcdir}/dest-install \
+    make -j1 install-host
 
-  make
+    MSYS_IN_PKGBUILD=enabled srcdir=${srcdir} DESTDIR=${srcdir}/dest-install \
+    sh ${pkg_root_dir}/build-install/gcc-prepare.sh
+
+  elif [[ "$MSYS_BOOTSTRAP_STAGE" == "stage1-core" ]]; then
+    # stage1-core gcc linkage to msys, gcc-libs linkage to cygwin
+
+    # First getting gcc/gcc-libs linkage to msys
+    make
+
+    # Then getting gcc-libs linkage to cygwin
+    cd ${srcdir}/gcc-${pkgver}
+
+    apply_patch_with_msg \
+      0021-gcc_libs-linkage-to-_cygwin_dll_entry.patch
+
+    cd ${srcdir}/gcc-${pkgver}/libatomic
+    WANT_AUTOCONF="2.69" autoreconf --force
+
+    cd ${srcdir}/gcc-${pkgver}/libgcc
+    WANT_AUTOCONF="2.69" autoreconf --force
+
+    cd ${srcdir}/gcc-${pkgver}/libgomp
+    WANT_AUTOCONF="2.69" autoreconf --force
+
+    cd ${srcdir}/gcc-${pkgver}/libquadmath
+    WANT_AUTOCONF="2.69" autoreconf --force
+
+    cd ${srcdir}/gcc-${pkgver}/libstdc++-v3
+    WANT_AUTOCONF="2.69" autoreconf --force
+
+    echo "Rebuilding the gcc-libs"
+
+    # Gcc libs linkage cygwin dll
+    MSYS_IN_PKGBUILD=enabled srcdir=${srcdir} DESTDIR=${srcdir}/dest-install \
+    sh ${pkg_root_dir}/build-install/gcc-prepare.sh
+
+    cd ${srcdir}/build-MSYS
+    export PATH=${srcdir}/build-MSYS/x86_64-pc-cygwin/libgcc/shlib:$PATH
+    rm -rf x86_64-pc-cygwin
+    make
+  else
+    echo "Invalid stage $MSYS_BOOTSTRAP_STAGE"
+    exit -1
+  fi
 
   # make documentation
   #cd $CHOST/libstdc++-v3
@@ -216,21 +333,40 @@ package_gcc-libs()
   pkgdesc="Runtime libraries shipped by GCC"
   license=('spdx:LGPL-3.0-or-later AND GPL-3.0-or-later WITH GCC-exception-3.1')
 
-  cd ${srcdir}/build-MSYS
-  make -j1 -C $CHOST/libgcc DESTDIR=${pkgdir} install-shared
-  for lib in libgomp libstdc++-v3/src; do
-    make -j1 -C $CHOST/$lib DESTDIR=${pkgdir} install-toolexeclibLTLIBRARIES
-  done
+  if [[ "$MSYS_BOOTSTRAP_STAGE" == "stage1" ]]; then
+    rm -rf  ${pkgdir}
+    cp -arf ${srcdir}/dest ${pkgdir}
+    pushd ${pkgdir}/usr/share/info
+      rm *.info
+      rm dir
+      gunzip libgomp.info.gz
+      gunzip libquadmath.info.gz
+      rm *.gz
+    popd
+    rm -rf ${pkgdir}/usr/bin/*.exe
+    rm -rf ${pkgdir}/usr/bin/cc
+    rm -rf ${pkgdir}/usr/bin/c99
+    rm -rf ${pkgdir}/usr/bin/c89
+    rm -rf ${pkgdir}/usr/share/licenses
+    rm -rf ${pkgdir}/usr/share/locale
+    rm -rf ${pkgdir}/usr/share/man
+  else
+    cd ${srcdir}/build-MSYS
+    make -j1 -C $CHOST/libgcc DESTDIR=${pkgdir} install-shared
+    for lib in libgomp libstdc++-v3/src; do
+      make -j1 -C $CHOST/$lib DESTDIR=${pkgdir} install-toolexeclibLTLIBRARIES
+    done
 
-  make -j1 -C $CHOST/libstdc++-v3/po DESTDIR=${pkgdir} install
-  make -j1 -C $CHOST/libgomp DESTDIR=${pkgdir} install-info
-  make -j1 -C $CHOST/libquadmath DESTDIR=${pkgdir} install-info
+    make -j1 -C $CHOST/libstdc++-v3/po DESTDIR=${pkgdir} install
+    make -j1 -C $CHOST/libgomp DESTDIR=${pkgdir} install-info
+    make -j1 -C $CHOST/libquadmath DESTDIR=${pkgdir} install-info
 
-  make -j1 DESTDIR=${pkgdir} install-target-libquadmath
-  #make -j1 DESTDIR=${pkgdir} install-target-libssp
-  make -j1 DESTDIR=${pkgdir} install-target-libatomic
-  #make -j1 DESTDIR=${pkgdir} install-target-libcilkrts
-  make -j1 DESTDIR=${pkgdir} install-target-libvtv
+    make -j1 DESTDIR=${pkgdir} install-target-libquadmath
+    #make -j1 DESTDIR=${pkgdir} install-target-libssp
+    make -j1 DESTDIR=${pkgdir} install-target-libatomic
+    #make -j1 DESTDIR=${pkgdir} install-target-libcilkrts
+    make -j1 DESTDIR=${pkgdir} install-target-libvtv
+  fi
 
   rm -f ${pkgdir}/*.dll
   rm -rf ${pkgdir}/usr/lib/
@@ -248,7 +384,7 @@ package_gcc()
 {
   pkgdesc="The GNU Compiler Collection - C and C++ frontends"
   license=('spdx:GPL-3.0-or-later AND GPL-2.0-or-later AND LGPL-2.1-or-later AND LGPL-3.0-or-later AND GFDL-1.3-or-later AND GPL-3.0-or-later WITH GCC-exception-3.1')
-  depends=("gcc-libs=${pkgver}-${pkgrel}" 'binutils' 'gmp' 'isl' 'libiconv' 'libintl' 'mpc' 'mpfr' 'zlib' 'msys2-runtime-devel' 'msys2-w32api-headers' 'msys2-w32api-runtime' 'windows-default-manifest')
+  depends=("gcc-libs=${pkgver}-${pkgrel}" 'binutils' 'gmp' 'isl' 'libiconv' 'libintl' 'mpc' 'mpfr' 'zlib' 'zstd' 'msys2-runtime-devel' 'msys2-w32api-headers' 'msys2-w32api-runtime' 'windows-default-manifest')
   #options=("!strip")
   provides=('msys2-devel')
   conflicts=('gcc-fortran<=11.3.0-4')
@@ -259,7 +395,15 @@ package_gcc()
     export STRIP=true
   fi
 
-  make -j1 DESTDIR=${pkgdir} install
+  if [[ "$MSYS_BOOTSTRAP_STAGE" == "stage1" ]]; then
+    rm -rf  ${pkgdir}
+    cp -arf ${srcdir}/dest ${pkgdir}
+    rm ${pkgdir}/usr/bin/cc
+    find ${pkgdir}/usr/share/info | grep info.gz$ | xargs -I ARG rm -f ARG
+    rm -rf ${pkgdir}/usr/share/licenses
+  else
+    make -j1 DESTDIR=${pkgdir} install
+  fi
   # install -d ${pkgdir}/usr/share/gdb/auto-load/usr/lib
   # mv $pkg{pkgdir}dir{,/usr/share/gdb/auto-load}/usr/lib/libstdc++.so.6.0.18-gdb.py
 
