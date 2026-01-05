@@ -3,7 +3,7 @@
 pkgbase=gmp
 pkgname=('gmp' 'gmp-devel')
 pkgver=6.3.0
-pkgrel=2
+pkgrel=3
 pkgdesc="A free library for arbitrary precision arithmetic"
 groups=('libraries')
 arch=('i686' 'x86_64')
@@ -14,10 +14,12 @@ msys2_references=(
 license=('spdx:LGPL-3.0-or-later OR GPL-2.0-or-later')
 makedepends=('autotools' 'gcc')
 source=(https://ftp.gnu.org/gnu/gmp/gmp-${pkgver}.tar.xz{,.sig}
-        "0001-gcc15.patch")
+        "0001-gcc15.patch"
+        "0002-Switch-to-use-_cygwin_dll_entry-for-gmp.patch")
 sha256sums=('a3c2b80201b89e68616f4ad30bc66aee4927c3ce50e33929ca819d5c43538898'
             'SKIP'
-            '7c4e2eaaf4da1bd69904077a351d585ff022b1d2e742ec25f15886f0063a2cfe')
+            '7c4e2eaaf4da1bd69904077a351d585ff022b1d2e742ec25f15886f0063a2cfe'
+            '76efcda001f6922266cc346c9a1bd685a2199d74aa7f6a9462dac3bb8a145bc5')
 validpgpkeys=('5972C48224C1E7E62AA0275D1150EE33C1A000B0'   # Marco Bodrato
               '343C2FF0FBEE5EC2EDBEF399F3599FF828C67298')   # Niels Möller
 
@@ -26,6 +28,7 @@ prepare() {
 
   # https://gmplib.org/repo/gmp/rev/8e7bb4ae7a18
   patch -p1 < "${srcdir}/0001-gcc15.patch"
+  patch -p1 < "${srcdir}/0002-Switch-to-use-_cygwin_dll_entry-for-gmp.patch"
 
   autoreconf -fi
 }
@@ -37,7 +40,7 @@ build() {
   CXXFLAGS+=" -Wno-attributes" \
   ./configure --build=${CHOST} \
     --prefix=/usr \
-    --enable-cxx \
+    --disable-cxx \
     --enable-fat \
     --enable-shared --disable-static
   make
