@@ -1,0 +1,99 @@
+From 785530de307f42e9f31388117dd8144b116dfa69 Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Thu, 8 Jan 2026 07:42:13 +0800
+Subject: [PATCH 1/2] gcc_libs linkage to _msys_dll_entry
+
+libgcc linkage to _msys_dll_entry
+libgomp update to linkage to _msys_dll_entry
+libstdc++-v3 linkage to _msys_dll_entry
+libquadmath linkage to _msys_dll_entry
+libatomic linkage to _msys_dll_entry
+
+lto-plugin also linkage to _msys_dll_entry for the first phase
+---
+ libatomic/Makefile.am                | 2 +-
+ libgcc/config/i386/t-slibgcc-cygming | 1 +
+ libgomp/configure.ac                 | 1 +
+ libquadmath/Makefile.am              | 2 +-
+ libstdc++-v3/src/Makefile.am         | 2 +-
+ lto-plugin/configure.ac              | 1 +
+ 6 files changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/libatomic/Makefile.am b/libatomic/Makefile.am
+index 0f1a7156084..fdb45827211 100644
+--- a/libatomic/Makefile.am
++++ b/libatomic/Makefile.am
+@@ -68,7 +68,7 @@ libatomic_darwin_rpath = -Wc,-nodefaultrpaths
+ libatomic_darwin_rpath += -Wl,-rpath,@loader_path
+ endif
+ 
+-libatomic_la_LDFLAGS = $(libatomic_version_info) $(libatomic_version_script) \
++libatomic_la_LDFLAGS = -Wl,-e -Wl,_msys_dll_entry $(libatomic_version_info) $(libatomic_version_script) \
+ 	$(lt_host_flags) $(libatomic_darwin_rpath)
+ libatomic_la_SOURCES = gload.c gstore.c gcas.c gexch.c glfree.c lock.c init.c \
+ 	fenv.c fence.c flag.c
+diff --git a/libgcc/config/i386/t-slibgcc-cygming b/libgcc/config/i386/t-slibgcc-cygming
+index 6871498cf60..1b6e4af90f6 100644
+--- a/libgcc/config/i386/t-slibgcc-cygming
++++ b/libgcc/config/i386/t-slibgcc-cygming
+@@ -39,6 +39,7 @@ SHLIB_LINK = $(LN_S) -f $(SHLIB_MAP) $(SHLIB_MAP).def && \
+ 	-shared -nodefaultlibs \
+ 	$(SHLIB_MAP).def \
+ 	-Wl,--out-implib,$(SHLIB_DIR)/$(SHLIB_IMPLIB).tmp \
++	-Wl,-e -Wl,_msys_dll_entry \
+ 	-o $(SHLIB_DIR)/$(SHLIB_SONAME).tmp @multilib_flags@ \
+ 	$(SHLIB_OBJS) ${SHLIB_PTHREAD_LDFLAG} $(SHLIB_LC) \
+ 	$(SHLIB_MCFGTHREAD_LIBS) && \
+diff --git a/libgomp/configure.ac b/libgomp/configure.ac
+index 1730c62c74c..37b53624463 100644
+--- a/libgomp/configure.ac
++++ b/libgomp/configure.ac
+@@ -374,6 +374,7 @@ FCFLAGS="$FCFLAGS $CET_FLAGS"
+ 
+ AC_SUBST(config_path)
+ AC_SUBST(XCFLAGS)
++XLDFLAGS="$XLDFLAGS -Wl,-e -Wl,_msys_dll_entry"
+ AC_SUBST(XLDFLAGS)
+ 
+ # Conditionalize the makefile for this target machine.
+diff --git a/libquadmath/Makefile.am b/libquadmath/Makefile.am
+index 93806106abb..8abe387468f 100644
+--- a/libquadmath/Makefile.am
++++ b/libquadmath/Makefile.am
+@@ -40,7 +40,7 @@ if ENABLE_DARWIN_AT_RPATH
+ libquadmath_darwin_rpath = -Wc,-nodefaultrpaths
+ libquadmath_darwin_rpath += -Wl,-rpath,@loader_path
+ endif
+-libquadmath_la_LDFLAGS = -version-info `grep -v '^\#' $(srcdir)/libtool-version` \
++libquadmath_la_LDFLAGS = -Wl,-e -Wl,_msys_dll_entry -version-info `grep -v '^\#' $(srcdir)/libtool-version` \
+ 	$(version_arg) $(lt_host_flags) $(LIBM) $(libquadmath_darwin_rpath)
+ libquadmath_la_DEPENDENCIES = $(version_dep) $(libquadmath_la_LIBADD)
+ 
+diff --git a/libstdc++-v3/src/Makefile.am b/libstdc++-v3/src/Makefile.am
+index dd31e5b2f6e..91b200c2d6b 100644
+--- a/libstdc++-v3/src/Makefile.am
++++ b/libstdc++-v3/src/Makefile.am
+@@ -305,7 +305,7 @@ CXXLINK = \
+ 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
+ 	--mode=link $(CXX) \
+ 	$(VTV_CXXLINKFLAGS) \
+-	$(OPT_LDFLAGS) $(SECTION_LDFLAGS) $(AM_CXXFLAGS) \
++	$(OPT_LDFLAGS) $(SECTION_LDFLAGS) -Wl,-e -Wl,_msys_dll_entry $(AM_CXXFLAGS) \
+ 	$(LTLDFLAGS) $(LTLIBICONV) \
+ 	-o $@
+ 
+diff --git a/lto-plugin/configure.ac b/lto-plugin/configure.ac
+index c051b8c6283..46f0a13e543 100644
+--- a/lto-plugin/configure.ac
++++ b/lto-plugin/configure.ac
+@@ -36,6 +36,7 @@ if test x$enable_host_bind_now = xyes; then
+   ac_lto_plugin_ldflags="$ac_lto_plugin_ldflags -Wl,-z,now"
+ fi
+ 
++ac_lto_plugin_ldflags="$ac_lto_plugin_ldflags -Wl,-e -Wl,_msys_dll_entry"
+ AC_SUBST(ac_lto_plugin_ldflags)
+ 
+ GCC_CET_HOST_FLAGS(CET_HOST_FLAGS)
+-- 
+2.52.0.windows.1
+
