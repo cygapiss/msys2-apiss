@@ -11,9 +11,11 @@ arch=('i686' 'x86_64')
 depends=('gmp>=5.0' 'mpfr')
 makedepends=('gmp-devel' 'mpfr-devel' 'autotools' 'gcc')
 options=('!emptydirs')
-source=(https://ftp.gnu.org/gnu/mpc/mpc-${pkgver}.tar.xz{,.sig})
+source=(https://ftp.gnu.org/gnu/mpc/mpc-${pkgver}.tar.xz{,.sig}
+        0001-Linkage-to-_cygwin_dll_entry-for-mpc.patch)
 sha256sums=('91204cd32f164bd3b7c992d4a6a8ce6519511aadab30f78b6982d0bf8d73e931'
-            'SKIP')
+            'SKIP'
+            '1bc8afce9d4121d145cc64b976b604f6f566e2b9d36a8ef858d4cf1125e63cee')
 validpgpkeys=('AD17A21EF8AED8F1CC02DBD9F7D5C9BF765C61E3')  # Andreas Enge
 msys2_references=(
   'archlinux: libmpc'
@@ -21,6 +23,8 @@ msys2_references=(
 
 prepare() {
   cd "${srcdir}/${pkgname}-${pkgver}"
+
+  patch -p1 -i ${srcdir}/0001-Linkage-to-_cygwin_dll_entry-for-mpc.patch
 
   autoreconf -fiv
 }
