@@ -1,0 +1,26 @@
+From 4bcb1b786a741a5d5feebae3bb767b2ef7570168 Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Tue, 6 Jan 2026 14:14:23 +0800
+Subject: [PATCH] Linkage to _cygwin_dll_entry for isl dll
+
+And add -no-undefined when do linkage
+---
+ Makefile.am | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index 29371d9..cb0da70 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -231,7 +231,7 @@ libisl_la_SOURCES = \
+ 	isl_vertices.c \
+ 	isl_yaml.h
+ libisl_la_LIBADD = @MP_LIBS@
+-libisl_la_LDFLAGS = -version-info @versioninfo@ \
++libisl_la_LDFLAGS = -version-info @versioninfo@ -no-undefined -Wl,-e -Wl,_cygwin_dll_entry \
+ 	@MP_LDFLAGS@
+ 
+ isl_test_LDFLAGS = @MP_LDFLAGS@
+-- 
+2.52.0.windows.1
+
