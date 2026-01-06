@@ -1,0 +1,85 @@
+From b02f4d3e0e6e66e107843f491a2907097d0add59 Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Tue, 6 Jan 2026 22:39:19 +0800
+Subject: [PATCH] Linkage to _cygwin_dll_entry
+
+---
+ gettext-runtime/intl/Makefile.am        | 4 ++--
+ gettext-runtime/libasprintf/Makefile.am | 2 +-
+ gettext-tools/gnulib-lib/Makefile.am    | 3 +++
+ gettext-tools/libgettextpo/Makefile.am  | 3 +++
+ gettext-tools/src/Makefile.am           | 2 +-
+ 5 files changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/gettext-runtime/intl/Makefile.am b/gettext-runtime/intl/Makefile.am
+index 2bed67b..5f093d2 100644
+--- a/gettext-runtime/intl/Makefile.am
++++ b/gettext-runtime/intl/Makefile.am
+@@ -450,8 +450,8 @@ OTHER_LDFLAGS = \
+   -export-symbols-regex '^([^_]|_[^l]|_l[^i]|_li[^b]|_lib[^i]|_libi[^n]|_libin[^t]|_libint[^l]|_libintl[^_]).*' \
+   -version-info $(LTV_CURRENT):$(LTV_REVISION):$(LTV_AGE) \
+   -rpath $(libdir)
+-libintl_la_LDFLAGS    = $(AM_LDFLAGS) $(OTHER_LDFLAGS)
+-libgnuintl_la_LDFLAGS = $(AM_LDFLAGS) $(OTHER_LDFLAGS)
++libintl_la_LDFLAGS    = $(AM_LDFLAGS) $(OTHER_LDFLAGS) -Wl,-e -Wl,_cygwin_dll_entry
++libgnuintl_la_LDFLAGS = $(AM_LDFLAGS) $(OTHER_LDFLAGS) -Wl,-e -Wl,_cygwin_dll_entry
+ 
+ 
+ # Installation of libintl.la.
+diff --git a/gettext-runtime/libasprintf/Makefile.am b/gettext-runtime/libasprintf/Makefile.am
+index c0eb406..40efaac 100644
+--- a/gettext-runtime/libasprintf/Makefile.am
++++ b/gettext-runtime/libasprintf/Makefile.am
+@@ -114,7 +114,7 @@ libasprintf_la_DEPENDENCIES = $(WOE32_LIBADD)
+ # How to build libasprintf.
+ # With libtool 1.5.14, on some platforms, like BeOS, "libtool --tag=CXX" fails
+ # to create a shared library, however "libtool --tag=CC" succeeds.
+-libasprintf_la_LDFLAGS = @LTNOUNDEF@ -export-symbols-regex $(LIBASPRINTF_EXPORTED_SYMBOLS_REGEX)
++libasprintf_la_LDFLAGS = @LTNOUNDEF@ -export-symbols-regex $(LIBASPRINTF_EXPORTED_SYMBOLS_REGEX)  -Wl,-e -Wl,_cygwin_dll_entry
+ libasprintf.la: $(libasprintf_la_OBJECTS) $(libasprintf_la_DEPENDENCIES) gnulib-lib/libgnu.la
+ 	$(AM_V_GEN)$(CXXLINK) -rpath $(libdir) $(libasprintf_la_LDFLAGS) $(libasprintf_la_OBJECTS) $(libasprintf_la_LIBADD) gnulib-lib/libgnu.la $(LIBS) || \
+ 	$(LINK) -rpath $(libdir) $(libasprintf_la_LDFLAGS) $(libasprintf_la_OBJECTS) $(libasprintf_la_LIBADD) gnulib-lib/libgnu.la $(LIBS)
+diff --git a/gettext-tools/gnulib-lib/Makefile.am b/gettext-tools/gnulib-lib/Makefile.am
+index ab729cd..f29ceaf 100644
+--- a/gettext-tools/gnulib-lib/Makefile.am
++++ b/gettext-tools/gnulib-lib/Makefile.am
+@@ -69,6 +69,9 @@ if RELOCATABLE_VIA_LD
+ libgettextlib_la_LDFLAGS += `$(RELOCATABLE_LDFLAGS) $(libdir)`
+ endif
+ 
++libgettextlib_la_LDFLAGS += -Wl,-e
++libgettextlib_la_LDFLAGS += -Wl,_cygwin_dll_entry
++
+ # Support for relocatability.
+ RELOCATABLE_LIBRARY_PATH = $(libdir)
+ 
+diff --git a/gettext-tools/libgettextpo/Makefile.am b/gettext-tools/libgettextpo/Makefile.am
+index 5fc6708..7be4b77 100644
+--- a/gettext-tools/libgettextpo/Makefile.am
++++ b/gettext-tools/libgettextpo/Makefile.am
+@@ -127,6 +127,9 @@ libgettextpo_la_SOURCES += ../woe32dll/gettextpo-exports.c
+ libgettextpo_la_LDFLAGS += -Wl,--export-all-symbols
+ endif
+ 
++libgettextpo_la_LDFLAGS += -Wl,-e
++libgettextpo_la_LDFLAGS += -Wl,_cygwin_dll_entry
++
+ # OS/2 does not support a DLL name longer than 8 characters.
+ if OS2
+ libgettextpo_la_LDFLAGS += -os2dllname gtpo
+diff --git a/gettext-tools/src/Makefile.am b/gettext-tools/src/Makefile.am
+index f77129d..4b57742 100644
+--- a/gettext-tools/src/Makefile.am
++++ b/gettext-tools/src/Makefile.am
+@@ -335,7 +335,7 @@ endif
+ # use iconv().
+ libgettextsrc_la_LDFLAGS = \
+   -release @VERSION@ \
+-  ../gnulib-lib/libgettextlib.la $(LTLIBUNISTRING) $(LT_LIBTEXTSTYLE) @LTLIBINTL@ @LTLIBICONV@ -lc -no-undefined
++  ../gnulib-lib/libgettextlib.la $(LTLIBUNISTRING) $(LT_LIBTEXTSTYLE) @LTLIBINTL@ @LTLIBICONV@ -lc -no-undefined -Wl,-e -Wl,_cygwin_dll_entry
+ 
+ # OS/2 does not support a DLL name longer than 8 characters.
+ if OS2
+-- 
+2.52.0.windows.1
+
