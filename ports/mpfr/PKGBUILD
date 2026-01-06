@@ -4,7 +4,7 @@ pkgname=('mpfr' 'mpfr-devel')
 _pkgver=4.2.2
 pkgver=${_pkgver}
 # pkgver=${_pkgver}.p1
-pkgrel=1
+pkgrel=2
 pkgdesc="Multiple-precision floating-point library"
 arch=('i686' 'x86_64')
 url="https://www.mpfr.org/"
@@ -15,17 +15,19 @@ msys2_references=(
 license=('spdx:LGPL-3.0-or-later')
 depends=('gmp>=5.0')
 makedepends=('gmp-devel>=5.0' 'autotools' 'gcc' 'autoconf-archive')
-source=(https://www.mpfr.org/mpfr-current/mpfr-${_pkgver}.tar.xz{,.asc})
+source=(https://www.mpfr.org/mpfr-current/mpfr-${_pkgver}.tar.xz{,.asc}
+        0001-Linkage-to-_cygwin_dll_entry-for-libmpfr.patch)
         # patches.patch)
 # wget https://www.mpfr.org/mpfr-4.2.1/allpatches -O patches.patch
 validpgpkeys=('A534BE3F83E241D918280AEB5831D11A0D4DB02A') # Vincent Lefevre <vincent@vinc17.net>
 sha256sums=('b67ba0383ef7e8a8563734e2e889ef5ec3c3b898a01d00fa0a6869ad81c6ce01'
-            'SKIP')
+            'SKIP'
+            '7e797ce5b2902d3943389555e90c53af92bb7395938cc6172041728534b69f0e')
 
 prepare() {
   cd "${srcdir}/${pkgname}-${_pkgver}"
 
-  # patch -p1 -i ${srcdir}/patches.patch
+  patch -p1 -i ${srcdir}/0001-Linkage-to-_cygwin_dll_entry-for-libmpfr.patch
 
   autoreconf -fi
 }

@@ -1,0 +1,24 @@
+From 65cd06cdadc7ed01eecb15877119666d2a4fff3d Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Tue, 6 Jan 2026 14:54:14 +0800
+Subject: [PATCH] Linkage to _cygwin_dll_entry for libmpfr
+
+---
+ configure.ac | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/configure.ac b/configure.ac
+index 9cf454d..ab925ff 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -630,6 +630,7 @@ dnl
+ dnl The DLL version (the number in libmpfr-*.dll.def below) must be the
+ dnl version of the oldest supported interface (i.e. CURRENT - AGE in
+ dnl src/Makefile.am).
++MPFR_LDFLAGS="$MPFR_LDFLAGS -Wl,-e -Wl,_cygwin_dll_entry"
+ AC_SUBST(MPFR_LDFLAGS)
+ AC_SUBST(LIBMPFR_LDFLAGS)
+ case $host in
+-- 
+2.52.0.windows.1
+
