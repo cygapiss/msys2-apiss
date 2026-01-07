@@ -1,0 +1,24 @@
+From 073a895de8f25677bdb236d2a7551f70f5627ac8 Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Thu, 8 Jan 2026 00:42:56 +0800
+Subject: [PATCH] zstd linkage to _cygwin_dll_entry
+
+---
+ build/cmake/lib/CMakeLists.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/build/cmake/lib/CMakeLists.txt b/build/cmake/lib/CMakeLists.txt
+index 4e902a1..b004415 100644
+--- a/build/cmake/lib/CMakeLists.txt
++++ b/build/cmake/lib/CMakeLists.txt
+@@ -134,6 +134,7 @@ if (ZSTD_BUILD_SHARED)
+     add_definition(libzstd_shared ZSTDLIB_VISIBLE)
+     add_definition(libzstd_shared ZSTDERRORLIB_VISIBLE)
+     add_definition(libzstd_shared ZDICTLIB_VISIBLE)
++    target_link_options(libzstd_shared PRIVATE -Wl,-e -Wl,_cygwin_dll_entry)
+ endif ()
+ if (ZSTD_BUILD_STATIC)
+     add_library(libzstd_static STATIC ${Sources} ${Headers})
+-- 
+2.52.0.windows.1
+
