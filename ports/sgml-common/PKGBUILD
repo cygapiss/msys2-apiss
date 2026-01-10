@@ -3,7 +3,7 @@
 # shamelessly stolen from Archlinux
 pkgname='sgml-common'
 pkgver=0.6.3
-pkgrel=2
+pkgrel=3
 pkgdesc='Tools for maintaining centralized SGML catalogs.'
 arch=('any')
 url='https://www.docbook.org/xml/'
@@ -26,11 +26,11 @@ prepare() {
   /usr/bin/bsdtar zxvf $srcdir/sgml-common-${pkgver}.tgz || true 
   cd "${srcdir}"/${pkgname}-${pkgver}
   # The symbolic links themselves were simply linking files from /usr/share/automake to the dist folder.
-  cp /usr/share/automake-1.15/install-sh .
-  cp /usr/share/automake-1.15/mkinstalldirs .
-  cp /usr/share/automake-1.15/missing .
-  cp /usr/share/automake-1.15/INSTALL .
-  cp /usr/share/automake-1.15/COPYING .
+  cp --remove-destination /usr/share/automake-1.15/install-sh .
+  cp --remove-destination /usr/share/automake-1.15/mkinstalldirs .
+  cp --remove-destination /usr/share/automake-1.15/missing .
+  cp --remove-destination /usr/share/automake-1.15/INSTALL .
+  cp --remove-destination /usr/share/automake-1.15/COPYING .
   patch -Np1 -i ../sgml-common-0.6.3-manpage-1.patch
 
   WANT_AUTOCONF="2.69" autoreconf -vfi
