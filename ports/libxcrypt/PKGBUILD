@@ -3,7 +3,7 @@
 pkgbase=libxcrypt
 pkgname=('libxcrypt' 'libxcrypt-devel')
 pkgver=4.5.2
-pkgrel=1
+pkgrel=2
 pkgdesc='Modern library for one-way hashing of passwords'
 arch=('i686' 'x86_64')
 url='https://github.com/besser82/libxcrypt/'
@@ -30,6 +30,7 @@ build() {
   cd "${srcdir}/build-libxcrypt/"
 
   "${srcdir}/${pkgbase}-${pkgver}"/configure \
+    --build=${CHOST} \
     --prefix=/usr \
     --enable-static \
     --disable-failure-tokens \
