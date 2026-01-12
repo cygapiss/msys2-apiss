@@ -48,7 +48,4 @@ package() {
 
   # remove unnessary import libraries of modules
   rm -fv "${pkgdir}"/usr/lib/gawk/*.dll.a
-
-  # roll-back the fake CHOST in gawkbug
-  sed -E -i '/^(MACHTYPE|OS)=/ s/cygwin/msys/' "${pkgdir}"/usr/bin/gawkbug
 }
