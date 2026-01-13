@@ -23,7 +23,7 @@ source=("https://github.com/mesonbuild/${pkgname}/releases/download/${pkgver}/${
         "0001-cygwin-disguise.patch")
 sha256sums=('dffdd0915ceb028541fe3bed77d63ba35e78514591c043736b450d62634eeb31'
             'SKIP'
-            '33cd4ff57565cb8066454cdd255df72782421f37f9749b8dc0e96dfeec68daad')
+            '7c4676d4582f811959eaa10df69131a3f54d8f6bbb5ad7a2eff04516c5e23665')
 validpgpkeys=(
   19E2D6D9B46D8DAA6288F877C24E631BABB1FE70 # Jussi Pakkanen <jpakkane@gmail.com>
   BD27B07A5EF45C2ADAF70E0484818A6819AF4A9B # Eli Schwartz <eschwartz93@gmail.com>
