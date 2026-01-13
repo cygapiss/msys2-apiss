@@ -1,52 +1,32 @@
---- Python-3.8.7.cygwin/configure.ac	2021-05-11 21:07:52.839122100 +0200
-+++ Python-3.8.7/configure.ac	2021-05-11 21:10:48.366063600 +0200
-@@ -1137,7 +1148,7 @@
-   case $ac_sys_system in
-     CYGWIN*)
-           LDLIBRARY='libpython$(LDVERSION).dll.a'
--          DLLLIBRARY='libpython$(LDVERSION).dll'
-+          DLLLIBRARY='msys-python$(LDVERSION).dll'
-           ;;
-     SunOS*)
- 	  LDLIBRARY='libpython$(LDVERSION).so'
---- Python-3.8.7.orig/Lib/ctypes/__init__.py	2020-12-21 17:25:24.000000000 +0100
-+++ Python-3.8.7/Lib/ctypes/__init__.py	2021-05-11 22:26:25.866873900 +0200
-@@ -456,7 +456,7 @@
+From dabe0b3c97decbf74f0a3d29f5b02d1272c03096 Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Tue, 13 Jan 2026 11:32:49 +0800
+Subject: [PATCH] msysize
+
+---
+ Lib/ctypes/__init__.py |  2 +-
+ Lib/sysconfig.py       | 12 ++++++------
+ configure.ac           |  2 +-
+ 3 files changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/Lib/ctypes/__init__.py b/Lib/ctypes/__init__.py
+index 6cedee7..f3f89d4 100644
+--- a/Lib/ctypes/__init__.py
++++ b/Lib/ctypes/__init__.py
+@@ -467,7 +467,7 @@ pydll = LibraryLoader(PyDLL)
  if _os.name == "nt":
      pythonapi = PyDLL("python dll", None, _sys.dllhandle)
  elif _sys.platform == "cygwin":
 -    pythonapi = PyDLL("libpython%d.%d.dll" % _sys.version_info[:2])
-+    pythonapi = PyDLL("msys-python%d.%d.dll" % _sys.version_info[:2])
++    pythonapi = PyDLL("cygpython%d.%d.dll" % _sys.version_info[:2])
  else:
      pythonapi = PyDLL(None)
  
---- Python-3.12.4/Lib/test/test_ctypes/test_loading.py.orig	2024-06-06 20:26:44.000000000 +0200
-+++ Python-3.12.4/Lib/test/test_ctypes/test_loading.py	2024-07-04 07:35:25.827763700 +0200
-@@ -16,7 +16,7 @@
-     if os.name == "nt":
-         libc_name = find_library("c")
-     elif sys.platform == "cygwin":
--        libc_name = "cygwin1.dll"
-+        libc_name = "msys-2.0.dll"
-     else:
-         libc_name = find_library("c")
- 
---- Python-3.8.7/Lib/ctypes/util.py.orig	2021-05-11 22:31:37.409285900 +0200
-+++ Python-3.8.7/Lib/ctypes/util.py	2021-05-11 22:33:22.371550100 +0200
-@@ -387,8 +387,8 @@
-             print(f"crypto\t:: {find_library('crypto')}")
-             print(f"crypto\t:: {cdll.LoadLibrary(find_library('crypto'))}")
-         elif sys.platform == "cygwin":
--            print(cdll.LoadLibrary("cygbz2-1.dll"))
--            print(cdll.LoadLibrary("cygcrypt-0.dll"))
-+            print(cdll.LoadLibrary("msys-bz2-1.dll"))
-+            print(cdll.LoadLibrary("msys-crypt-0.dll"))
-             print(find_library("crypt"))
-         else:
-             print(cdll.LoadLibrary("libm.so"))
---- Python-3.12.8/Lib/sysconfig.py.orig	2024-12-03 19:42:41.000000000 +0100
-+++ Python-3.12.8/Lib/sysconfig.py	2025-02-01 17:39:28.925188300 +0100
-@@ -815,13 +815,13 @@
+diff --git a/Lib/sysconfig.py b/Lib/sysconfig.py
+index acc8d4d..bcab621 100644
+--- a/Lib/sysconfig.py
++++ b/Lib/sysconfig.py
+@@ -823,13 +823,13 @@ def get_platform():
      elif osname[:3] == "aix":
          from _aix_support import aix_platform
          return aix_platform()
@@ -66,3 +46,19 @@
      elif osname[:6] == "darwin":
          import _osx_support
          osname, release, machine = _osx_support.get_platform_osx(
+diff --git a/configure.ac b/configure.ac
+index 1a02d19..7a9ebbb 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -1505,7 +1505,7 @@ if test $enable_shared = "yes"; then
+   case $ac_sys_system in
+     CYGWIN*)
+           LDLIBRARY='libpython$(LDVERSION).dll.a'
+-          DLLLIBRARY='libpython$(LDVERSION).dll'
++          DLLLIBRARY='cygpython$(LDVERSION).dll'
+           ;;
+     SunOS*)
+ 	  LDLIBRARY='libpython$(LDVERSION).so'
+-- 
+2.52.0.windows.1
+
