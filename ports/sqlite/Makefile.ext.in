@@ -3,7 +3,7 @@
 # Makefile template to generate sqlite extensions
 # in sub-folder ext/misc of sqlite-src-xxxxx package.
 
-DLL_PREFIX   = msys-sqlite3
+DLL_PREFIX   = cygsqlite3
 DLL_SUFFIX   = -0
 extdir       = $(prefix)/bin
 
