@@ -53,8 +53,8 @@ build() {
   DESTDIR="${srcdir}/dest" meson install
 
   pushd ${srcdir}/dest/usr/share/gdb/auto-load/usr/lib > /dev/null
-    mv libglib* msys-glib-2.0-0.dll-gdb.py
-    mv libgobject* msys-gobject-2.0-0.dll-gdb.py
+    mv libglib* cygglib-2.0-0.dll-gdb.py
+    mv libgobject* cyggobject-2.0-0.dll-gdb.py
   popd > /dev/null
 }
 
