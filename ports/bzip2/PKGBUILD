@@ -2,7 +2,7 @@
 
 pkgname=('bzip2' 'libbz2' 'libbz2-devel')
 pkgver=1.0.8
-pkgrel=4
+pkgrel=5
 pkgdesc="A high-quality data compression program"
 groups=('compression')
 arch=('i686' 'x86_64')
@@ -14,17 +14,17 @@ msys2_references=(
 )
 makedepends=('gcc' 'patch' 'autotools')
 source=(https://sourceware.org/pub/bzip2/bzip2-${pkgver}.tar.gz
-        bzip2-1.0.6-msys-dll.patch
-        bzip2-1.0.6-msys2.patch)
+        0001-use-cygwin-dll.patch
+        0002-functional-for-msys2.patch)
 sha256sums=('ab5a03176ee106d3f0fa90e381da478ddae405918153cca248e682cd0c4a2269'
-            'a14e3ef3108fe843f5bd4bdf0943cc22c0a1581c382706dbd3f42ad7dc097c88'
-            'b499532b538ae1faa9b07933013671fd8f34431bfaa802f9099a96a6a4135e80')
+            '85338a2642865057b9c7b90bc16f50f2cb917761cadc7f6962bad25d3bc220d1'
+            '7d8e60d26b29e65926111fb390704af377783eb1b4ef3c66aa3555de0867a8da')
 
 prepare() {
   cd "${srcdir}/${pkgname}-${pkgver}"
 
-  patch -p1 -i ${srcdir}/bzip2-1.0.6-msys-dll.patch
-  patch -p1 -i ${srcdir}/bzip2-1.0.6-msys2.patch
+  patch -p1 -i ${srcdir}/0001-use-cygwin-dll.patch
+  patch -p1 -i ${srcdir}/0002-functional-for-msys2.patch
 }
 
 build() {
