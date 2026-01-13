@@ -3,7 +3,7 @@
 pkgbase=heimdal
 pkgname=('heimdal' 'heimdal-libs' 'heimdal-devel')
 pkgver=7.8.0
-pkgrel=5
+pkgrel=6
 pkgdesc="Implementation of Kerberos V5 libraries"
 arch=('i686' 'x86_64')
 url="https://www.h5l.org/"
@@ -62,6 +62,8 @@ prepare() {
 build() {
   cd ${srcdir}/heimdal-${pkgver}
 
+  export LDFLAGS="-lcrypt"
+  CFLAGS="-Wno-incompatible-pointer-types -Wno-int-conversion" \
   ./configure \
     --build=${CHOST} \
     --host=${CHOST} \
@@ -83,7 +85,8 @@ build() {
     --disable-ndbm-db \
     --disable-heimdal-documentation \
     ac_cv_header_winsock2_h=no \
-    ac_cv_header_ws2tcpip_h=no
+    ac_cv_header_ws2tcpip_h=no \
+    ac_cv_funclib_getpwnam_r=yes
   
   make LDFLAGS="${LDFLAGS} -no-undefined"
   setup
