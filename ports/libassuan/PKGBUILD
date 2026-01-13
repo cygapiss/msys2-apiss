@@ -3,7 +3,7 @@
 pkgbase=libassuan
 pkgname=('libassuan' 'libassuan-devel')
 pkgver=3.0.2
-pkgrel=1
+pkgrel=2
 pkgdesc="A IPC library used by some GnuPG related software"
 arch=('i686' 'x86_64')
 url="https://gnupg.org/related_software/libassuan"
@@ -36,6 +36,7 @@ prepare() {
 build() {
   cd "${pkgname}-${_oldver}"
 
+  CFLAGS="-Wno-incompatible-pointer-types" \
   ./configure \
     --prefix=/usr \
     --build=${CHOST} \
@@ -47,6 +48,7 @@ build() {
 
   cd "${pkgname}-${pkgver}"
 
+  CFLAGS="-Wno-incompatible-pointer-types" \
   ./configure \
     --prefix=/usr \
     --build=${CHOST} \
