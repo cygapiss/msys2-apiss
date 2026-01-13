@@ -1,6 +1,644 @@
-diff -Naur bzip2-1.0.6-orig/aclocal.m4 bzip2-1.0.6/aclocal.m4
---- bzip2-1.0.6-orig/aclocal.m4	1970-01-01 00:00:00.000000000 +0000
-+++ bzip2-1.0.6/aclocal.m4	2013-02-13 04:57:15.000000000 +0000
+From 832fdef523a9583b9ef45c7d432bb60f07c93fba Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Tue, 13 Jan 2026 10:48:06 +0800
+Subject: [PATCH 2/2] functional for msys2
+
+---
+ Makefile       |  217 ---
+ Makefile.in    |  381 +++++
+ aclocal.m4     |  115 ++
+ bzip2.1        |    4 +
+ bzip2.c        |   68 +-
+ bzip2recover.c |   17 +-
+ bzlib.c        |    2 +-
+ bzlib.h        |   32 +-
+ bzmore         |    8 +-
+ configure      | 4003 ++++++++++++++++++++++++++++++++++++++++++++++++
+ configure.ac   |   39 +
+ libbz2.def.in  |   27 +
+ 12 files changed, 4678 insertions(+), 235 deletions(-)
+ delete mode 100644 Makefile
+ create mode 100644 Makefile.in
+ create mode 100644 aclocal.m4
+ create mode 100644 configure
+ create mode 100644 configure.ac
+ create mode 100644 libbz2.def.in
+
+diff --git a/Makefile b/Makefile
+deleted file mode 100644
+index f8a1772..0000000
+--- a/Makefile
++++ /dev/null
+@@ -1,217 +0,0 @@
+-# ------------------------------------------------------------------
+-# This file is part of bzip2/libbzip2, a program and library for
+-# lossless, block-sorting data compression.
+-#
+-# bzip2/libbzip2 version 1.0.8 of 13 July 2019
+-# Copyright (C) 1996-2019 Julian Seward <jseward@acm.org>
+-#
+-# Please read the WARNING, DISCLAIMER and PATENTS sections in the 
+-# README file.
+-#
+-# This program is released under the terms of the license contained
+-# in the file LICENSE.
+-# ------------------------------------------------------------------
+-
+-SHELL=/bin/sh
+-
+-# To assist in cross-compiling
+-CC=gcc
+-AR=ar
+-RANLIB=ranlib
+-LDFLAGS=
+-
+-BIGFILES=-D_FILE_OFFSET_BITS=64
+-CFLAGS=-Wall -Winline -O2 -g $(BIGFILES)
+-
+-# Where you want it installed when you do 'make install'
+-PREFIX=/usr/local
+-
+-
+-OBJS= blocksort.o  \
+-      huffman.o    \
+-      crctable.o   \
+-      randtable.o  \
+-      compress.o   \
+-      decompress.o \
+-      bzlib.o
+-
+-all: libbz2.a bzip2 bzip2recover test
+-
+-bzip2: libbz2.a bzip2.o
+-	$(CC) $(CFLAGS) $(LDFLAGS) -o bzip2 bzip2.o -L. -lbz2
+-
+-bzip2recover: bzip2recover.o
+-	$(CC) $(CFLAGS) $(LDFLAGS) -o bzip2recover bzip2recover.o
+-
+-libbz2.a: $(OBJS)
+-	rm -f libbz2.a
+-	$(AR) cq libbz2.a $(OBJS)
+-	@if ( test -f $(RANLIB) -o -f /usr/bin/ranlib -o \
+-		-f /bin/ranlib -o -f /usr/ccs/bin/ranlib ) ; then \
+-		echo $(RANLIB) libbz2.a ; \
+-		$(RANLIB) libbz2.a ; \
+-	fi
+-
+-check: test
+-test: bzip2
+-	@cat words1
+-	./bzip2 -1  < sample1.ref > sample1.rb2
+-	./bzip2 -2  < sample2.ref > sample2.rb2
+-	./bzip2 -3  < sample3.ref > sample3.rb2
+-	./bzip2 -d  < sample1.bz2 > sample1.tst
+-	./bzip2 -d  < sample2.bz2 > sample2.tst
+-	./bzip2 -ds < sample3.bz2 > sample3.tst
+-	cmp sample1.bz2 sample1.rb2 
+-	cmp sample2.bz2 sample2.rb2
+-	cmp sample3.bz2 sample3.rb2
+-	cmp sample1.tst sample1.ref
+-	cmp sample2.tst sample2.ref
+-	cmp sample3.tst sample3.ref
+-	@cat words3
+-
+-install: bzip2 bzip2recover
+-	if ( test ! -d $(PREFIX)/bin ) ; then mkdir -p $(PREFIX)/bin ; fi
+-	if ( test ! -d $(PREFIX)/lib ) ; then mkdir -p $(PREFIX)/lib ; fi
+-	if ( test ! -d $(PREFIX)/man ) ; then mkdir -p $(PREFIX)/man ; fi
+-	if ( test ! -d $(PREFIX)/man/man1 ) ; then mkdir -p $(PREFIX)/man/man1 ; fi
+-	if ( test ! -d $(PREFIX)/include ) ; then mkdir -p $(PREFIX)/include ; fi
+-	cp -f bzip2 $(PREFIX)/bin/bzip2
+-	cp -f bzip2 $(PREFIX)/bin/bunzip2
+-	cp -f bzip2 $(PREFIX)/bin/bzcat
+-	cp -f bzip2recover $(PREFIX)/bin/bzip2recover
+-	chmod a+x $(PREFIX)/bin/bzip2
+-	chmod a+x $(PREFIX)/bin/bunzip2
+-	chmod a+x $(PREFIX)/bin/bzcat
+-	chmod a+x $(PREFIX)/bin/bzip2recover
+-	cp -f bzip2.1 $(PREFIX)/man/man1
+-	chmod a+r $(PREFIX)/man/man1/bzip2.1
+-	cp -f bzlib.h $(PREFIX)/include
+-	chmod a+r $(PREFIX)/include/bzlib.h
+-	cp -f libbz2.a $(PREFIX)/lib
+-	chmod a+r $(PREFIX)/lib/libbz2.a
+-	cp -f bzgrep $(PREFIX)/bin/bzgrep
+-	ln -s -f $(PREFIX)/bin/bzgrep $(PREFIX)/bin/bzegrep
+-	ln -s -f $(PREFIX)/bin/bzgrep $(PREFIX)/bin/bzfgrep
+-	chmod a+x $(PREFIX)/bin/bzgrep
+-	cp -f bzmore $(PREFIX)/bin/bzmore
+-	ln -s -f $(PREFIX)/bin/bzmore $(PREFIX)/bin/bzless
+-	chmod a+x $(PREFIX)/bin/bzmore
+-	cp -f bzdiff $(PREFIX)/bin/bzdiff
+-	ln -s -f $(PREFIX)/bin/bzdiff $(PREFIX)/bin/bzcmp
+-	chmod a+x $(PREFIX)/bin/bzdiff
+-	cp -f bzgrep.1 bzmore.1 bzdiff.1 $(PREFIX)/man/man1
+-	chmod a+r $(PREFIX)/man/man1/bzgrep.1
+-	chmod a+r $(PREFIX)/man/man1/bzmore.1
+-	chmod a+r $(PREFIX)/man/man1/bzdiff.1
+-	echo ".so man1/bzgrep.1" > $(PREFIX)/man/man1/bzegrep.1
+-	echo ".so man1/bzgrep.1" > $(PREFIX)/man/man1/bzfgrep.1
+-	echo ".so man1/bzmore.1" > $(PREFIX)/man/man1/bzless.1
+-	echo ".so man1/bzdiff.1" > $(PREFIX)/man/man1/bzcmp.1
+-
+-clean: 
+-	rm -f *.o libbz2.a bzip2 bzip2recover \
+-	sample1.rb2 sample2.rb2 sample3.rb2 \
+-	sample1.tst sample2.tst sample3.tst
+-
+-blocksort.o: blocksort.c
+-	@cat words0
+-	$(CC) $(CFLAGS) -c blocksort.c
+-huffman.o: huffman.c
+-	$(CC) $(CFLAGS) -c huffman.c
+-crctable.o: crctable.c
+-	$(CC) $(CFLAGS) -c crctable.c
+-randtable.o: randtable.c
+-	$(CC) $(CFLAGS) -c randtable.c
+-compress.o: compress.c
+-	$(CC) $(CFLAGS) -c compress.c
+-decompress.o: decompress.c
+-	$(CC) $(CFLAGS) -c decompress.c
+-bzlib.o: bzlib.c
+-	$(CC) $(CFLAGS) -c bzlib.c
+-bzip2.o: bzip2.c
+-	$(CC) $(CFLAGS) -c bzip2.c
+-bzip2recover.o: bzip2recover.c
+-	$(CC) $(CFLAGS) -c bzip2recover.c
+-
+-
+-distclean: clean
+-	rm -f manual.ps manual.html manual.pdf
+-
+-DISTNAME=bzip2-1.0.8
+-dist: check manual
+-	rm -f $(DISTNAME)
+-	ln -s -f . $(DISTNAME)
+-	tar cvf $(DISTNAME).tar \
+-	   $(DISTNAME)/blocksort.c \
+-	   $(DISTNAME)/huffman.c \
+-	   $(DISTNAME)/crctable.c \
+-	   $(DISTNAME)/randtable.c \
+-	   $(DISTNAME)/compress.c \
+-	   $(DISTNAME)/decompress.c \
+-	   $(DISTNAME)/bzlib.c \
+-	   $(DISTNAME)/bzip2.c \
+-	   $(DISTNAME)/bzip2recover.c \
+-	   $(DISTNAME)/bzlib.h \
+-	   $(DISTNAME)/bzlib_private.h \
+-	   $(DISTNAME)/Makefile \
+-	   $(DISTNAME)/LICENSE \
+-	   $(DISTNAME)/bzip2.1 \
+-	   $(DISTNAME)/bzip2.1.preformatted \
+-	   $(DISTNAME)/bzip2.txt \
+-	   $(DISTNAME)/words0 \
+-	   $(DISTNAME)/words1 \
+-	   $(DISTNAME)/words2 \
+-	   $(DISTNAME)/words3 \
+-	   $(DISTNAME)/sample1.ref \
+-	   $(DISTNAME)/sample2.ref \
+-	   $(DISTNAME)/sample3.ref \
+-	   $(DISTNAME)/sample1.bz2 \
+-	   $(DISTNAME)/sample2.bz2 \
+-	   $(DISTNAME)/sample3.bz2 \
+-	   $(DISTNAME)/dlltest.c \
+-	   $(DISTNAME)/manual.html \
+-	   $(DISTNAME)/manual.pdf \
+-	   $(DISTNAME)/manual.ps \
+-	   $(DISTNAME)/README \
+-	   $(DISTNAME)/README.COMPILATION.PROBLEMS \
+-	   $(DISTNAME)/README.XML.STUFF \
+-	   $(DISTNAME)/CHANGES \
+-	   $(DISTNAME)/libbz2.def \
+-	   $(DISTNAME)/libbz2.dsp \
+-	   $(DISTNAME)/dlltest.dsp \
+-	   $(DISTNAME)/makefile.msc \
+-	   $(DISTNAME)/unzcrash.c \
+-	   $(DISTNAME)/spewG.c \
+-	   $(DISTNAME)/mk251.c \
+-	   $(DISTNAME)/bzdiff \
+-	   $(DISTNAME)/bzdiff.1 \
+-	   $(DISTNAME)/bzmore \
+-	   $(DISTNAME)/bzmore.1 \
+-	   $(DISTNAME)/bzgrep \
+-	   $(DISTNAME)/bzgrep.1 \
+-	   $(DISTNAME)/Makefile-libbz2_so \
+-	   $(DISTNAME)/bz-common.xsl \
+-	   $(DISTNAME)/bz-fo.xsl \
+-	   $(DISTNAME)/bz-html.xsl \
+-	   $(DISTNAME)/bzip.css \
+-	   $(DISTNAME)/entities.xml \
+-	   $(DISTNAME)/manual.xml \
+-	   $(DISTNAME)/format.pl \
+-	   $(DISTNAME)/xmlproc.sh
+-	gzip -v $(DISTNAME).tar
+-
+-# For rebuilding the manual from sources on my SuSE 9.1 box
+-
+-MANUAL_SRCS= 	bz-common.xsl bz-fo.xsl bz-html.xsl bzip.css \
+-		entities.xml manual.xml 
+-
+-manual: manual.html manual.ps manual.pdf
+-
+-manual.ps: $(MANUAL_SRCS)
+-	./xmlproc.sh -ps manual.xml
+-
+-manual.pdf: $(MANUAL_SRCS)
+-	./xmlproc.sh -pdf manual.xml
+-
+-manual.html: $(MANUAL_SRCS)
+-	./xmlproc.sh -html manual.xml
+diff --git a/Makefile.in b/Makefile.in
+new file mode 100644
+index 0000000..5824e27
+--- /dev/null
++++ b/Makefile.in
+@@ -0,0 +1,381 @@
++# @configure_input@
++# ------------------------------------------------------------------
++# This file is part of bzip2/libbzip2, a program and library for
++# lossless, block-sorting data compression.
++#
++# bzip2/libbzip2 version 1.0.6 of 6 September 2010
++# Copyright (C) 1996-2010 Julian Seward <jseward@bzip.org>
++#
++# File: Makefile.in for autoconf configuration
++# Contributed by Keith Marshall <keithmarshall@users.sourceforge.net>
++#
++# Please read the WARNING, DISCLAIMER and PATENTS sections in the 
++# README file.
++#
++# This program is released under the terms of the license contained
++# in the file LICENSE.
++# ------------------------------------------------------------------
++
++PACKAGE	   =	@PACKAGE_TARNAME@
++VERSION	   =	@PACKAGE_VERSION@
++
++# If building libbz2 as a shared library, we use these version tags,
++SO_VER	   =	1
++SO_AGE	   =    0
++SO_REV	   =	6
++#
++# This yields a shared object library name below, following the
++# normal naming rules -- most linux distributions patch Julian's
++# original makefile to do something similar.
++#
++SO_MAJOR   :=   $(shell expr $(SO_VER) - $(SO_AGE))
++SONAME	   =	libbz2.so.$(SO_MAJOR)
++SOFULL     =    $(SONAME).$(SO_AGE).$(SO_REV)
++
++# For MS-Windows hosts, Julian's original build strategy, (and that
++# still adopted for building with MSVC), creates an unversioned DLL,
++# exporting functions using the __stdcall (WINAPI) calling convention.
++# Conversly, MinGW developers have chosen to sanitise the libbz2 ABI,
++# avoiding the use of the __stdcall calling convention, in favour of
++# the more GNU/Linux-alike __cdecl convention.
++#
++# To permit MinGW builds of libbz2.dll to co-exist, in the developer
++# universe, with MSVC builds, the MinGW Project has specified a scheme
++# for distribution of versioned DLLs, unambiguously named libbz2-N.dll,
++# where N is an ABI version number, nominally computed as:
++#
++#   SO_VER - SO_AGE	(ignoring SO_REV)
++#
++# Unfortunately, at an early stage in the evolution of the MinGW
++# versioned libbz2-N.dll, at a time when this version paradigm would
++# have yielded N = 1, a libbz2-1.dll was released, which employed the
++# __stdcall calling convention.  Thus, to avoid potential confusion
++# with this early release, and specific to the case of libbz2-N.dll,
++# the DLLVER for the __cdecl releases, as computed by the configure
++# script will lead the nominal value by one, becoming effectively:
++#
++#   1 + SO_VER - SO_AGE
++#
++# Note that for cygwin, a similar scheme (SO_VER - SO_AGE) is used,
++# but on that platform the extra +1 is not needed.
++DLLVER	   =	@DLLVER@
++DLLNAME    =    @DLLNAME@
++LIBNAME    =    libbz2
++
++
++# Shell used by make...
++#
++SHELL	   =	@SHELL@
++
++# Where to find the sources...
++#
++VPATH	   =	${srcdir}
++srcdir	   =	@srcdir@
++
++# To assist in cross-compiling...
++#
++CC	   =	@CC@
++AR	   =	@AR@
++RANLIB	   =	@RANLIB@
++LN_S	   =	@LN_S@
++
++OBJEXT	   =	@OBJEXT@
++EXEEXT	   =	@EXEEXT@
++
++BIGFILES   =	-D_FILE_OFFSET_BITS=64
++CFLAGS	   =	@CFLAGS@ $(BIGFILES)
++LDFLAGS	   =	@LDFLAGS@
++ARFLAGS    =	@ARFLAGS@
++
++# Where you want it installed when you do 'make install'
++#
++PREFIX	   =	@prefix@
++
++OBJS= blocksort.$(OBJEXT)  \
++      huffman.$(OBJEXT)    \
++      crctable.$(OBJEXT)   \
++      randtable.$(OBJEXT)  \
++      compress.$(OBJEXT)   \
++      decompress.$(OBJEXT) \
++      bzlib.$(OBJEXT)
++
++# Default build goals...
++#
++all: all-libs bzip2$(EXEEXT) bzip2recover$(EXEEXT)
++all-libs: libbz2.a @enable_shared@
++
++bzip2$(EXEEXT): libbz2.a bzip2.$(OBJEXT)
++	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ bzip2.$(OBJEXT) -L. -lbz2
++
++bzip2recover$(EXEEXT): bzip2recover.$(OBJEXT)
++	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
++
++libbz2.a: $(OBJS)
++	rm -f $@
++	$(AR) $(ARFLAGS) $@ $(OBJS)
++	$(RANLIB) $@
++
++blocksort.$(OBJEXT): blocksort.c
++	@cat ${srcdir}/words0
++	$(CC) $(CFLAGS) -c -o $@ $^
++
++%.$(OBJEXT): %.c
++	$(CC) $(CFLAGS) -c -o$@ $<
++
++# Building using a shared library, for dynamic linking on GNU/Linux...
++# (Invoked when configured with `--enable-shared' for a non-Win32 host).
++#
++# This is incorporated from Julian's original Makefile-libbz2_so.
++# It is reported to work successfully on x86-Linux (Red Hat 7.2), with
++# gcc-2.96 20000731 (Red Hat Linux 7.1 2.96-98); YMMV.
++#
++# Please refer to README, for important information regarding building
++# libbz2 as a shared library, in this manner.
++#
++PICFLAGS = -fpic -fPIC -Wall -Winline $(CFLAGS)
++
++all-bzip2-shared: bzip2-shared$(EXEEXT)
++bzip2-shared$(EXEEXT): bzip2.c $(SOFULL)
++	$(CC) $(PICFLAGS) -o $@ $^
++	
++$(SOFULL): $(OBJS:.$(OBJEXT)=-pic.$(OBJEXT))
++	$(CC) -shared -Wl,-soname -Wl,$(SONAME) -o $@ $^
++	rm -f $(SONAME); $(LN_S) $@ $(SONAME)
++	rm -f $(SONAME).$(SO_AGE); $(LN_S) $@ $(SONAME).$(SO_AGE)
++
++%-pic.$(OBJEXT): %.c
++	$(CC) $(PICFLAGS) -c -o $@ $<
++
++# Building using a shared library, for dynamic linking on MS-Windows
++# and cygwin...
++# (Invoked when configured with `--enable-shared' for a Win32/cygwin host)
++
++all-dll-shared: $(LIBNAME).dll.a
++
++$(LIBNAME).dll.a: $(DLLNAME)-$(DLLVER).dll
++
++$(DLLNAME)-$(DLLVER).dll: libbz2.def libbz2.a
++	$(CC) -shared -o $@ $(LDFLAGS) -Wl,--out-implib=$(LIBNAME).dll.a $^
++
++libbz2.def: libbz2.def.in
++	sed -e s,%DLLNAME%,$(DLLNAME), -e s,%DLLVER%,$(DLLVER), $^ > $@
++
++# Build validation...
++#
++check: test
++test: bzip2$(EXEEXT)
++	@cat ${srcdir}/words1
++	./bzip2$(EXEEXT) -1  < ${srcdir}/sample1.ref > sample1.rb2
++	./bzip2$(EXEEXT) -2  < ${srcdir}/sample2.ref > sample2.rb2
++	./bzip2$(EXEEXT) -3  < ${srcdir}/sample3.ref > sample3.rb2
++	./bzip2$(EXEEXT) -d  < ${srcdir}/sample1.bz2 > sample1.tst
++	./bzip2$(EXEEXT) -d  < ${srcdir}/sample2.bz2 > sample2.tst
++	./bzip2$(EXEEXT) -ds < ${srcdir}/sample3.bz2 > sample3.tst
++	cmp ${srcdir}/sample1.bz2 sample1.rb2 
++	cmp ${srcdir}/sample2.bz2 sample2.rb2
++	cmp ${srcdir}/sample3.bz2 sample3.rb2
++	cmp sample1.tst ${srcdir}/sample1.ref
++	cmp sample2.tst ${srcdir}/sample2.ref
++	cmp sample3.tst ${srcdir}/sample3.ref
++	@cat ${srcdir}/words3
++
++# GNU Standard Specifications for Installation Directories...
++#
++prefix = $(PREFIX)
++exec_prefix = @exec_prefix@
++
++bindir = @bindir@
++datarootdir = @datarootdir@
++includedir = @includedir@
++libdir = @libdir@
++
++# `man' Documentation Hierarchy, in Terms of GNU Standards...
++#
++# FIXME: Julian's original distribution wasn't fully compliant
++# with current GNU Standards; to achieve compliance, we must use
++# this autotool standard definition:
++#
++#   mandir = @mandir@
++#
++# in place of:
++#
++#   mandir = $(PREFIX)/man
++#
++# which preserves Julian's original configuration.
++#
++mandir = $(PREFIX)/share/man
++man1dir = ${mandir}/man1
++
++# Installation...
++#
++FORCE:
++${bindir} ${includedir} ${libdir} ${man1dir}: FORCE
++	test -d $@ || mkdir -p $@
++
++install: all ${bindir} ${includedir} ${libdir} ${man1dir}
++	cp -f bzip2$(EXEEXT) ${bindir}/bzip2$(EXEEXT)
++	cp -f bzip2$(EXEEXT) ${bindir}/bunzip2$(EXEEXT)
++	cp -f bzip2$(EXEEXT) ${bindir}/bzcat$(EXEEXT)
++	cp -f bzip2recover$(EXEEXT) ${bindir}/bzip2recover$(EXEEXT)
++	if test -f $(DLLNAME)-$(DLLVER).dll; \
++	then \
++	  cp -f $(DLLNAME)-$(DLLVER).dll ${bindir}/$(DLLNAME)-$(DLLVER).dll; \
++	  chmod a+rx ${bindir}/$(DLLNAME)-$(DLLVER).dll; \
++	fi
++	chmod a+x ${bindir}/bzip2$(EXEEXT)
++	chmod a+x ${bindir}/bunzip2$(EXEEXT)
++	chmod a+x ${bindir}/bzcat$(EXEEXT)
++	chmod a+x ${bindir}/bzip2recover$(EXEEXT)
++	cp -f ${srcdir}/bzlib.h ${includedir}
++	chmod a+r ${includedir}/bzlib.h
++	cp -f libbz2.a ${libdir}
++	if test -f $(LIBNAME).dll.a; \
++	then \
++	  cp -f $(LIBNAME).dll.a ${libdir}/$(LIBNAME).dll.a; \
++	  chmod a+r ${libdir}/$(LIBNAME).dll.a; \
++	fi
++	chmod a+r ${libdir}/libbz2.a
++	if test -f $(SOFULL); \
++	then \
++	  cp -f $(SOFULL) ${libdir}; \
++	  cd ${libdir}; rm -f $(SO_NAME).$(SO_AGE) $(SONAME); \
++	  $(LN_S) $(SOFULL) $(SONAME).$(SO_AGE); \
++	  $(LN_S) $(SOFULL) $(SONAME); \
++	  chmod a+r $(SOFULL); \
++	fi
++	cp -f ${srcdir}/bzgrep ${bindir}/bzgrep
++	cd ${bindir}; $(LN_S) -f bzgrep bzegrep
++	cd ${bindir}; $(LN_S) -f bzgrep bzfgrep
++	chmod a+x ${bindir}/bzgrep
++	cp -f ${srcdir}/bzmore ${bindir}/bzmore
++	cd ${bindir}; $(LN_S) -f bzmore bzless
++	chmod a+x ${bindir}/bzmore
++	cp -f ${srcdir}/bzdiff ${bindir}/bzdiff
++	cd ${bindir}; $(LN_S) -f bzdiff bzcmp
++	chmod a+x ${bindir}/bzdiff
++	cd ${srcdir}; cp -f bzip2.1 bzgrep.1 bzmore.1 bzdiff.1 ${man1dir}
++	chmod a+r ${man1dir}/bzip2.1
++	chmod a+r ${man1dir}/bzgrep.1
++	chmod a+r ${man1dir}/bzmore.1
++	chmod a+r ${man1dir}/bzdiff.1
++	echo ".so man1/bzgrep.1" > ${man1dir}/bzegrep.1
++	echo ".so man1/bzgrep.1" > ${man1dir}/bzfgrep.1
++	echo ".so man1/bzmore.1" > ${man1dir}/bzless.1
++	echo ".so man1/bzdiff.1" > ${man1dir}/bzcmp.1
++
++ldconfig:
++	ldconfig -n ${libdir}
++
++# Housekeeping...
++#
++clean: 
++	cmp > /dev/null 2>&1 ${srcdir}/libbz2.def libbz2.def \
++	  || rm -f libbz2.def
++	rm -f *.$(OBJEXT) libbz2*.a $(DLLNAME)*.dll  \
++	bzip2$(EXEEXT) bzip2recover$(EXEEXT) \
++	sample1.rb2 sample2.rb2 sample3.rb2 \
++	sample1.tst sample2.tst sample3.tst
++
++distclean: clean
++	rm -f config.status config.log Makefile
++
++# NOTE: Julian's original Makefile had these in `distclean'.
++# Since they are `distributables', that might have surprised
++# users expecting GNU standard behaviour; they rightfully
++# belong in `maintainer-clean'.
++#
++maintainer-clean: clean
++	rm -f manual.ps manual.html manual.pdf
++
++# Distribution...
++#
++DISTNAME = $(PACKAGE)-$(VERSION)
++#
++# FIXME: this method of creating a source distribution works fine
++# on systems which fully support symbolic links between directories;
++# it cannot be used reliably, on MS-Windows hosts running MSYS.
++#
++dist: manual
++	rm -f $(DISTNAME) $(DISTNAME)$(SNAPSHOT).*
++	$(LN_S) -f ${srcdir} $(DISTNAME)
++	tar cvf $(DISTNAME)$(SNAPSHOT).tar \
++	   $(DISTNAME)/aclocal.m4 \
++	   $(DISTNAME)/configure \
++	   $(DISTNAME)/configure.ac \
++	   $(DISTNAME)/Makefile.in \
++	   $(DISTNAME)/blocksort.c \
++	   $(DISTNAME)/huffman.c \
++	   $(DISTNAME)/crctable.c \
++	   $(DISTNAME)/randtable.c \
++	   $(DISTNAME)/compress.c \
++	   $(DISTNAME)/decompress.c \
++	   $(DISTNAME)/bzlib.c \
++	   $(DISTNAME)/bzip2.c \
++	   $(DISTNAME)/bzip2recover.c \
++	   $(DISTNAME)/bzlib.h \
++	   $(DISTNAME)/bzlib_private.h \
++	   $(DISTNAME)/LICENSE \
++	   $(DISTNAME)/bzip2.1 \
++	   $(DISTNAME)/bzip2.1.preformatted \
++	   $(DISTNAME)/bzip2.txt \
++	   $(DISTNAME)/words0 \
++	   $(DISTNAME)/words1 \
++	   $(DISTNAME)/words2 \
++	   $(DISTNAME)/words3 \
++	   $(DISTNAME)/sample1.ref \
++	   $(DISTNAME)/sample2.ref \
++	   $(DISTNAME)/sample3.ref \
++	   $(DISTNAME)/sample1.bz2 \
++	   $(DISTNAME)/sample2.bz2 \
++	   $(DISTNAME)/sample3.bz2 \
++	   $(DISTNAME)/dlltest.c \
++	   $(DISTNAME)/manual.html \
++	   $(DISTNAME)/manual.pdf \
++	   $(DISTNAME)/manual.ps \
++	   $(DISTNAME)/README \
++	   $(DISTNAME)/README.COMPILATION.PROBLEMS \
++	   $(DISTNAME)/README.XML.STUFF \
++	   $(DISTNAME)/CHANGES \
++	   $(DISTNAME)/libbz2.def \
++	   $(DISTNAME)/libbz2.def.in \
++	   $(DISTNAME)/libbz2.dsp \
++	   $(DISTNAME)/dlltest.dsp \
++	   $(DISTNAME)/makefile.msc \
++	   $(DISTNAME)/unzcrash.c \
++	   $(DISTNAME)/spewG.c \
++	   $(DISTNAME)/mk251.c \
++	   $(DISTNAME)/bzdiff \
++	   $(DISTNAME)/bzdiff.1 \
++	   $(DISTNAME)/bzmore \
++	   $(DISTNAME)/bzmore.1 \
++	   $(DISTNAME)/bzgrep \
++	   $(DISTNAME)/bzgrep.1 \
++	   $(DISTNAME)/Makefile-libbz2_so \
++	   $(DISTNAME)/bz-common.xsl \
++	   $(DISTNAME)/bz-fo.xsl \
++	   $(DISTNAME)/bz-html.xsl \
++	   $(DISTNAME)/bzip.css \
++	   $(DISTNAME)/entities.xml \
++	   $(DISTNAME)/manual.xml \
++	   $(DISTNAME)/format.pl \
++	   $(DISTNAME)/xmlproc.sh
++	gzip -v $(DISTNAME)$(SNAPSHOT).tar
++	rm -f $(DISTNAME)
++
++# For rebuilding the manual from sources on Julian's SuSE 9.1 box
++#
++MANUAL_SRCS  =  bz-common.xsl bz-fo.xsl bz-html.xsl bzip.css \
++		entities.xml manual.xml 
++
++manual: manual.html manual.ps manual.pdf
++
++manual.ps: $(MANUAL_SRCS)
++	${srcdir}/xmlproc.sh -ps manual.xml
++
++manual.pdf: $(MANUAL_SRCS)
++	${srcdir}/xmlproc.sh -pdf manual.xml
++
++manual.html: $(MANUAL_SRCS)
++	${srcdir}/xmlproc.sh -html manual.xml
++
++# Makefile: end of file
+diff --git a/aclocal.m4 b/aclocal.m4
+new file mode 100644
+index 0000000..eeda952
+--- /dev/null
++++ b/aclocal.m4
 @@ -0,0 +1,115 @@
 +# aclocal.m4 -*- Autoconf -*- vim: filetype=config
 +# ------------------------------------------------------------------
@@ -110,17 +748,18 @@ diff -Naur bzip2-1.0.6-orig/aclocal.m4 bzip2-1.0.6/aclocal.m4
 +AC_DEFUN([BZIP2_AC_SUBST_DLLNAME],
 +[AC_REQUIRE([BZIP2_AC_WINDOWS_HOST])dnl
 + AC_MSG_CHECKING([for base name of DLL shared libraries])
-+ [dllname=msys-bz2
++ [dllname=cygbz2
 +  test "x$bzip2_cv_windows_host" = xyes && dllname=libbz2]
 + AC_SUBST([DLLNAME], [${dllname}])
 + AC_MSG_RESULT([${dllname}])dnl
 +])# BZIP2_AC_SUBST_DLLNAME
 +
 +# aclocal.m4: end of file
-diff -Naur bzip2-1.0.6-orig/bzip2.1 bzip2-1.0.6/bzip2.1
---- bzip2-1.0.6-orig/bzip2.1	2010-09-11 09:35:11.000000000 +0000
-+++ bzip2-1.0.6/bzip2.1	2013-02-13 04:51:08.000000000 +0000
-@@ -235,6 +235,10 @@
+diff --git a/bzip2.1 b/bzip2.1
+index 0cbcdab..cbe6035 100644
+--- a/bzip2.1
++++ b/bzip2.1
+@@ -235,6 +235,10 @@ less), use \-s for everything.  See MEMORY MANAGEMENT below.
  Suppress non-essential warning messages.  Messages pertaining to
  I/O errors and other critical events will not be suppressed.
  .TP
@@ -131,9 +770,10 @@ diff -Naur bzip2-1.0.6-orig/bzip2.1 bzip2-1.0.6/bzip2.1
  .B \-v --verbose
  Verbose mode -- show the compression ratio for each file processed.
  Further \-v's increase the verbosity level, spewing out lots of
-diff -Naur bzip2-1.0.6-orig/bzip2.c bzip2-1.0.6/bzip2.c
---- bzip2-1.0.6-orig/bzip2.c	2010-09-10 23:04:53.000000000 +0000
-+++ bzip2-1.0.6/bzip2.c	2013-02-13 04:51:08.000000000 +0000
+diff --git a/bzip2.c b/bzip2.c
+index d95d280..d447bb9 100644
+--- a/bzip2.c
++++ b/bzip2.c
 @@ -53,6 +53,7 @@
  #include <signal.h>
  #include <math.h>
@@ -142,7 +782,7 @@ diff -Naur bzip2-1.0.6-orig/bzip2.c bzip2-1.0.6/bzip2.c
  #include <ctype.h>
  #include "bzlib.h"
  
-@@ -209,6 +210,7 @@
+@@ -209,6 +210,7 @@ Char    *progName;
  Char    progNameReally[FILE_NAME_LEN];
  FILE    *outputHandleJustInCase;
  Int32   workFactor;
@@ -150,7 +790,7 @@ diff -Naur bzip2-1.0.6-orig/bzip2.c bzip2-1.0.6/bzip2.c
  
  static void    panic                 ( const Char* ) NORETURN;
  static void    ioError               ( void )        NORETURN;
-@@ -334,6 +336,12 @@
+@@ -334,6 +336,12 @@ void compressStream ( FILE *stream, FILE *zStream )
     UInt32  nbytes_in_lo32, nbytes_in_hi32;
     UInt32  nbytes_out_lo32, nbytes_out_hi32;
     Int32   bzerr, bzerr_dummy, ret;
@@ -163,7 +803,7 @@ diff -Naur bzip2-1.0.6-orig/bzip2.c bzip2-1.0.6/bzip2.c
  
     SET_BINARY_MODE(stream);
     SET_BINARY_MODE(zStream);
-@@ -341,12 +349,21 @@
+@@ -341,12 +349,21 @@ void compressStream ( FILE *stream, FILE *zStream )
     if (ferror(stream)) goto errhandler_io;
     if (ferror(zStream)) goto errhandler_io;
  
@@ -185,7 +825,7 @@ diff -Naur bzip2-1.0.6-orig/bzip2.c bzip2-1.0.6/bzip2.c
     while (True) {
  
        if (myfeof(stream)) break;
-@@ -355,6 +372,22 @@
+@@ -355,6 +372,22 @@ void compressStream ( FILE *stream, FILE *zStream )
        if (nIbuf > 0) BZ2_bzWrite ( &bzerr, bzf, (void*)ibuf, nIbuf );
        if (bzerr != BZ_OK) goto errhandler;
  
@@ -208,7 +848,7 @@ diff -Naur bzip2-1.0.6-orig/bzip2.c bzip2-1.0.6/bzip2.c
     }
  
     BZ2_bzWriteClose64 ( &bzerr, bzf, 0, 
-@@ -439,6 +472,8 @@
+@@ -439,6 +472,8 @@ Bool uncompressStream ( FILE *zStream, FILE *stream )
     Int32   nUnused;
     void*   unusedTmpV;
     UChar*  unusedTmp;
@@ -217,7 +857,7 @@ diff -Naur bzip2-1.0.6-orig/bzip2.c bzip2-1.0.6/bzip2.c
  
     nUnused = 0;
     streamNo = 0;
-@@ -446,9 +481,19 @@
+@@ -446,9 +481,19 @@ Bool uncompressStream ( FILE *zStream, FILE *stream )
     SET_BINARY_MODE(stream);
     SET_BINARY_MODE(zStream);
  
@@ -237,7 +877,7 @@ diff -Naur bzip2-1.0.6-orig/bzip2.c bzip2-1.0.6/bzip2.c
     while (True) {
  
        bzf = BZ2_bzReadOpen ( 
-@@ -464,6 +509,16 @@
+@@ -464,6 +509,16 @@ Bool uncompressStream ( FILE *zStream, FILE *stream )
           if ((bzerr == BZ_OK || bzerr == BZ_STREAM_END) && nread > 0)
              fwrite ( obuf, sizeof(UChar), nread, stream );
           if (ferror(stream)) goto errhandler_io;
@@ -254,7 +894,7 @@ diff -Naur bzip2-1.0.6-orig/bzip2.c bzip2-1.0.6/bzip2.c
        }
        if (bzerr != BZ_STREAM_END) goto errhandler;
  
-@@ -1132,8 +1187,8 @@
+@@ -1132,8 +1187,8 @@ Bool mapSuffix ( Char* name,
  static 
  void compress ( Char *name )
  {
@@ -265,7 +905,7 @@ diff -Naur bzip2-1.0.6-orig/bzip2.c bzip2-1.0.6/bzip2.c
     Int32 n, i;
     struct MY_STAT statBuf;
  
-@@ -1313,8 +1368,8 @@
+@@ -1313,8 +1368,8 @@ void compress ( Char *name )
  static 
  void uncompress ( Char *name )
  {
@@ -276,7 +916,7 @@ diff -Naur bzip2-1.0.6-orig/bzip2.c bzip2-1.0.6/bzip2.c
     Int32 n, i;
     Bool  magicNumberOK;
     Bool  cantGuess;
-@@ -1511,7 +1566,7 @@
+@@ -1511,7 +1566,7 @@ void uncompress ( Char *name )
  static 
  void testf ( Char *name )
  {
@@ -285,7 +925,7 @@ diff -Naur bzip2-1.0.6-orig/bzip2.c bzip2-1.0.6/bzip2.c
     Bool allOK;
     struct MY_STAT statBuf;
  
-@@ -1803,6 +1858,7 @@
+@@ -1803,6 +1858,7 @@ IntNative main ( IntNative argc, Char *argv[] )
     deleteOutputOnInterrupt = False;
     exitValue               = 0;
     i = j = 0; /* avoid bogus warning from egcs-1.1.X */
@@ -293,7 +933,7 @@ diff -Naur bzip2-1.0.6-orig/bzip2.c bzip2-1.0.6/bzip2.c
  
     /*-- Set up signal handlers for mem access errors --*/
     signal (SIGSEGV, mySIGSEGVorSIGBUScatcher);
-@@ -1880,6 +1936,7 @@
+@@ -1880,6 +1936,7 @@ IntNative main ( IntNative argc, Char *argv[] )
                 case 'k': keepInputFiles   = True; break;
                 case 's': smallMode        = True; break;
                 case 'q': noisy            = False; break;
@@ -301,7 +941,7 @@ diff -Naur bzip2-1.0.6-orig/bzip2.c bzip2-1.0.6/bzip2.c
                 case '1': blockSize100k    = 1; break;
                 case '2': blockSize100k    = 2; break;
                 case '3': blockSize100k    = 3; break;
-@@ -1916,6 +1973,7 @@
+@@ -1916,6 +1973,7 @@ IntNative main ( IntNative argc, Char *argv[] )
        if (ISFLAG("--keep"))              keepInputFiles   = True;    else
        if (ISFLAG("--small"))             smallMode        = True;    else
        if (ISFLAG("--quiet"))             noisy            = False;   else
@@ -309,9 +949,10 @@ diff -Naur bzip2-1.0.6-orig/bzip2.c bzip2-1.0.6/bzip2.c
        if (ISFLAG("--version"))           license();                  else
        if (ISFLAG("--license"))           license();                  else
        if (ISFLAG("--exponential"))       workFactor = 1;             else 
-diff -Naur bzip2-1.0.6-orig/bzip2recover.c bzip2-1.0.6/bzip2recover.c
---- bzip2-1.0.6-orig/bzip2recover.c	2010-09-10 23:18:40.000000000 +0000
-+++ bzip2-1.0.6/bzip2recover.c	2013-02-13 04:51:08.000000000 +0000
+diff --git a/bzip2recover.c b/bzip2recover.c
+index a8131e0..3a9eb8f 100644
+--- a/bzip2recover.c
++++ b/bzip2recover.c
 @@ -24,6 +24,8 @@
  #include <errno.h>
  #include <stdlib.h>
@@ -321,7 +962,7 @@ diff -Naur bzip2-1.0.6-orig/bzip2recover.c bzip2-1.0.6/bzip2recover.c
  
  
  /* This program records bit locations in the file to be recovered.
-@@ -269,6 +271,19 @@
+@@ -269,6 +271,19 @@ static Bool endsInBz2 ( Char* name )
         name[n-1] == '2');
  }
  
@@ -341,7 +982,7 @@ diff -Naur bzip2-1.0.6-orig/bzip2recover.c bzip2-1.0.6/bzip2recover.c
  
  /*---------------------------------------------------*/
  /*---                                             ---*/
-@@ -486,7 +503,7 @@
+@@ -488,7 +503,7 @@ Int32 main ( Int32 argc, Char** argv )
           fprintf ( stderr, "   writing block %d to `%s' ...\n",
                             wrBlock+1, outFileName );
  
@@ -350,10 +991,11 @@ diff -Naur bzip2-1.0.6-orig/bzip2recover.c bzip2-1.0.6/bzip2recover.c
           if (outFile == NULL) {
              fprintf ( stderr, "%s: can't write `%s'\n",
                        progName, outFileName );
-diff -Naur bzip2-1.0.6-orig/bzlib.c bzip2-1.0.6/bzlib.c
---- bzip2-1.0.6-orig/bzlib.c	2010-09-10 22:38:23.000000000 +0000
-+++ bzip2-1.0.6/bzlib.c	2013-02-13 04:51:08.000000000 +0000
-@@ -1372,7 +1372,7 @@
+diff --git a/bzlib.c b/bzlib.c
+index 2178655..179c311 100644
+--- a/bzlib.c
++++ b/bzlib.c
+@@ -1372,7 +1372,7 @@ const char * BZ_API(BZ2_bzlibVersion)(void)
  #ifndef BZ_NO_STDIO
  /*---------------------------------------------------*/
  
@@ -362,10 +1004,11 @@ diff -Naur bzip2-1.0.6-orig/bzlib.c bzip2-1.0.6/bzlib.c
  #   include <fcntl.h>
  #   include <io.h>
  #   define SET_BINARY_MODE(file) setmode(fileno(file),O_BINARY)
-diff -Naur bzip2-1.0.6-orig/bzlib.h bzip2-1.0.6/bzlib.h
---- bzip2-1.0.6-orig/bzlib.h	2010-09-10 23:08:42.000000000 +0000
-+++ bzip2-1.0.6/bzlib.h	2013-02-13 04:51:08.000000000 +0000
-@@ -75,21 +75,39 @@
+diff --git a/bzlib.h b/bzlib.h
+index 8966a6c..53f19c2 100644
+--- a/bzlib.h
++++ b/bzlib.h
+@@ -75,21 +75,39 @@ typedef
  #include <stdio.h>
  #endif
  
@@ -412,10 +1055,11 @@ diff -Naur bzip2-1.0.6-orig/bzlib.h bzip2-1.0.6/bzlib.h
  #   define BZ_API(func) func
  #   define BZ_EXTERN extern
  #endif
-diff -Naur bzip2-1.0.6-orig/bzmore bzip2-1.0.6/bzmore
---- bzip2-1.0.6-orig/bzmore	2007-01-03 02:00:55.000000000 +0000
-+++ bzip2-1.0.6/bzmore	2013-02-13 04:51:08.000000000 +0000
-@@ -24,10 +24,10 @@
+diff --git a/bzmore b/bzmore
+index d314043..f423ed9 100644
+--- a/bzmore
++++ b/bzmore
+@@ -24,10 +24,10 @@ else
    # 'stty min 1' resets eof to ^a on both SunOS and SysV!
    cb='min 1 -icanon'; ncb='icanon eof ^d'
  fi
@@ -429,7 +1073,7 @@ diff -Naur bzip2-1.0.6-orig/bzmore bzip2-1.0.6/bzmore
  fi
  
  if test $# = 0; then
-@@ -46,7 +46,7 @@
+@@ -46,7 +46,7 @@ else
  		ANS=`dd bs=1 count=1 2>/dev/null` 
  		stty $ncb echo 2>/dev/null
  		echo " "
@@ -438,9 +1082,11 @@ diff -Naur bzip2-1.0.6-orig/bzmore bzip2-1.0.6/bzmore
  			exit
  		fi
  	fi
-diff -Naur bzip2-1.0.6-orig/configure bzip2-1.0.6/configure
---- bzip2-1.0.6-orig/configure	1970-01-01 00:00:00.000000000 +0000
-+++ bzip2-1.0.6/configure	2013-02-13 04:57:54.000000000 +0000
+diff --git a/configure b/configure
+new file mode 100644
+index 0000000..d29c89a
+--- /dev/null
++++ b/configure
 @@ -0,0 +1,4003 @@
 +#! /bin/sh
 +# Guess values for system-dependent variables and create Makefiles.
@@ -3083,7 +3729,7 @@ diff -Naur bzip2-1.0.6-orig/configure bzip2-1.0.6/configure
 +$as_echo "${dllver}" >&6; }
 + { $as_echo "$as_me:${as_lineno-$LINENO}: checking for base name of DLL shared libraries" >&5
 +$as_echo_n "checking for base name of DLL shared libraries... " >&6; }
-+ dllname=msys-bz2
++ dllname=cygbz2
 +  test "x$bzip2_cv_windows_host" = xyes && dllname=libbz2
 + DLLNAME=${dllname}
 +
@@ -4445,9 +5091,11 @@ diff -Naur bzip2-1.0.6-orig/configure bzip2-1.0.6/configure
 +
 +
 +# configure.ac: end of file
-diff -Naur bzip2-1.0.6-orig/configure.ac bzip2-1.0.6/configure.ac
---- bzip2-1.0.6-orig/configure.ac	1970-01-01 00:00:00.000000000 +0000
-+++ bzip2-1.0.6/configure.ac	2011-05-21 04:35:18.000000000 +0000
+diff --git a/configure.ac b/configure.ac
+new file mode 100644
+index 0000000..cafe5fb
+--- /dev/null
++++ b/configure.ac
 @@ -0,0 +1,39 @@
 +AC_INIT([bzip2],[1.0.7])
 +# ------------------------------------------------------------------
@@ -4488,9 +5136,11 @@ diff -Naur bzip2-1.0.6-orig/configure.ac bzip2-1.0.6/configure.ac
 +AC_OUTPUT
 +
 +# configure.ac: end of file
-diff -Naur bzip2-1.0.6-orig/libbz2.def.in bzip2-1.0.6/libbz2.def.in
---- bzip2-1.0.6-orig/libbz2.def.in	1970-01-01 00:00:00.000000000 +0000
-+++ bzip2-1.0.6/libbz2.def.in	2011-05-21 04:35:45.000000000 +0000
+diff --git a/libbz2.def.in b/libbz2.def.in
+new file mode 100644
+index 0000000..e233a73
+--- /dev/null
++++ b/libbz2.def.in
 @@ -0,0 +1,27 @@
 +LIBRARY			%DLLNAME%-%DLLVER%
 +DESCRIPTION		"libbzip2: library for data compression"
@@ -4519,609 +5169,6 @@ diff -Naur bzip2-1.0.6-orig/libbz2.def.in bzip2-1.0.6/libbz2.def.in
 +	BZ2_bzflush
 +	BZ2_bzclose
 +	BZ2_bzerror
-diff -Naur bzip2-1.0.6-orig/Makefile bzip2-1.0.6/Makefile
---- bzip2-1.0.6-orig/Makefile	2010-09-10 22:46:02.000000000 +0000
-+++ bzip2-1.0.6/Makefile	1970-01-01 00:00:00.000000000 +0000
-@@ -1,217 +0,0 @@
--# ------------------------------------------------------------------
--# This file is part of bzip2/libbzip2, a program and library for
--# lossless, block-sorting data compression.
--#
--# bzip2/libbzip2 version 1.0.8 of 13 July 2019
--# Copyright (C) 1996-2019 Julian Seward <jseward@acm.org>
--#
--# Please read the WARNING, DISCLAIMER and PATENTS sections in the 
--# README file.
--#
--# This program is released under the terms of the license contained
--# in the file LICENSE.
--# ------------------------------------------------------------------
--
--SHELL=/bin/sh
--
--# To assist in cross-compiling
--CC=gcc
--AR=ar
--RANLIB=ranlib
--LDFLAGS=
--
--BIGFILES=-D_FILE_OFFSET_BITS=64
--CFLAGS=-Wall -Winline -O2 -g $(BIGFILES)
--
--# Where you want it installed when you do 'make install'
--PREFIX=/usr/local
--
--
--OBJS= blocksort.o  \
--      huffman.o    \
--      crctable.o   \
--      randtable.o  \
--      compress.o   \
--      decompress.o \
--      bzlib.o
--
--all: libbz2.a bzip2 bzip2recover test
--
--bzip2: libbz2.a bzip2.o
--	$(CC) $(CFLAGS) $(LDFLAGS) -o bzip2 bzip2.o -L. -lbz2
--
--bzip2recover: bzip2recover.o
--	$(CC) $(CFLAGS) $(LDFLAGS) -o bzip2recover bzip2recover.o
--
--libbz2.a: $(OBJS)
--	rm -f libbz2.a
--	$(AR) cq libbz2.a $(OBJS)
--	@if ( test -f $(RANLIB) -o -f /usr/bin/ranlib -o \
--		-f /bin/ranlib -o -f /usr/ccs/bin/ranlib ) ; then \
--		echo $(RANLIB) libbz2.a ; \
--		$(RANLIB) libbz2.a ; \
--	fi
--
--check: test
--test: bzip2
--	@cat words1
--	./bzip2 -1  < sample1.ref > sample1.rb2
--	./bzip2 -2  < sample2.ref > sample2.rb2
--	./bzip2 -3  < sample3.ref > sample3.rb2
--	./bzip2 -d  < sample1.bz2 > sample1.tst
--	./bzip2 -d  < sample2.bz2 > sample2.tst
--	./bzip2 -ds < sample3.bz2 > sample3.tst
--	cmp sample1.bz2 sample1.rb2 
--	cmp sample2.bz2 sample2.rb2
--	cmp sample3.bz2 sample3.rb2
--	cmp sample1.tst sample1.ref
--	cmp sample2.tst sample2.ref
--	cmp sample3.tst sample3.ref
--	@cat words3
--
--install: bzip2 bzip2recover
--	if ( test ! -d $(PREFIX)/bin ) ; then mkdir -p $(PREFIX)/bin ; fi
--	if ( test ! -d $(PREFIX)/lib ) ; then mkdir -p $(PREFIX)/lib ; fi
--	if ( test ! -d $(PREFIX)/man ) ; then mkdir -p $(PREFIX)/man ; fi
--	if ( test ! -d $(PREFIX)/man/man1 ) ; then mkdir -p $(PREFIX)/man/man1 ; fi
--	if ( test ! -d $(PREFIX)/include ) ; then mkdir -p $(PREFIX)/include ; fi
--	cp -f bzip2 $(PREFIX)/bin/bzip2
--	cp -f bzip2 $(PREFIX)/bin/bunzip2
--	cp -f bzip2 $(PREFIX)/bin/bzcat
--	cp -f bzip2recover $(PREFIX)/bin/bzip2recover
--	chmod a+x $(PREFIX)/bin/bzip2
--	chmod a+x $(PREFIX)/bin/bunzip2
--	chmod a+x $(PREFIX)/bin/bzcat
--	chmod a+x $(PREFIX)/bin/bzip2recover
--	cp -f bzip2.1 $(PREFIX)/man/man1
--	chmod a+r $(PREFIX)/man/man1/bzip2.1
--	cp -f bzlib.h $(PREFIX)/include
--	chmod a+r $(PREFIX)/include/bzlib.h
--	cp -f libbz2.a $(PREFIX)/lib
--	chmod a+r $(PREFIX)/lib/libbz2.a
--	cp -f bzgrep $(PREFIX)/bin/bzgrep
--	ln -s -f $(PREFIX)/bin/bzgrep $(PREFIX)/bin/bzegrep
--	ln -s -f $(PREFIX)/bin/bzgrep $(PREFIX)/bin/bzfgrep
--	chmod a+x $(PREFIX)/bin/bzgrep
--	cp -f bzmore $(PREFIX)/bin/bzmore
--	ln -s -f $(PREFIX)/bin/bzmore $(PREFIX)/bin/bzless
--	chmod a+x $(PREFIX)/bin/bzmore
--	cp -f bzdiff $(PREFIX)/bin/bzdiff
--	ln -s -f $(PREFIX)/bin/bzdiff $(PREFIX)/bin/bzcmp
--	chmod a+x $(PREFIX)/bin/bzdiff
--	cp -f bzgrep.1 bzmore.1 bzdiff.1 $(PREFIX)/man/man1
--	chmod a+r $(PREFIX)/man/man1/bzgrep.1
--	chmod a+r $(PREFIX)/man/man1/bzmore.1
--	chmod a+r $(PREFIX)/man/man1/bzdiff.1
--	echo ".so man1/bzgrep.1" > $(PREFIX)/man/man1/bzegrep.1
--	echo ".so man1/bzgrep.1" > $(PREFIX)/man/man1/bzfgrep.1
--	echo ".so man1/bzmore.1" > $(PREFIX)/man/man1/bzless.1
--	echo ".so man1/bzdiff.1" > $(PREFIX)/man/man1/bzcmp.1
--
--clean: 
--	rm -f *.o libbz2.a bzip2 bzip2recover \
--	sample1.rb2 sample2.rb2 sample3.rb2 \
--	sample1.tst sample2.tst sample3.tst
--
--blocksort.o: blocksort.c
--	@cat words0
--	$(CC) $(CFLAGS) -c blocksort.c
--huffman.o: huffman.c
--	$(CC) $(CFLAGS) -c huffman.c
--crctable.o: crctable.c
--	$(CC) $(CFLAGS) -c crctable.c
--randtable.o: randtable.c
--	$(CC) $(CFLAGS) -c randtable.c
--compress.o: compress.c
--	$(CC) $(CFLAGS) -c compress.c
--decompress.o: decompress.c
--	$(CC) $(CFLAGS) -c decompress.c
--bzlib.o: bzlib.c
--	$(CC) $(CFLAGS) -c bzlib.c
--bzip2.o: bzip2.c
--	$(CC) $(CFLAGS) -c bzip2.c
--bzip2recover.o: bzip2recover.c
--	$(CC) $(CFLAGS) -c bzip2recover.c
--
--
--distclean: clean
--	rm -f manual.ps manual.html manual.pdf
--
--DISTNAME=bzip2-1.0.8
--dist: check manual
--	rm -f $(DISTNAME)
--	ln -s -f . $(DISTNAME)
--	tar cvf $(DISTNAME).tar \
--	   $(DISTNAME)/blocksort.c \
--	   $(DISTNAME)/huffman.c \
--	   $(DISTNAME)/crctable.c \
--	   $(DISTNAME)/randtable.c \
--	   $(DISTNAME)/compress.c \
--	   $(DISTNAME)/decompress.c \
--	   $(DISTNAME)/bzlib.c \
--	   $(DISTNAME)/bzip2.c \
--	   $(DISTNAME)/bzip2recover.c \
--	   $(DISTNAME)/bzlib.h \
--	   $(DISTNAME)/bzlib_private.h \
--	   $(DISTNAME)/Makefile \
--	   $(DISTNAME)/LICENSE \
--	   $(DISTNAME)/bzip2.1 \
--	   $(DISTNAME)/bzip2.1.preformatted \
--	   $(DISTNAME)/bzip2.txt \
--	   $(DISTNAME)/words0 \
--	   $(DISTNAME)/words1 \
--	   $(DISTNAME)/words2 \
--	   $(DISTNAME)/words3 \
--	   $(DISTNAME)/sample1.ref \
--	   $(DISTNAME)/sample2.ref \
--	   $(DISTNAME)/sample3.ref \
--	   $(DISTNAME)/sample1.bz2 \
--	   $(DISTNAME)/sample2.bz2 \
--	   $(DISTNAME)/sample3.bz2 \
--	   $(DISTNAME)/dlltest.c \
--	   $(DISTNAME)/manual.html \
--	   $(DISTNAME)/manual.pdf \
--	   $(DISTNAME)/manual.ps \
--	   $(DISTNAME)/README \
--	   $(DISTNAME)/README.COMPILATION.PROBLEMS \
--	   $(DISTNAME)/README.XML.STUFF \
--	   $(DISTNAME)/CHANGES \
--	   $(DISTNAME)/libbz2.def \
--	   $(DISTNAME)/libbz2.dsp \
--	   $(DISTNAME)/dlltest.dsp \
--	   $(DISTNAME)/makefile.msc \
--	   $(DISTNAME)/unzcrash.c \
--	   $(DISTNAME)/spewG.c \
--	   $(DISTNAME)/mk251.c \
--	   $(DISTNAME)/bzdiff \
--	   $(DISTNAME)/bzdiff.1 \
--	   $(DISTNAME)/bzmore \
--	   $(DISTNAME)/bzmore.1 \
--	   $(DISTNAME)/bzgrep \
--	   $(DISTNAME)/bzgrep.1 \
--	   $(DISTNAME)/Makefile-libbz2_so \
--	   $(DISTNAME)/bz-common.xsl \
--	   $(DISTNAME)/bz-fo.xsl \
--	   $(DISTNAME)/bz-html.xsl \
--	   $(DISTNAME)/bzip.css \
--	   $(DISTNAME)/entities.xml \
--	   $(DISTNAME)/manual.xml \
--	   $(DISTNAME)/format.pl \
--	   $(DISTNAME)/xmlproc.sh
--	gzip -v $(DISTNAME).tar
--
--# For rebuilding the manual from sources on my SuSE 9.1 box
--
--MANUAL_SRCS= 	bz-common.xsl bz-fo.xsl bz-html.xsl bzip.css \
--		entities.xml manual.xml 
--
--manual: manual.html manual.ps manual.pdf
--
--manual.ps: $(MANUAL_SRCS)
--	./xmlproc.sh -ps manual.xml
--
--manual.pdf: $(MANUAL_SRCS)
--	./xmlproc.sh -pdf manual.xml
--
--manual.html: $(MANUAL_SRCS)
--	./xmlproc.sh -html manual.xml
-diff -Naur bzip2-1.0.6-orig/Makefile.in bzip2-1.0.6/Makefile.in
---- bzip2-1.0.6-orig/Makefile.in	1970-01-01 00:00:00.000000000 +0000
-+++ bzip2-1.0.6/Makefile.in	2011-05-21 19:10:44.000000000 +0000
-@@ -0,0 +1,381 @@
-+# @configure_input@
-+# ------------------------------------------------------------------
-+# This file is part of bzip2/libbzip2, a program and library for
-+# lossless, block-sorting data compression.
-+#
-+# bzip2/libbzip2 version 1.0.6 of 6 September 2010
-+# Copyright (C) 1996-2010 Julian Seward <jseward@bzip.org>
-+#
-+# File: Makefile.in for autoconf configuration
-+# Contributed by Keith Marshall <keithmarshall@users.sourceforge.net>
-+#
-+# Please read the WARNING, DISCLAIMER and PATENTS sections in the 
-+# README file.
-+#
-+# This program is released under the terms of the license contained
-+# in the file LICENSE.
-+# ------------------------------------------------------------------
-+
-+PACKAGE	   =	@PACKAGE_TARNAME@
-+VERSION	   =	@PACKAGE_VERSION@
-+
-+# If building libbz2 as a shared library, we use these version tags,
-+SO_VER	   =	1
-+SO_AGE	   =    0
-+SO_REV	   =	6
-+#
-+# This yields a shared object library name below, following the
-+# normal naming rules -- most linux distributions patch Julian's
-+# original makefile to do something similar.
-+#
-+SO_MAJOR   :=   $(shell expr $(SO_VER) - $(SO_AGE))
-+SONAME	   =	libbz2.so.$(SO_MAJOR)
-+SOFULL     =    $(SONAME).$(SO_AGE).$(SO_REV)
-+
-+# For MS-Windows hosts, Julian's original build strategy, (and that
-+# still adopted for building with MSVC), creates an unversioned DLL,
-+# exporting functions using the __stdcall (WINAPI) calling convention.
-+# Conversly, MinGW developers have chosen to sanitise the libbz2 ABI,
-+# avoiding the use of the __stdcall calling convention, in favour of
-+# the more GNU/Linux-alike __cdecl convention.
-+#
-+# To permit MinGW builds of libbz2.dll to co-exist, in the developer
-+# universe, with MSVC builds, the MinGW Project has specified a scheme
-+# for distribution of versioned DLLs, unambiguously named libbz2-N.dll,
-+# where N is an ABI version number, nominally computed as:
-+#
-+#   SO_VER - SO_AGE	(ignoring SO_REV)
-+#
-+# Unfortunately, at an early stage in the evolution of the MinGW
-+# versioned libbz2-N.dll, at a time when this version paradigm would
-+# have yielded N = 1, a libbz2-1.dll was released, which employed the
-+# __stdcall calling convention.  Thus, to avoid potential confusion
-+# with this early release, and specific to the case of libbz2-N.dll,
-+# the DLLVER for the __cdecl releases, as computed by the configure
-+# script will lead the nominal value by one, becoming effectively:
-+#
-+#   1 + SO_VER - SO_AGE
-+#
-+# Note that for cygwin, a similar scheme (SO_VER - SO_AGE) is used,
-+# but on that platform the extra +1 is not needed.
-+DLLVER	   =	@DLLVER@
-+DLLNAME    =    @DLLNAME@
-+LIBNAME    =    libbz2
-+
-+
-+# Shell used by make...
-+#
-+SHELL	   =	@SHELL@
-+
-+# Where to find the sources...
-+#
-+VPATH	   =	${srcdir}
-+srcdir	   =	@srcdir@
-+
-+# To assist in cross-compiling...
-+#
-+CC	   =	@CC@
-+AR	   =	@AR@
-+RANLIB	   =	@RANLIB@
-+LN_S	   =	@LN_S@
-+
-+OBJEXT	   =	@OBJEXT@
-+EXEEXT	   =	@EXEEXT@
-+
-+BIGFILES   =	-D_FILE_OFFSET_BITS=64
-+CFLAGS	   =	@CFLAGS@ $(BIGFILES)
-+LDFLAGS	   =	@LDFLAGS@
-+ARFLAGS    =	@ARFLAGS@
-+
-+# Where you want it installed when you do 'make install'
-+#
-+PREFIX	   =	@prefix@
-+
-+OBJS= blocksort.$(OBJEXT)  \
-+      huffman.$(OBJEXT)    \
-+      crctable.$(OBJEXT)   \
-+      randtable.$(OBJEXT)  \
-+      compress.$(OBJEXT)   \
-+      decompress.$(OBJEXT) \
-+      bzlib.$(OBJEXT)
-+
-+# Default build goals...
-+#
-+all: all-libs bzip2$(EXEEXT) bzip2recover$(EXEEXT)
-+all-libs: libbz2.a @enable_shared@
-+
-+bzip2$(EXEEXT): libbz2.a bzip2.$(OBJEXT)
-+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ bzip2.$(OBJEXT) -L. -lbz2
-+
-+bzip2recover$(EXEEXT): bzip2recover.$(OBJEXT)
-+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
-+
-+libbz2.a: $(OBJS)
-+	rm -f $@
-+	$(AR) $(ARFLAGS) $@ $(OBJS)
-+	$(RANLIB) $@
-+
-+blocksort.$(OBJEXT): blocksort.c
-+	@cat ${srcdir}/words0
-+	$(CC) $(CFLAGS) -c -o $@ $^
-+
-+%.$(OBJEXT): %.c
-+	$(CC) $(CFLAGS) -c -o$@ $<
-+
-+# Building using a shared library, for dynamic linking on GNU/Linux...
-+# (Invoked when configured with `--enable-shared' for a non-Win32 host).
-+#
-+# This is incorporated from Julian's original Makefile-libbz2_so.
-+# It is reported to work successfully on x86-Linux (Red Hat 7.2), with
-+# gcc-2.96 20000731 (Red Hat Linux 7.1 2.96-98); YMMV.
-+#
-+# Please refer to README, for important information regarding building
-+# libbz2 as a shared library, in this manner.
-+#
-+PICFLAGS = -fpic -fPIC -Wall -Winline $(CFLAGS)
-+
-+all-bzip2-shared: bzip2-shared$(EXEEXT)
-+bzip2-shared$(EXEEXT): bzip2.c $(SOFULL)
-+	$(CC) $(PICFLAGS) -o $@ $^
-+	
-+$(SOFULL): $(OBJS:.$(OBJEXT)=-pic.$(OBJEXT))
-+	$(CC) -shared -Wl,-soname -Wl,$(SONAME) -o $@ $^
-+	rm -f $(SONAME); $(LN_S) $@ $(SONAME)
-+	rm -f $(SONAME).$(SO_AGE); $(LN_S) $@ $(SONAME).$(SO_AGE)
-+
-+%-pic.$(OBJEXT): %.c
-+	$(CC) $(PICFLAGS) -c -o $@ $<
-+
-+# Building using a shared library, for dynamic linking on MS-Windows
-+# and cygwin...
-+# (Invoked when configured with `--enable-shared' for a Win32/cygwin host)
-+
-+all-dll-shared: $(LIBNAME).dll.a
-+
-+$(LIBNAME).dll.a: $(DLLNAME)-$(DLLVER).dll
-+
-+$(DLLNAME)-$(DLLVER).dll: libbz2.def libbz2.a
-+	$(CC) -shared -o $@ $(LDFLAGS) -Wl,--out-implib=$(LIBNAME).dll.a $^
-+
-+libbz2.def: libbz2.def.in
-+	sed -e s,%DLLNAME%,$(DLLNAME), -e s,%DLLVER%,$(DLLVER), $^ > $@
-+
-+# Build validation...
-+#
-+check: test
-+test: bzip2$(EXEEXT)
-+	@cat ${srcdir}/words1
-+	./bzip2$(EXEEXT) -1  < ${srcdir}/sample1.ref > sample1.rb2
-+	./bzip2$(EXEEXT) -2  < ${srcdir}/sample2.ref > sample2.rb2
-+	./bzip2$(EXEEXT) -3  < ${srcdir}/sample3.ref > sample3.rb2
-+	./bzip2$(EXEEXT) -d  < ${srcdir}/sample1.bz2 > sample1.tst
-+	./bzip2$(EXEEXT) -d  < ${srcdir}/sample2.bz2 > sample2.tst
-+	./bzip2$(EXEEXT) -ds < ${srcdir}/sample3.bz2 > sample3.tst
-+	cmp ${srcdir}/sample1.bz2 sample1.rb2 
-+	cmp ${srcdir}/sample2.bz2 sample2.rb2
-+	cmp ${srcdir}/sample3.bz2 sample3.rb2
-+	cmp sample1.tst ${srcdir}/sample1.ref
-+	cmp sample2.tst ${srcdir}/sample2.ref
-+	cmp sample3.tst ${srcdir}/sample3.ref
-+	@cat ${srcdir}/words3
-+
-+# GNU Standard Specifications for Installation Directories...
-+#
-+prefix = $(PREFIX)
-+exec_prefix = @exec_prefix@
-+
-+bindir = @bindir@
-+datarootdir = @datarootdir@
-+includedir = @includedir@
-+libdir = @libdir@
-+
-+# `man' Documentation Hierarchy, in Terms of GNU Standards...
-+#
-+# FIXME: Julian's original distribution wasn't fully compliant
-+# with current GNU Standards; to achieve compliance, we must use
-+# this autotool standard definition:
-+#
-+#   mandir = @mandir@
-+#
-+# in place of:
-+#
-+#   mandir = $(PREFIX)/man
-+#
-+# which preserves Julian's original configuration.
-+#
-+mandir = $(PREFIX)/share/man
-+man1dir = ${mandir}/man1
-+
-+# Installation...
-+#
-+FORCE:
-+${bindir} ${includedir} ${libdir} ${man1dir}: FORCE
-+	test -d $@ || mkdir -p $@
-+
-+install: all ${bindir} ${includedir} ${libdir} ${man1dir}
-+	cp -f bzip2$(EXEEXT) ${bindir}/bzip2$(EXEEXT)
-+	cp -f bzip2$(EXEEXT) ${bindir}/bunzip2$(EXEEXT)
-+	cp -f bzip2$(EXEEXT) ${bindir}/bzcat$(EXEEXT)
-+	cp -f bzip2recover$(EXEEXT) ${bindir}/bzip2recover$(EXEEXT)
-+	if test -f $(DLLNAME)-$(DLLVER).dll; \
-+	then \
-+	  cp -f $(DLLNAME)-$(DLLVER).dll ${bindir}/$(DLLNAME)-$(DLLVER).dll; \
-+	  chmod a+rx ${bindir}/$(DLLNAME)-$(DLLVER).dll; \
-+	fi
-+	chmod a+x ${bindir}/bzip2$(EXEEXT)
-+	chmod a+x ${bindir}/bunzip2$(EXEEXT)
-+	chmod a+x ${bindir}/bzcat$(EXEEXT)
-+	chmod a+x ${bindir}/bzip2recover$(EXEEXT)
-+	cp -f ${srcdir}/bzlib.h ${includedir}
-+	chmod a+r ${includedir}/bzlib.h
-+	cp -f libbz2.a ${libdir}
-+	if test -f $(LIBNAME).dll.a; \
-+	then \
-+	  cp -f $(LIBNAME).dll.a ${libdir}/$(LIBNAME).dll.a; \
-+	  chmod a+r ${libdir}/$(LIBNAME).dll.a; \
-+	fi
-+	chmod a+r ${libdir}/libbz2.a
-+	if test -f $(SOFULL); \
-+	then \
-+	  cp -f $(SOFULL) ${libdir}; \
-+	  cd ${libdir}; rm -f $(SO_NAME).$(SO_AGE) $(SONAME); \
-+	  $(LN_S) $(SOFULL) $(SONAME).$(SO_AGE); \
-+	  $(LN_S) $(SOFULL) $(SONAME); \
-+	  chmod a+r $(SOFULL); \
-+	fi
-+	cp -f ${srcdir}/bzgrep ${bindir}/bzgrep
-+	cd ${bindir}; $(LN_S) -f bzgrep bzegrep
-+	cd ${bindir}; $(LN_S) -f bzgrep bzfgrep
-+	chmod a+x ${bindir}/bzgrep
-+	cp -f ${srcdir}/bzmore ${bindir}/bzmore
-+	cd ${bindir}; $(LN_S) -f bzmore bzless
-+	chmod a+x ${bindir}/bzmore
-+	cp -f ${srcdir}/bzdiff ${bindir}/bzdiff
-+	cd ${bindir}; $(LN_S) -f bzdiff bzcmp
-+	chmod a+x ${bindir}/bzdiff
-+	cd ${srcdir}; cp -f bzip2.1 bzgrep.1 bzmore.1 bzdiff.1 ${man1dir}
-+	chmod a+r ${man1dir}/bzip2.1
-+	chmod a+r ${man1dir}/bzgrep.1
-+	chmod a+r ${man1dir}/bzmore.1
-+	chmod a+r ${man1dir}/bzdiff.1
-+	echo ".so man1/bzgrep.1" > ${man1dir}/bzegrep.1
-+	echo ".so man1/bzgrep.1" > ${man1dir}/bzfgrep.1
-+	echo ".so man1/bzmore.1" > ${man1dir}/bzless.1
-+	echo ".so man1/bzdiff.1" > ${man1dir}/bzcmp.1
-+
-+ldconfig:
-+	ldconfig -n ${libdir}
-+
-+# Housekeeping...
-+#
-+clean: 
-+	cmp > /dev/null 2>&1 ${srcdir}/libbz2.def libbz2.def \
-+	  || rm -f libbz2.def
-+	rm -f *.$(OBJEXT) libbz2*.a $(DLLNAME)*.dll  \
-+	bzip2$(EXEEXT) bzip2recover$(EXEEXT) \
-+	sample1.rb2 sample2.rb2 sample3.rb2 \
-+	sample1.tst sample2.tst sample3.tst
-+
-+distclean: clean
-+	rm -f config.status config.log Makefile
-+
-+# NOTE: Julian's original Makefile had these in `distclean'.
-+# Since they are `distributables', that might have surprised
-+# users expecting GNU standard behaviour; they rightfully
-+# belong in `maintainer-clean'.
-+#
-+maintainer-clean: clean
-+	rm -f manual.ps manual.html manual.pdf
-+
-+# Distribution...
-+#
-+DISTNAME = $(PACKAGE)-$(VERSION)
-+#
-+# FIXME: this method of creating a source distribution works fine
-+# on systems which fully support symbolic links between directories;
-+# it cannot be used reliably, on MS-Windows hosts running MSYS.
-+#
-+dist: manual
-+	rm -f $(DISTNAME) $(DISTNAME)$(SNAPSHOT).*
-+	$(LN_S) -f ${srcdir} $(DISTNAME)
-+	tar cvf $(DISTNAME)$(SNAPSHOT).tar \
-+	   $(DISTNAME)/aclocal.m4 \
-+	   $(DISTNAME)/configure \
-+	   $(DISTNAME)/configure.ac \
-+	   $(DISTNAME)/Makefile.in \
-+	   $(DISTNAME)/blocksort.c \
-+	   $(DISTNAME)/huffman.c \
-+	   $(DISTNAME)/crctable.c \
-+	   $(DISTNAME)/randtable.c \
-+	   $(DISTNAME)/compress.c \
-+	   $(DISTNAME)/decompress.c \
-+	   $(DISTNAME)/bzlib.c \
-+	   $(DISTNAME)/bzip2.c \
-+	   $(DISTNAME)/bzip2recover.c \
-+	   $(DISTNAME)/bzlib.h \
-+	   $(DISTNAME)/bzlib_private.h \
-+	   $(DISTNAME)/LICENSE \
-+	   $(DISTNAME)/bzip2.1 \
-+	   $(DISTNAME)/bzip2.1.preformatted \
-+	   $(DISTNAME)/bzip2.txt \
-+	   $(DISTNAME)/words0 \
-+	   $(DISTNAME)/words1 \
-+	   $(DISTNAME)/words2 \
-+	   $(DISTNAME)/words3 \
-+	   $(DISTNAME)/sample1.ref \
-+	   $(DISTNAME)/sample2.ref \
-+	   $(DISTNAME)/sample3.ref \
-+	   $(DISTNAME)/sample1.bz2 \
-+	   $(DISTNAME)/sample2.bz2 \
-+	   $(DISTNAME)/sample3.bz2 \
-+	   $(DISTNAME)/dlltest.c \
-+	   $(DISTNAME)/manual.html \
-+	   $(DISTNAME)/manual.pdf \
-+	   $(DISTNAME)/manual.ps \
-+	   $(DISTNAME)/README \
-+	   $(DISTNAME)/README.COMPILATION.PROBLEMS \
-+	   $(DISTNAME)/README.XML.STUFF \
-+	   $(DISTNAME)/CHANGES \
-+	   $(DISTNAME)/libbz2.def \
-+	   $(DISTNAME)/libbz2.def.in \
-+	   $(DISTNAME)/libbz2.dsp \
-+	   $(DISTNAME)/dlltest.dsp \
-+	   $(DISTNAME)/makefile.msc \
-+	   $(DISTNAME)/unzcrash.c \
-+	   $(DISTNAME)/spewG.c \
-+	   $(DISTNAME)/mk251.c \
-+	   $(DISTNAME)/bzdiff \
-+	   $(DISTNAME)/bzdiff.1 \
-+	   $(DISTNAME)/bzmore \
-+	   $(DISTNAME)/bzmore.1 \
-+	   $(DISTNAME)/bzgrep \
-+	   $(DISTNAME)/bzgrep.1 \
-+	   $(DISTNAME)/Makefile-libbz2_so \
-+	   $(DISTNAME)/bz-common.xsl \
-+	   $(DISTNAME)/bz-fo.xsl \
-+	   $(DISTNAME)/bz-html.xsl \
-+	   $(DISTNAME)/bzip.css \
-+	   $(DISTNAME)/entities.xml \
-+	   $(DISTNAME)/manual.xml \
-+	   $(DISTNAME)/format.pl \
-+	   $(DISTNAME)/xmlproc.sh
-+	gzip -v $(DISTNAME)$(SNAPSHOT).tar
-+	rm -f $(DISTNAME)
-+
-+# For rebuilding the manual from sources on Julian's SuSE 9.1 box
-+#
-+MANUAL_SRCS  =  bz-common.xsl bz-fo.xsl bz-html.xsl bzip.css \
-+		entities.xml manual.xml 
-+
-+manual: manual.html manual.ps manual.pdf
-+
-+manual.ps: $(MANUAL_SRCS)
-+	${srcdir}/xmlproc.sh -ps manual.xml
-+
-+manual.pdf: $(MANUAL_SRCS)
-+	${srcdir}/xmlproc.sh -pdf manual.xml
-+
-+manual.html: $(MANUAL_SRCS)
-+	${srcdir}/xmlproc.sh -html manual.xml
-+
-+# Makefile: end of file
+-- 
+2.52.0.windows.1
+
