@@ -4,7 +4,7 @@
 pkgbase=python
 pkgname=('python' 'python-devel')
 pkgver=3.12.13
-pkgrel=1
+pkgrel=5
 _pybasever=${pkgver%.*}
 pkgdesc="Next generation of the python high-level scripting language"
 arch=('i686' 'x86_64')
@@ -48,18 +48,18 @@ source=(https://www.python.org/ftp/python/${pkgver%rc*}/Python-${pkgver}.tar.xz
         EXTERNALLY-MANAGED)
 sha256sums=('c08bc65a81971c1dd5783182826503369466c7e67374d1646519adf05207b684'
             '82cfafc5b31ad4c9bb4c9786044c39c75762dbc2656abdfdc433c23fee69c02f'
-            'f0bb75ca69c63894fc43e0f8218c9dbcc746935bf5ea095a724e6fb2f5dcc566'
+            'a217ef37ce9ddbe44e2f12edc6842e9f2340461df707bd3b15c7716cabc21a21'
             '70f854f00de71372e49f2ebbff7491e09e9e036e8e3f3646fe2984e30fb4a9da'
             '24cc76e155b5e017d2e46e784eb3407de60f2f1fd26e691ef222bc2088bbb9d5'
             '9d0efb7e7e913e96b9f7953802311bbc2d046a7bfdcc3ffaf11fc509731b4d18'
-            'a0acb9da960df3d509dfb530f548adeffbcab616e7f4f2fc92fc98659649d43b'
+            '5f87599ca8c9a54e80227bac2a83c2586c61c49922092fa5b0af3949c43816d7'
             '85d9d042e0fa3493ec54b364e6b4fb6d2b12ba09641e01047bc84a09605ef76b'
             'b439ff4f0a1f13858f8fb596414b74ed2c14fc3103d90287bb8e461ee89288b9'
             'bcdb4e7922e30f7dfbd3993ffe6db2dfd0df29326bebd12203dce376ea3451d9'
             'ee109d91a1c7ea84d278d9a8b0e1feb397e691b8868d79f77ea7bb6b1b3b1968'
             'e2861218f05741bfe99b05bb41cf88e14f57747aedec251626691b05482a50bd'
             'd04ca4778f150b880e23b9bc1fe5c5385e41228399093320c80ad4d5e29c6aab'
-            '2124efe25780baee553f5634b1d0487a0fc631622f30198dcf4976b9665aa2a6'
+            'c4bfb2b489075fef5960e6f6d794b41324068d9598eab00054999d091deeb965'
             '2c8cdad18085b8736e985653c0f18523958f29b72125e15124806a0f3d1a20ee')
 
 apply_patch_with_msg() {
@@ -132,7 +132,10 @@ check() {
 package_python() {
   depends=('libbz2' 'libexpat' 'libffi' 'liblzma' 'ncurses' 'libopenssl' 'libreadline' 'mpdecimal' 'libsqlite' 'zlib' 'libxcrypt'
            # ctypes.util.find_library() depends on 'dlltool' from binutils
-           'binutils')
+           'binutils'
+           'libgdbm' # Required by _gdbm.cpython-312-x86_64-cygwin.dll
+           'libutil-linux' # Required by _uuid.cpython-312-x86_64-cygwin
+  )
   provides=('python3')
   replaces=('python3')
 
