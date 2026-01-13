@@ -1,0 +1,24 @@
+From 821fe840769404c2a92eda23b16c59492d6191f7 Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Tue, 13 Jan 2026 08:16:41 +0800
+Subject: [PATCH] cygwin: handling symlink_exists properly
+
+---
+ tools/c_rehash.in | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/tools/c_rehash.in b/tools/c_rehash.in
+index 9f33895..df42a33 100644
+--- a/tools/c_rehash.in
++++ b/tools/c_rehash.in
+@@ -21,6 +21,7 @@ my $x509hash = "-subject_hash";
+ my $crlhash = "-hash";
+ my $verbose = 0;
+ my $symlink_exists=eval {symlink("",""); 1};
++$symlink_exists=0;
+ my $removelinks = 1;
+ 
+ ##  Parse flags.
+-- 
+2.52.0.windows.1
+
