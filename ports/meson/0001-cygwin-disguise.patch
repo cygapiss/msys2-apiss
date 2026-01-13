@@ -1,24 +1,25 @@
-diff --git a/mesonbuild/build.py b/mesonbuild/build.py
-index 071dbdfd4..85249ebbf 100644
---- a/mesonbuild/build.py
-+++ b/mesonbuild/build.py
-@@ -2289,7 +2289,7 @@ class SharedLibrary(BuildTarget):
-             suffix = 'dll'
-             # Shared library is of the form cygfoo.dll
-             # (ld --dll-search-prefix=cyg is the default)
--            prefix = 'cyg'
-+            prefix = 'msys-'
-             # Import library is called libfoo.dll.a
-             import_prefix = self.prefix if self.prefix is not None else 'lib'
-             import_filename_tpl = import_prefix + '{0.name}.dll.a'
---- meson-1.7.0/mesonbuild/compilers/mixins/clike.py.orig	2025-01-27 06:40:16.476400700 +0100
-+++ meson-1.7.0/mesonbuild/compilers/mixins/clike.py	2025-01-27 06:44:23.897492200 +0100
-@@ -1048,7 +1048,7 @@
-             stlibext += ['lib']
-         elif env.machines[self.for_machine].is_cygwin():
-             shlibext = ['dll', 'dll.a']
--            prefixes = ['cyg'] + prefixes
-+            prefixes = ['msys-', 'cyg'] + prefixes
-         elif self.id.lower() in {'c6000', 'c2000', 'ti'}:
-             # TI C28x compilers can use both extensions for static or dynamic libs.
-             stlibext = ['a', 'lib']
+From 0329ce04abb6446ee3e8775b3129f11dfdb001e8 Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Wed, 14 Jan 2026 06:27:58 +0800
+Subject: [PATCH] cygwin disguise
+
+---
+ mesonbuild/mesonmain.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mesonbuild/mesonmain.py b/mesonbuild/mesonmain.py
+index ca7a184..a10ba8c 100644
+--- a/mesonbuild/mesonmain.py
++++ b/mesonbuild/mesonmain.py
+@@ -279,7 +279,7 @@ def run(original_args: T.List[str], mainfile: str) -> int:
+     ensure_stdout_accepts_unicode()
+ 
+     # https://github.com/mesonbuild/meson/issues/3653
+-    if sys.platform == 'cygwin' and os.environ.get('MSYSTEM', '') not in ['MSYS', '']:
++    if sys.platform == 'cygwin' and os.environ.get('MSYSTEM', '') not in ['CYGWIN', 'MSYS', '']:
+         mlog.error('This python3 seems to be msys/python on MSYS2 Windows, but you are in a MinGW environment')
+         mlog.error('Please install it via https://packages.msys2.org/base/mingw-w64-python')
+         return 2
+-- 
+2.52.0.windows.1
+
