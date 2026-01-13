@@ -14,10 +14,18 @@ msys2_references=(
 license=('spdx:GPL-3.0-or-later')
 depends=('sh' 'libiconv' 'libintl')
 makedepends=('autotools' 'gcc' 'gettext-devel' 'libiconv-devel')
-source=(https://ftp.gnu.org/gnu/${pkgname}/${pkgname}-${pkgver}.tar.xz{,.sig})
+source=(https://ftp.gnu.org/gnu/${pkgname}/${pkgname}-${pkgver}.tar.xz{,.sig}
+        0001-Fixes-gnulib-for-building-with-gcc-15.x.patch)
 sha256sums=('7c8b7f9fc8609141fdea9cece85249d308624391ff61dedaf528fcb337727dfd'
-            'SKIP')
+            'SKIP'
+            'f711e4631b76cd2a26f47adf5580b68d71317c14831518ca092d0b9a118675d0')
 validpgpkeys=('155D3FC500C834486D1EEA677FD9FCCB000BEEEE') # Jim Meyering <jim@meyering.net>
+
+prepare() {
+  pushd "${srcdir}/${pkgname}-${pkgver}"
+
+  patch -p1 -i "${srcdir}/0001-Fixes-gnulib-for-building-with-gcc-15.x.patch"
+}
 
 build() {
   cd ${srcdir}/${pkgname}-${pkgver}
