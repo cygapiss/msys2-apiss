@@ -54,6 +54,7 @@ build() {
     --program-transform-name=s/kill/gkill/ \
     --without-libintl-prefix \
     --without-libiconv-prefix \
+    --with-openssl=no \
     --enable-install-program=arch,hostname \
     --enable-no-install-program=uptime \
     gl_cv_func_strtod_works=yes \
