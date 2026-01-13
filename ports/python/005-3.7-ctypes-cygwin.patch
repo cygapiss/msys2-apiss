@@ -32,7 +32,7 @@
              print(f"crypto\t:: {cdll.LoadLibrary(find_library('crypto'))}")
 +        elif sys.platform == "cygwin":
 +            print(cdll.LoadLibrary("cygbz2-1.dll"))
-+            print(cdll.LoadLibrary("cygcrypt-0.dll"))
++            print(cdll.LoadLibrary("cygcrypt-2.dll"))
 +            print(find_library("crypt"))
          else:
              print(cdll.LoadLibrary("libm.so"))
