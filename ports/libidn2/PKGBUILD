@@ -15,13 +15,17 @@ arch=('i686' 'x86_64')
 license=('spdx:GPL-2.0-or-later AND GPL-3.0-or-later AND LGPL-3.0-or-later')
 makedepends=('gcc' 'texinfo' 'libunistring-devel' 'gettext-devel' 'gtk-doc' 'autotools')
 options=('!libtool' 'staticlibs')
-source=(https://ftp.gnu.org/gnu/libidn/${pkgname}-${pkgver}.tar.gz{,.sig})
+source=(https://ftp.gnu.org/gnu/libidn/${pkgname}-${pkgver}.tar.gz{,.sig}
+        0001-gnulib-Upgrade-stddef.-for-compile-with-gcc-15.x.patch)
 sha256sums=('f557911bf6171621e1f72ff35f5b1825bb35b52ed45325dcdee931e5d3c0787a'
-            'SKIP')
+            'SKIP'
+            'e3dccd7fb80c976d5c64b8bbefdf33ae82b2eb7893f9e1be7b3569e4491d4a2b')
 validpgpkeys=('B1D2BD1375BECB784CF4F8C4D73CF638C53C06BE') # Simon Josefsson <simon@josefsson.org>
 
 prepare() {
   cd ${srcdir}/${pkgname}-${_basever}
+
+  patch -p1 -i "${srcdir}/0001-gnulib-Upgrade-stddef.-for-compile-with-gcc-15.x.patch"
 
   # https://gitlab.com/libidn/libidn2/-/issues/108
   AUTOPOINT=true autoreconf -ivf
