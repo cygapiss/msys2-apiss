@@ -19,6 +19,8 @@ makedepends=(
   'libbz2-devel'
   'libxcrypt-devel'
   'libexpat-devel'
+  'libgdbm-devel'
+  'libutil-linux-devel'
   'mpdecimal-devel'
   'libsqlite-devel'
   'libffi-devel'
