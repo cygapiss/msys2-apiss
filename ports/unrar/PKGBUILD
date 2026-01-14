@@ -18,7 +18,7 @@ makedepends=('make' 'gcc')
 source=("https://www.rarlab.com/rar/unrarsrc-${pkgver}.tar.gz"
         'build-dll.patch')
 sha256sums=('01d903a7dcf413cb2925696d7796e48e38d471f79bfe7ef3ad2aebf6c12dbefd'
-            '8c618b85478f5b9bb764c523670d0d60a6b14a382919beadf357120d045313b4')
+            '682772c8359432abc8430f52f957b8cf3aa3edaac39d862f154de96d868510a3')
 
 prepare() {
   cd ${pkgname}
@@ -45,7 +45,7 @@ package_libunrar() {
   pkgdesc="Library file for applications that use libunrar"
   depends=('gcc-libs')
   cd "${srcdir}/libunrar"
-  install -Dm755 msys-unrar.dll "${pkgdir}/usr/bin/msys-unrar.dll"
+  install -Dm755 cygunrar.dll "${pkgdir}/usr/bin/cygunrar.dll"
   # install license
   install -Dm644 license.txt "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
 }
