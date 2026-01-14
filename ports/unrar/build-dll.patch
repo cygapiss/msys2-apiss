@@ -5,7 +5,7 @@
  lib:	clean $(OBJECTS) $(LIB_OBJ)
  	@rm -f libunrar.*
 -	$(LINK) -shared -o libunrar.so $(LDFLAGS) $(OBJECTS) $(LIB_OBJ)
-+	$(LINK) -shared -Wl,--out-implib,libunrar.dll.a -o msys-unrar.dll $(LDFLAGS) $(OBJECTS) $(LIB_OBJ)
++	$(LINK) -shared -Wl,--out-implib,libunrar.dll.a -o cygunrar.dll $(LDFLAGS) $(OBJECTS) $(LIB_OBJ)
  	$(AR) rcs libunrar.a $(OBJECTS) $(LIB_OBJ)
  
  install-unrar:
@@ -15,10 +15,10 @@
  install-lib:
 -		install libunrar.so $(DESTDIR)/lib
 +		install libunrar.dll.a $(DESTDIR)/lib
-+		install msys-unrar.dll $(DESTDIR)/bin
++		install cygunrar.dll $(DESTDIR)/bin
  		install libunrar.a $(DESTDIR)/lib
  
  uninstall-lib:
 -		rm -f $(DESTDIR)/lib/libunrar.so
-+		rm -f $(DESTDIR)/bin/msys-unrar.dll
++		rm -f $(DESTDIR)/bin/cygunrar.dll
 +		rm -f $(DESTDIR)/lib/libunrar.dll.a
