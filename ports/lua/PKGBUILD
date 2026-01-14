@@ -3,7 +3,7 @@
 pkgname=lua
 pkgver=5.4.8
 _majorver=${pkgver%.*}
-pkgrel=1
+pkgrel=2
 pkgdesc='Powerful lightweight programming language designed for extending applications'
 arch=('x86_64')
 url='https://www.lua.org/'
@@ -32,7 +32,7 @@ build() {
     CFLAGS="${CFLAGS}" \
     AR="${CC} -shared -Wl,--out-implib,liblua.dll.a -o" \
     RANLIB=: \
-    LUA_A="msys-lua-${_majorver}.dll" \
+    LUA_A="cyglua-${_majorver}.dll" \
     linux
 }
 
@@ -40,7 +40,7 @@ package() {
   cd "lua-$pkgver"
 
   make \
-    TO_BIN="msys-lua-${_majorver}.dll lua.exe luac.exe" \
+    TO_BIN="cyglua-${_majorver}.dll lua.exe luac.exe" \
     TO_LIB="liblua.dll.a" \
     INSTALL_TOP="$pkgdir"/usr \
     INSTALL_INC="$pkgdir"/usr/include \
