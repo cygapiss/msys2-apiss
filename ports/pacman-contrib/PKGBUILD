@@ -21,14 +21,17 @@ makedepends=('asciidoc'
              'gcc'
              )
 source=(https://gitlab.archlinux.org/pacman/pacman-contrib/-/archive/v$pkgver/$pkgname-v$pkgver.tar.gz
-        "0100-contrib.patch")
+        "0100-contrib.patch"
+        "0001-linkage-to-lunistring-for-resolve-linkage-error.patch")
 sha256sums=('fe8456638444ee6bead13ed526e047f8d251188582c085551afb29774ec468a8'
-            '6eb0e2c966a474b57bd30ebd615eeaea050c4036e875b619cbb77b64e9480a7b')
+            '6eb0e2c966a474b57bd30ebd615eeaea050c4036e875b619cbb77b64e9480a7b'
+            'd17fd33d639f723980c9c3094331aa676e7a7f56083f7ebcd0af1497f6925e46')
 
 prepare() {
   cd ${srcdir}/${pkgname}-v${pkgver}
 
   patch -p1 -i ${srcdir}/0100-contrib.patch
+  patch -p1 -i ${srcdir}/0001-linkage-to-lunistring-for-resolve-linkage-error.patch
 
   ./autogen.sh
 }

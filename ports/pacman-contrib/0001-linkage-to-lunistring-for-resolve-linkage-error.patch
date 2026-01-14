@@ -1,0 +1,26 @@
+From 3f7059e777e5d585728d257bc98ea282d51e31cc Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Wed, 14 Jan 2026 11:14:14 +0800
+Subject: [PATCH] linkage to -lunistring for resolve linkage error
+
+common -lzstd -lpsl -lidn2 -lssh2 -lz -lnghttp2 -lngtcp2_crypto_ossl -lngtcp2 -lssl -lcrypto -lcrypt32 -lnghttp3 -lgpgme -lassuan -lgpg-error -lintl -liconv
+/usr/lib/gcc/x86_64-pc-cygwin/15.2.0/../../../../x86_64-pc-cygwin/bin/ld: /usr/lib/gcc/x86_64-pc-cygwin/15.2.0/../../../libpsl.a(libpsl_la-psl.o):(.text+0x13e6): undefined reference to `u8_tolower'
+/usr/lib/gcc/x86_64-pc-cygwin/15.2.0/../../../../x86_64-pc-cygwin/bin/ld: /usr/lib/gcc/x86_64-pc-cygwin/15.2.0/../../../libpsl.a(libpsl_la-psl.o):(.text+0x1462): undefined reference to `u8_tolower'
+/usr/lib/gcc/x86_64-pc-cygwin/15.2.0/../../../../x86_64-pc-cygwin/bin/ld: /usr/lib/gcc/x86_64-pc-cygwin/15.2.0/../../../libpsl.a(libpsl_la-psl.o):(.rdata$.refptr.uninorm_nfkc[.refptr.uninorm_nfkc]+0x0): undefined reference to `uninorm_nfkc'
+---
+ src/Makefile.am | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 4b87cc9..f1797aa 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -143,4 +143,4 @@ pacsort_SOURCES = pacsort.c
+ pacsort_LDADD = $(LIBARCHIVE_LIBS) $(LIBALPM_LIBS)
+ 
+ pactree_SOURCES = pactree.c
+-pactree_LDADD = $(LIBARCHIVE_LIBS) $(LIBALPM_LIBS)
++pactree_LDADD = $(LIBARCHIVE_LIBS) $(LIBALPM_LIBS) -lunistring
+-- 
+2.52.0.windows.1
+
