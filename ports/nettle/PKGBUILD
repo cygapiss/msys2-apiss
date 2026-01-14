@@ -2,7 +2,7 @@
 
 pkgname=('nettle' 'libnettle' 'libhogweed' 'libnettle-devel')
 pkgver=4.0
-pkgrel=1
+pkgrel=2
 pkgdesc="A low-level cryptographic library"
 arch=('i686' 'x86_64')
 url="https://www.lysator.liu.se/~nisse/nettle/"
@@ -15,16 +15,16 @@ groups=('net-utils')
 depends=('gmp')
 makedepends=('gmp-devel' 'autotools' 'gcc')
 source=(https://ftp.gnu.org/gnu/${pkgname}/${pkgname}-${pkgver}.tar.gz{,.sig}
-        001-fix-dll-names.patch)
+        0001-fixes-dll-names-for-testing.patch)
 validpgpkeys=('343C2FF0FBEE5EC2EDBEF399F3599FF828C67298') # Niels M├╢ller <nisse@lysator.liu.se>
 sha256sums=('3addbc00da01846b232fb3bc453538ea5468da43033f21bb345cb1e9073f5094'
             'SKIP'
-            'b55a5b742e77215a8290d9adfd12378ff4b55a4e51285ac3662ac8ead9e4bfd3')
+            'b3403b59a71c9ec104691d50f9e362a770a40c90ff44dd309b449844ecfc59b4')
 
 prepare() {
   cd "${srcdir}/${pkgname}-${pkgver}"
 
-  patch -p1 -i ${srcdir}/001-fix-dll-names.patch
+  patch -p1 -i ${srcdir}/0001-fixes-dll-names-for-testing.patch
   autoreconf -fi
 }
 

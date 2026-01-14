@@ -1,0 +1,25 @@
+From 52a6db99641316858e70c947415cd7a2ca7f01c2 Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Wed, 14 Jan 2026 11:59:26 +0800
+Subject: [PATCH] fixes dll names for testing
+
+---
+ testsuite/dlopen-test.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/testsuite/dlopen-test.c b/testsuite/dlopen-test.c
+index 4265bf7..249dd03 100644
+--- a/testsuite/dlopen-test.c
++++ b/testsuite/dlopen-test.c
+@@ -15,7 +15,7 @@ int
+ main (int argc UNUSED, char **argv UNUSED)
+ {
+ #if HAVE_LIBDL
+-  void *handle = dlopen ("../libnettle." SO_EXT, RTLD_NOW);
++  void *handle = dlopen ("../cygnettle." SO_EXT, RTLD_NOW);
+   int (*get_version)(void);
+   if (!handle)
+     {
+-- 
+2.52.0.windows.1
+
