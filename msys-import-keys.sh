@@ -1,6 +1,3 @@
-
-pacman -Sl msys  >msys.txt
-
 gpg --recv-keys 6570EA01146F7354
 gpg --recv-keys 7FD9FCCB000BEEEE
 gpg --recv-keys BB5869F064EA74AB
