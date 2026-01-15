@@ -17,29 +17,27 @@ const packages_provides_by = {
   "libuuid-devel": "libutil-linux-devel",
 };
 
-const packages_deferred_to_tail = [
-  "autotools",
-  "bash",
-  "binutils",
-  "cmake",
-  "git",
-  "gtk-doc",
-  "make",
-  "meson",
-  "ninja",
-  "perl",
-  "python",
-];
+const packages_deferred_to_tail = ["autotools", "cmake", "git", "gtk-doc"];
 
 const packages_deferred_to_stage2 = [
-  "perl-Locale-Gettext",
-  "perl-TermReadKey",
-  "perl-Text-CharWidth",
-  "perl-Unicode-LineBreak",
-  "perl-XML-Parser",
-  "perl-YAML-Syck",
-  "rust",
 ];
+
+// Remove deps that prevent bootstrap
+const deps_remove_map = {
+  perl: ["groff", "libxcrypt-devel", "libxcrypt"],
+  "gettext-devel": ["libiconv", "iconv", "libiconv-devel"],
+  libintl: ["libiconv"],
+  libxslt: ["libxml2", "libxml2-devel"],
+  "docbook-xsl": ["libxml2", "libxml2-devel", "po4a"],
+  clang: ["llvm-libs"],
+  ninja: ["re2c"],
+  "perl-Locale-Gettext": ["help2man"],
+  pkgconf: ["meson"],
+  doxygen: ["liblzma", "liblzma-devel"],
+
+  // This is for building git at the stage1
+  "rust": ["git"]
+};
 
 function calc_deps(deps_map, pkg_name) {
   let packages = [pkg_name];
@@ -200,18 +198,13 @@ async function get_deps_map_make() {
       // console.log(deps_map_make[pkgname]);
     }
   }
-  // gcc libreadline-devel zlib-devel autotools libxslt docbook-xsl doxygen libiconv-devel
-  deps_map_make["libxml2"] = deps_map_make["libxml2"].filter(
-    (x) => x != "libxslt" && x != "docbook-xsl"
-  );
-  deps_map_make["libxml2-devel"] = deps_map_make["libxml2"];
 
-  // In bootstrap step
-  deps_map_make["llvm-libs"] = [];
-  // There is circular dep of gettext libiconv
-  deps_map_make["libiconv-devel"] = [];
-  deps_map_make["libiconv"] = deps_map_make["libiconv-devel"];
-  deps_map_make["iconv"] = deps_map_make["libiconv-devel"];
+  for (let filter_key of Object.keys(deps_remove_map)) {
+    for (let pkg of deps_remove_map[filter_key]) {
+      deps_map_make[pkg] = deps_map_make[pkg].filter((x) => x != filter_key);
+    }
+  }
+
   deps_map_make["base-devel"].push(...packages_deferred_to_tail);
 
   deps_map_make["base-devel"].push("tcl-doc");
