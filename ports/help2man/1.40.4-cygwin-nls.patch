@@ -1,6 +1,6 @@
 LD_PRELOAD by itself only works with Cygwin builtin functions, but
 textdomain() and friends come from libintl.  In order to override
-those functions, we have to "replace" msys-intl-?.dll since functions are
+those functions, we have to "replace" cygintl-?.dll since functions are
 bound to a DLL name at link time.  Our replacement will be used since
 it is loaded first by LD_PRELOAD.
 
@@ -9,32 +9,32 @@ pass-throughs for the other functions which we're not overriding,
 otherwise Locale::gettext won't load (not to mention the program
 that we're trying to help2man).
 
---- origsrc/help2man-1.40.4/Makefile.in	2010-12-27 22:34:40.000000000 -0600
-+++ src/help2man-1.40.4/Makefile.in	2011-12-28 22:36:27.666288300 -0600
-@@ -60,7 +60,8 @@ install_base: install_dirs
+--- origsrc/help2man-1.48.5/Makefile.in	2020-03-15 04:52:00.000000000 -0600
++++ src/help2man-1.48.5/Makefile.in	2021-09-07 03:10:00.000000000 -0600
+@@ -76,7 +76,8 @@ install_base:
  
  install_preload: preload
  	$(MKINSTALLDIRS) $(DESTDIR)$(pkglibdir)
 -	$(INSTALL_PROGRAM) $(preload).so $(DESTDIR)$(pkglibdir)
-+	$(INSTALL_PROGRAM) lib/msys-intl-8.dll $(DESTDIR)$(pkglibdir)
-+	ln -sf msys-intl-8.dll $(DESTDIR)$(pkglibdir)/$(preload).so
++	$(INSTALL_PROGRAM) lib/cygintl-8.dll $(DESTDIR)$(pkglibdir)
++	ln -sf cygintl-8.dll $(DESTDIR)$(pkglibdir)/$(preload).so
  
  install_l10n: msg_l10n man_l10n info_l10n
  	set -e; \
-@@ -113,7 +114,9 @@ $(target).h2m: $(srcdir)/$(target).h2m.P
+@@ -145,7 +146,9 @@ $(target).h2m: $(srcdir)/$(target).h2m.PL
  
  preload: $(preload).so
  $(preload).so: $(srcdir)/$(preload).c
 -	$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) -o $@ -fPIC -shared $? $(LIBS)
 +	mkdir -p lib
-+	$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) -o lib/msys-intl-8.dll -shared $? $(LIBS)
-+	ln -sf lib/msys-intl-8.dll $@
++	$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) -o lib/cygintl-8.dll -shared $? $(LIBS)
++	ln -sf lib/cygintl-8.dll $@
  
  man: $(target).1
  $(target).1: $(srcdir)/$(target).PL $(srcdir)/$(target).h2m.PL
---- origsrc/help2man-1.40.4/bindtextdomain.c	2009-11-13 00:01:34.000000000 -0600
-+++ src/help2man-1.40.4/bindtextdomain.c	2011-12-29 00:24:33.608078600 -0600
-@@ -27,12 +27,34 @@ static char *(*r_textdomain)(char const
+--- origsrc/help2man-1.48.5/bindtextdomain.c	2009-11-13 00:01:34.000000000 -0600
++++ src/help2man-1.48.5/bindtextdomain.c	2011-12-29 00:24:33.608078600 -0600
+@@ -36,12 +36,34 @@ static char *(*r_textdomain)(char const *) = 0;
  static char *(*r_bindtextdomain)(char const *, char const *) = 0;
  static char *(*r_bind_textdomain_codeset)(char const *, char const *) = 0;
  
@@ -62,14 +62,14 @@ that we're trying to help2man).
          return;
  
 +#ifdef __CYGWIN__
-+    if (!(RTLD_NEXT = dlopen("/usr/bin/msys-intl-8.dll", RTLD_LAZY)))
++    if (!(RTLD_NEXT = dlopen("/usr/bin/cygintl-8.dll", RTLD_LAZY)))
 +        die("libintl8 not found");
 +#endif
 +
      if (!(e_textdomain = getenv("TEXTDOMAIN")))
  	die("TEXTDOMAIN not set");
  
-@@ -48,9 +70,19 @@ void setup()
+@@ -57,9 +79,19 @@ void setup()
      if (!(r_bind_textdomain_codeset = dlsym(RTLD_NEXT,
      					    "bind_textdomain_codeset")))
  	die("can't find symbol \"bind_textdomain_codeset\"");
@@ -90,7 +90,7 @@ that we're trying to help2man).
  {
      char *r;
      setup();
-@@ -61,7 +93,7 @@ char *textdomain(char const *domainname)
+@@ -70,7 +102,7 @@ char *textdomain(char const *domainname)
      return r;
  }
  
@@ -99,7 +99,7 @@ that we're trying to help2man).
  {
      char const *dir = dirname;
      setup();
-@@ -71,7 +103,7 @@ char *bindtextdomain(char const *domainn
+@@ -80,7 +112,7 @@ char *bindtextdomain(char const *domainname,
      return r_bindtextdomain(domainname, dir);
  }
  
@@ -108,7 +108,7 @@ that we're trying to help2man).
  {
      char *r;
      setup();
-@@ -81,3 +113,54 @@ char *bind_textdomain_codeset(char const
+@@ -90,3 +122,54 @@ char *bind_textdomain_codeset(char const
  
      return r;
  }
