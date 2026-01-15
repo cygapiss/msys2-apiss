@@ -74,7 +74,7 @@ build() {
   mkdir -p ${srcdir}/build-${CARCH}
   cd ${srcdir}/build-${CARCH}
   MSYSTEM=MSYS ${srcdir}/${_realname}-${pkgver}/configure \
-    --prefix=/usr \
+    --prefix=${srcdir}/dest/usr \
     --system-libs \
     --no-qt-gui \
     --parallel=$(nproc) \
@@ -86,7 +86,7 @@ build() {
       -DCMAKE_BUILD_TYPE=Release
   plain "Start building..."
   make
-  make DESTDIR=${srcdir}/dest install
+  make install
 }
 
 #Enable once we can get all tests to pass
