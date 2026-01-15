@@ -28,8 +28,8 @@ if [ -f ${new_dir}-tmp-full.tar ]; then
   echo "There is no need build for '${new_dir}'"
 else
   echo "Building with makepkg for '${new_dir}'"
-#  makepkg --cleanbuild --syncdeps --force --noconfirm --nocheck --skippgpcheck
-  makepkg -e --force --noconfirm --nocheck --skippgpcheck
+  makepkg --cleanbuild --syncdeps --force --noconfirm --nocheck --skippgpcheck
+  # makepkg -e --force --noconfirm --nocheck --skippgpcheck
 fi
 
 # updpkgsums
@@ -62,8 +62,12 @@ if [[ "$MSYS_BOOTSTRAP_STAGE" == "stage1" ]]; then
   pushd tmp
   find | grep .exe$
 
-  dlls_to_remove=`find | grep .dll$ | grep -v "^./usr/bin"`
-  echo "Clean dll and exe: '$dlls_to_remove'"
+  dlls_to_remove=`find | grep .dll$ | grep -v "^./usr/bin" | tr '\n' ' '`
+  if [[ "$dlls_to_remove" != "" ]]; then
+    echo "Clean the list of dlls: '$dlls_to_remove'"
+  fi
+
+  echo "Clean dll and exe:"
 
   find | grep .exe$ | xargs -I ARG rm -f ARG
   find | grep .dll$ | grep -v "^./usr/bin" | xargs -I ARG rm -f ARG
