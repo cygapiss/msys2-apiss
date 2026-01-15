@@ -158,6 +158,10 @@ prepare() {
 
 build() {
   cd "${srcdir}/${pkgname}-${pkgver}"
+  disable_tests=''
+  if [[ "$MSYS_BOOTSTRAP_STAGE" == "stage1" ]]; then
+    disable_tests='--disable-tests'
+  fi
 
   ./configure \
     --build=${CHOST} \
@@ -168,6 +172,7 @@ build() {
     --libexecdir=/usr/lib/gnupg \
     --disable-libdns \
     --enable-large-secmem \
+    ${disable_tests} \
     --enable-maintainer-mode
 
   make
