@@ -28,7 +28,11 @@ const packages_deferred_to_tail = [
   "libiconv",
 ];
 
-const packages_deferred_to_stage2 = [];
+// gcc can only be built after bootstrap, so it's stage2
+const packages_deferred_to_stage2 = [
+  "mingw-w64-cross-gcc",
+  "mingw-w64-cross-mingwarm64-gcc",
+];
 
 // Remove deps that prevent bootstrap
 const deps_remove_map = {
@@ -36,7 +40,7 @@ const deps_remove_map = {
   libxslt: ["libxml2", "libxml2-devel"],
   "docbook-xsl": ["libxml2", "libxml2-devel", "po4a"],
   clang: ["llvm-libs"],
-  ninja: ["re2c"],
+  ninja: ["re2c", "libzstd", "libzstd-devel"],
   "perl-Locale-Gettext": ["help2man"],
   pkgconf: ["meson"],
   doxygen: ["liblzma", "liblzma-devel"],
@@ -124,7 +128,7 @@ async function write_script(
   packages,
   dir_for_package,
   output_filename,
-  filter_out_set
+  filter_out_set,
 ) {
   let dirs = [];
   let dir_set = new Set();
@@ -166,7 +170,7 @@ async function get_deps_map_make() {
   const dir_for_package = {};
 
   let packages_deferred_set = new Set(
-    [].concat(packages_deferred_to_tail, packages_deferred_to_stage2)
+    [].concat(packages_deferred_to_tail, packages_deferred_to_stage2),
   );
   for (let pkg of deps_json.pkg_info) {
     for (let pkgname of pkg.pkgname.split(" ")) {
@@ -177,7 +181,7 @@ async function get_deps_map_make() {
       if (typeof pkg.makedepends == "string" && pkg.makedepends.trim() != "") {
         items = [].concat(
           pkg.makedepends.split(" "),
-          deps_json.deps_map[pkgname]
+          deps_json.deps_map[pkgname],
         );
       } else {
         items = deps_json.deps_map[pkgname];
@@ -185,7 +189,7 @@ async function get_deps_map_make() {
       items = items.map((element) => {
         if (element == undefined) {
           console.log(
-            `Undefined for: ${pkgname} makedepends: '${pkg.makedepends}'`
+            `Undefined for: ${pkgname} makedepends: '${pkg.makedepends}'`,
           );
           return "";
         }
@@ -199,10 +203,8 @@ async function get_deps_map_make() {
           !packages_deferred_set.has(x) &&
           x != "gcc-libs" &&
           x != "gcc" &&
-          x != "mingw-w64-cross-gcc" &&
-          x != "mingw-w64-cross-mingwarm64-gcc" &&
           x != pkgname &&
-          x != ""
+          x != "",
       );
       items = Array.from(new Set(items));
       // console.log(pkgname, items);
@@ -233,40 +235,40 @@ async function main() {
   let { deps_map_make, dir_for_package } = await get_deps_map_make();
 
   console.log("deps_map_make update finished");
+  // console.log(JSON.stringify(deps_map_make, null, 2))
   let deps_map_make_cloned = JSON.parse(JSON.stringify(deps_map_make));
   let packages = dump_deps(deps_map_make);
   let packages_to_include_base_devel = new Set([]);
   if (Object.keys(deps_map_make).length == 0) {
     console.log("All packages are sorted out");
     packages_to_include_base_devel = new Set(
-      calc_deps(deps_map_make_cloned, "base-devel")
+      calc_deps(deps_map_make_cloned, "base-devel"),
     );
   }
 
   let packages_base_devel = packages.filter((x) =>
-    packages_to_include_base_devel.has(x)
+    packages_to_include_base_devel.has(x),
   );
 
   await write_script(
     "",
     packages_base_devel,
     dir_for_package,
-    "msys-base-devel-list.sh",
-    new Set([
-      // gcc can only be built after bootstrap.
-      "mingw-w64-cross-gcc",
-    ])
+    "msys-stage1-list.sh",
+    new Set(packages_deferred_to_stage2),
   );
 
   let packages_base_devel_set = new Set(packages_base_devel);
   let packages_other = packages.filter((x) => !packages_base_devel_set.has(x));
 
   await write_script(
+    // texinfo need build twice as it's called perl in runtime for testing it self
     `#!/bin/bash
+sh build-single.sh texinfo
 `,
     packages_other,
     dir_for_package,
-    "msys-all-list.sh",
+    "msys-stage2-list.sh",
     new Set([
       // :: cmake-bootstrap-4.2.1-1 and cmake-4.2.1-2 are in conflict. Remove cmake? [Y/n]
       "cmake-bootstrap",
@@ -283,7 +285,7 @@ async function main() {
 
       // gnu-netcat-0.7.1-3 and openbsd-netcat-1.234_1-1 are in conflict. Remove openbsd-netcat? [Y/n] "
       "gnu-netcat",
-    ])
+    ]),
   );
 }
 

@@ -74,7 +74,7 @@
     },
     {
       "makedepends": "autotools",
-      "pkgrel": "2",
+      "pkgrel": "3",
       "pkgver": "0.39.0",
       "dir": "atool",
       "pkgname": "atool",
@@ -257,7 +257,7 @@
       "pkgbase": ""
     },
     {
-      "makedepends": "libiconv-devel gettext-devel zlib-devel autotools gcc",
+      "makedepends": "libiconv-devel gettext-devel zlib-devel libzstd-devel autotools gcc",
       "pkgrel": "2",
       "pkgver": "2.45.1",
       "dir": "binutils",
@@ -795,7 +795,7 @@
     {
       "makedepends": "gcc gettext pcre2-devel cmake pkgconf rust ninja python-sphinx",
       "pkgrel": "1",
-      "pkgver": "4.3.2",
+      "pkgver": "4.3.3",
       "dir": "fish",
       "pkgname": "fish",
       "pkgbase": ""
@@ -857,7 +857,7 @@
       "pkgbase": "gc"
     },
     {
-      "makedepends": "gcc binutils autotools isl-devel gmp-devel mpc-devel mpfr-devel zlib-devel windows-default-manifest gperf",
+      "makedepends": "gcc binutils autotools isl-devel gmp-devel mpc-devel mpfr-devel zlib-devel libzstd-devel windows-default-manifest gperf",
       "pkgrel": "2",
       "pkgver": "15.2.0",
       "dir": "gcc",
@@ -1122,7 +1122,7 @@
     },
     {
       "makedepends": "autotools gcc gettext-devel",
-      "pkgrel": "1",
+      "pkgrel": "2",
       "pkgver": "1.49.3",
       "dir": "help2man",
       "pkgname": "help2man",
@@ -1315,7 +1315,7 @@
     {
       "makedepends": "gcc cmake ninja",
       "pkgrel": "1",
-      "pkgver": "1.8.2",
+      "pkgver": "1.8.3",
       "dir": "libblake3",
       "pkgname": "libblake3",
       "pkgbase": ""
@@ -1499,7 +1499,7 @@
     {
       "makedepends": "gcc patch gtk-doc autotools",
       "pkgrel": "1",
-      "pkgver": "4.20.0",
+      "pkgver": "4.21.0",
       "dir": "libtasn1",
       "pkgname": "libtasn1 libtasn1-devel",
       "pkgbase": "libtasn1"
@@ -1707,7 +1707,7 @@
     {
       "makedepends": "python-build python-installer python-setuptools-rust openssl-devel pkgconf",
       "pkgrel": "1",
-      "pkgver": "1.11.2",
+      "pkgver": "1.11.5",
       "dir": "maturin",
       "pkgname": "python-maturin maturin",
       "pkgbase": "maturin"
@@ -2002,8 +2002,8 @@
     },
     {
       "makedepends": "cocom git perl gcc mingw-w64-cross-crt mingw-w64-cross-gcc mingw-w64-cross-zlib zlib-devel gettext-devel libiconv-devel autotools xmlto docbook-xsl",
-      "pkgrel": "7",
-      "pkgver": "3.6.5",
+      "pkgrel": "3",
+      "pkgver": "3.6.6",
       "dir": "msys2-runtime",
       "pkgname": "msys2-runtime msys2-runtime-devel",
       "pkgbase": "msys2-runtime"
@@ -2098,8 +2098,8 @@
     },
     {
       "makedepends": "libgpgme-devel libsasl-devel libgdbm-devel ncurses-devel libidn2-devel libiconv-devel openssl-devel gettext-devel heimdal-devel gcc libxslt docbook-xsl pkgconf",
-      "pkgrel": "2",
-      "pkgver": "20251211",
+      "pkgrel": "1",
+      "pkgver": "20260105",
       "dir": "neomutt",
       "pkgname": "neomutt",
       "pkgbase": ""
@@ -2179,7 +2179,7 @@
     {
       "makedepends": "gcc",
       "pkgrel": "1",
-      "pkgver": "3.01.0",
+      "pkgver": "3.01.1",
       "dir": "nyacc",
       "pkgname": "nyacc",
       "pkgbase": ""
@@ -2539,7 +2539,7 @@
     {
       "makedepends": "",
       "pkgrel": "1",
-      "pkgver": "1.006002",
+      "pkgver": "1.006003",
       "dir": "perl-Exporter-Tiny",
       "pkgname": "perl-Exporter-Tiny",
       "pkgbase": ""
@@ -2771,7 +2771,7 @@
     {
       "makedepends": "",
       "pkgrel": "1",
-      "pkgver": "2.095",
+      "pkgver": "2.098",
       "dir": "perl-IO-Socket-SSL",
       "pkgname": "perl-IO-Socket-SSL",
       "pkgbase": ""
@@ -3963,7 +3963,7 @@
     {
       "makedepends": "python-build python-flit-core python-installer",
       "pkgrel": "1",
-      "pkgver": "9.0.4",
+      "pkgver": "9.1.0",
       "dir": "python-sphinx",
       "pkgname": "python-sphinx",
       "pkgbase": ""
@@ -4027,7 +4027,7 @@
     {
       "makedepends": "python-build python-installer python-setuptools python-calver",
       "pkgrel": "1",
-      "pkgver": "2025.12.1.14",
+      "pkgver": "2026.1.14.14",
       "dir": "python-trove-classifiers",
       "pkgname": "python-trove-classifiers",
       "pkgbase": ""
@@ -4051,7 +4051,7 @@
     {
       "makedepends": "python-hatchling python-hatch-vcs python-build python-installer",
       "pkgrel": "1",
-      "pkgver": "2.6.2",
+      "pkgver": "2.6.3",
       "dir": "python-urllib3",
       "pkgname": "python-urllib3",
       "pkgbase": ""
@@ -4267,7 +4267,7 @@
     {
       "makedepends": "libreadline-devel tcl-devel zlib-devel autotools gcc",
       "pkgrel": "2",
-      "pkgver": "3.51.1",
+      "pkgver": "3.51.2",
       "dir": "sqlite",
       "pkgname": "sqlite libsqlite libsqlite-devel sqlite-doc tcl-sqlite sqlite-extensions lemon",
       "pkgbase": "sqlite"
@@ -4499,7 +4499,7 @@
     {
       "makedepends": "rust python-maturin python-installer liblzma-devel libzstd-devel pkgconf git",
       "pkgrel": "1",
-      "pkgver": "0.9.22",
+      "pkgver": "0.9.25",
       "dir": "uv",
       "pkgname": "python-uv-build",
       "pkgbase": "uv"
@@ -4515,7 +4515,7 @@
     {
       "makedepends": "gawk perl-devel python-devel ruby ncurses-devel autotools gcc libiconv-devel gettext-devel libxcrypt-devel",
       "pkgrel": "1",
-      "pkgver": "9.1.1997",
+      "pkgver": "9.1.2081",
       "dir": "vim",
       "pkgname": "vim",
       "pkgbase": ""
@@ -5304,7 +5304,7 @@
       "libreadline"
     ],
     "gcc": [
-      "gcc-libs=15.2.0-1",
+      "gcc-libs=15.2.0-2",
       "binutils",
       "gmp",
       "isl",
@@ -5313,6 +5313,7 @@
       "mpc",
       "mpfr",
       "zlib",
+      "zstd",
       "msys2-runtime-devel",
       "msys2-w32api-headers",
       "msys2-w32api-runtime",
@@ -5619,7 +5620,7 @@
       "zlib"
     ],
     "libarchive-devel": [
-      "libarchive=3.8.4",
+      "libarchive=3.8.5",
       "libbz2-devel",
       "libiconv-devel",
       "libexpat-devel",
@@ -5632,7 +5633,7 @@
     ],
     "libargp": [],
     "libargp-devel": [
-      "libargp=20241207"
+      "libargp=202601"
     ],
     "libasprintf": [
       "gcc-libs"
@@ -5692,7 +5693,7 @@
       "libzstd"
     ],
     "libcurl-devel": [
-      "libcurl=8.17.0",
+      "libcurl=8.18.0",
       "brotli-devel",
       "libidn2-devel",
       "libnghttp3-devel",
@@ -5841,10 +5842,10 @@
       "gmp"
     ],
     "libiconv": [
-      "gcc-libs",
-      "libintl"
+      "gcc-libs"
     ],
     "libiconv-devel": [
+      "iconv=1.18",
       "libiconv=1.18"
     ],
     "libidn": [
@@ -6049,7 +6050,7 @@
     ],
     "libsqlite": [],
     "libsqlite-devel": [
-      "libsqlite=3.51.1",
+      "libsqlite=3.51.2",
       "zlib-devel"
     ],
     "libssh": [
@@ -6074,7 +6075,7 @@
       "info"
     ],
     "libtasn1-devel": [
-      "libtasn1=4.20.0"
+      "libtasn1=4.21.0"
     ],
     "libtirpc": [
       "gcc-libs"
@@ -6414,7 +6415,8 @@
     "mingw-w64-cross-zlib": [
       "mingw-w64-cross-ucrt64-zlib",
       "mingw-w64-cross-mingw32-zlib",
-      "mingw-w64-cross-mingw64-zlib"
+      "mingw-w64-cross-mingw64-zlib",
+      "mingw-w64-cross-mingwarm64-zlib"
     ],
     "mintty": [
       "sh"
@@ -6470,7 +6472,7 @@
     ],
     "msys2-runtime": [],
     "msys2-runtime-devel": [
-      "msys2-runtime=3.6.5"
+      "msys2-runtime=3.6.6"
     ],
     "msys2-w32api-headers": [],
     "msys2-w32api-runtime": [
@@ -6509,7 +6511,7 @@
       "gcc-libs"
     ],
     "ncurses-devel": [
-      "ncurses=6.5.20240831"
+      "ncurses=6.6"
     ],
     "neofetch": [
       "bash"
@@ -6663,7 +6665,8 @@
       "gdbm",
       "libxcrypt",
       "coreutils",
-      "sh"
+      "sh",
+      "libbsd"
     ],
     "perl-Algorithm-Diff": [
       "perl"
@@ -7236,7 +7239,9 @@
       "libsqlite",
       "zlib",
       "libxcrypt",
-      "binutils"
+      "binutils",
+      "libgdbm",
+      "libutil-linux"
     ],
     "python-appdirs": [
       "python"
@@ -7624,8 +7629,8 @@
     ],
     "sqlite-doc": [],
     "sqlite-extensions": [
-      "sqlite=3.51.1",
-      "libsqlite=3.51.1"
+      "sqlite=3.51.2",
+      "libsqlite=3.51.2"
     ],
     "squashfs-tools": [
       "gcc-libs",
@@ -7685,7 +7690,7 @@
     ],
     "tcl-doc": [],
     "tcl-sqlite": [
-      "libsqlite=3.51.1",
+      "libsqlite=3.51.2",
       "tcl"
     ],
     "tcsh": [

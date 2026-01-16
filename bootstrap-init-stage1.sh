@@ -9,8 +9,8 @@ echo "Install new runtime and libiconv"
 rm -rf ./tmp
 mkdir -p ./tmp
 
-tar xf ./dist-init/msys2-runtime-devel-3.6.5-7-x86_64.pkg.tar.zst -C ./tmp
-tar xf ./dist-init/msys2-runtime-3.6.5-7-x86_64.pkg.tar.zst -C ./tmp
+tar xf ./dist-init/msys2-runtime-devel-3.6.6-3-x86_64.pkg.tar.zst -C ./tmp
+tar xf ./dist-init/msys2-runtime-3.6.6-3-x86_64.pkg.tar.zst -C ./tmp
 tar xf ./dist-init/libiconv-devel-1.18-2-x86_64.pkg.tar.zst -C ./tmp
 tar xf ./dist-init/libiconv-1.18-2-x86_64.pkg.tar.zst -C ./tmp
 
