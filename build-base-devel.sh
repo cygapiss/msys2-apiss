@@ -8,6 +8,9 @@ else
     sh bootstrap-init-stage1.sh
 fi
 
+pushd build-install
+sh perl-create-syms-for-pkg.sh
+popd
 sh msys-base-devel-list.sh
 
 do_other() {
