@@ -5,7 +5,7 @@ export MSYS_BOOTSTRAP_STAGE=stage1
 if [[ "$MSYS_BOOTSTRAP_STAGE" == "cleanup" ]]; then
     echo "Do cleanup, do not init"
 else
-    sh bootstrap-init.sh
+    sh bootstrap-init-stage1.sh
 fi
 
 sh msys-base-devel-list.sh
