@@ -35,6 +35,13 @@ do_build() {
   fi
 
   retVal=$?
+
+  if [ -f "${pkg_root_dir}/build-install/${new_dir}-finish.sh" ]; then
+    echo "Finish for ${new_dir}"
+    new_dir=${new_dir} pkg_root_dir=${pkg_root_dir} \
+    sh "${pkg_root_dir}/build-install/${new_dir}-finish.sh"
+  fi
+
   if [ $retVal -ne 0 ]; then
       echo "Error for pkgbase: ${new_dir} with retcode:$retVal"
       find . -maxdepth 1 -name "*.pkg.tar.zst" | xargs -I ARG rm -f ARG
