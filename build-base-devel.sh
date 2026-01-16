@@ -11,14 +11,15 @@ fi
 sh msys-base-devel-list.sh
 
 do_other() {
-    sh build-single.sh nano
-    sh build-single.sh gnupg
     sh ./build-base-devel.sh >out.txt 2>&1
+
     Clean dll and exe: '.+'
     sh ./build-all.sh >build-all.txt 2>&1
 
     pacman -Sl msys  >msys.txt
 
+    sh build-single.sh nano
+    sh build-single.sh gnupg
 
     MSYS_BUILD_WITH_CLEAN=enabled MSYS_BOOTSTRAP_STAGE=stage1 sh build-single.sh jsoncpp
     MSYS_BUILD_PKGSUMS=enabled MSYS_BUILD_WITH_CLEAN=enabled MSYS_BOOTSTRAP_STAGE=stage1 sh build-single.sh jsoncpp
