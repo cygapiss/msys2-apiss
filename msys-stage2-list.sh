@@ -1,4 +1,5 @@
 #!/bin/bash
+sh build-single.sh texinfo
 sh build-single.sh btyacc
 sh build-single.sh cygnative
 sh build-single.sh cygrunsrv
@@ -88,6 +89,7 @@ sh build-single.sh docx2txt
 sh build-single.sh enscript
 sh build-single.sh expect
 sh build-single.sh markdown
+sh build-single.sh mingw-w64-cross-mingwarm64-binutils
 sh build-single.sh perl-Algorithm-Diff
 sh build-single.sh perl-Archive-Zip
 sh build-single.sh perl-Benchmark-Timer
@@ -135,6 +137,9 @@ sh build-single.sh stow
 sh build-single.sh wcd
 sh build-single.sh ack
 sh build-single.sh dejagnu
+sh build-single.sh mingw-w64-cross-mingwarm64-crt
+sh build-single.sh mingw-w64-cross-mingwarm64-tools
+sh build-single.sh mingw-w64-cross-mingwarm64-windows-default-manifest
 sh build-single.sh perl-Compress-Bzip2
 sh build-single.sh perl-DBI
 sh build-single.sh perl-List-MoreUtils-XS
@@ -153,6 +158,9 @@ sh build-single.sh perl-Text-Diff
 sh build-single.sh perl-XML-SAX
 sh build-single.sh apr-util
 sh build-single.sh lcov
+sh build-single.sh mingw-w64-cross-mingwarm64-winpthreads
+sh build-single.sh mingw-w64-cross-mingwarm64-winstorecompat
+sh build-single.sh mingw-w64-cross-tools
 sh build-single.sh perl-Class-Method-Modifiers
 sh build-single.sh perl-Data-OptList
 sh build-single.sh perl-File-Which
@@ -174,6 +182,7 @@ sh build-single.sh perl-Import-Into
 sh build-single.sh perl-Sub-Exporter
 sh build-single.sh perl-Test-YAML
 sh build-single.sh git-flow
+sh build-single.sh mingw-w64-cross-winstorecompat
 sh build-single.sh perl-alien-build-plugin-download-gitlab
 sh build-single.sh perl-Devel-GlobalDestruction
 sh build-single.sh quilt
@@ -185,6 +194,7 @@ sh build-single.sh socat
 sh build-single.sh w3m
 sh build-single.sh perl-Parallel-ForkManager
 sh build-single.sh sharutils
+sh build-single.sh squashfs-tools
 sh build-single.sh cloc
 sh build-single.sh git-filter-repo
 sh build-single.sh gtest
@@ -192,6 +202,7 @@ sh build-single.sh libidn
 sh build-single.sh man-db
 sh build-single.sh perl-LWP-Protocol-https
 sh build-single.sh tmux
+sh build-single.sh atool
 sh build-single.sh man2html
 sh build-single.sh whois
 sh build-single.sh cvs
@@ -204,6 +215,7 @@ sh build-single.sh libssh
 sh build-single.sh libtirpc
 sh build-single.sh lynx
 sh build-single.sh msgpack-c
+sh build-single.sh nano-syntax-highlighting
 sh build-single.sh python-pyparsing
 sh build-single.sh upx
 sh build-single.sh ruby
@@ -243,16 +255,13 @@ sh build-single.sh python-sphinxcontrib-serializinghtml
 sh build-single.sh python-wcwidth
 sh build-single.sh python-zstandard
 sh build-single.sh scons
-sh build-single.sh squashfs-tools
 sh build-single.sh txt2tags
 sh build-single.sh vim
 sh build-single.sh xdelta3
-sh build-single.sh atool
 sh build-single.sh ctags
 sh build-single.sh editorconfig-vim
 sh build-single.sh grml-zsh-config
 sh build-single.sh gyp
-sh build-single.sh mingw-w64-cross-mingwarm64-binutils
 sh build-single.sh mm-common
 sh build-single.sh python-cffi
 sh build-single.sh python-jinja
@@ -268,18 +277,13 @@ sh build-single.sh guile
 sh build-single.sh libinih
 sh build-single.sh llvm
 sh build-single.sh mercurial
-sh build-single.sh mingw-w64-cross-mingwarm64-crt
-sh build-single.sh mingw-w64-cross-mingwarm64-tools
-sh build-single.sh mingw-w64-cross-mingwarm64-windows-default-manifest
-sh build-single.sh nano-syntax-highlighting
 sh build-single.sh nnn
 sh build-single.sh openbsd-netcat
 sh build-single.sh perl-Alien-Libxml2
 sh build-single.sh python-pkgconfig
 sh build-single.sh cyrus-sasl
-sh build-single.sh mingw-w64-cross-mingwarm64-winpthreads
-sh build-single.sh mingw-w64-cross-mingwarm64-winstorecompat
-sh build-single.sh mingw-w64-cross-tools
+sh build-single.sh mingw-w64-cross-gcc
+sh build-single.sh mingw-w64-cross-mingwarm64-gcc
 sh build-single.sh moreutils
 sh build-single.sh mosh
 sh build-single.sh mosquitto
@@ -288,7 +292,6 @@ sh build-single.sh sshpass
 sh build-single.sh autogen
 sh build-single.sh colordiff
 sh build-single.sh gdb
-sh build-single.sh mingw-w64-cross-mingwarm64-gcc
 sh build-single.sh nyacc
 sh build-single.sh opensp
 sh build-single.sh patchutils
@@ -298,12 +301,12 @@ sh build-single.sh python-hatch-vcs
 sh build-single.sh python-typogrify
 sh build-single.sh tig
 sh build-single.sh tio
+sh build-single.sh winpty
 sh build-single.sh yasm
 sh build-single.sh cgdb
 sh build-single.sh gi-docgen
 sh build-single.sh guile-mqtt
 sh build-single.sh mingw-w64-cross-compiler-rt
-sh build-single.sh mingw-w64-cross-winstorecompat
 sh build-single.sh neon
 sh build-single.sh python-attrs
 sh build-single.sh python-iniconfig
@@ -320,10 +323,8 @@ sh build-single.sh crosstool-ng
 sh build-single.sh irssi
 sh build-single.sh libgit2
 sh build-single.sh mc
-sh build-single.sh mingw-w64-cross-gcc
 sh build-single.sh python-sphinx
 sh build-single.sh remake
-sh build-single.sh winpty
 sh build-single.sh rust
 sh build-single.sh cargo-c
 sh build-single.sh cargo-edit

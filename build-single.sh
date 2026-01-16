@@ -3,12 +3,17 @@ new_dir=$1
 pushd ./ports/${new_dir}
 
 do_build() {
-  exist_packages=`find . -maxdepth 1 -name "*.pkg.tar.zst"`
-  echo "Do build for ${new_dir} at `cygpath -w ${PWD}` exist_packages:$exist_packages MSYS_BOOTSTRAP_STAGE:$MSYS_BOOTSTRAP_STAGE"
+  exist_packages=`find . -maxdepth 1 -name "*.pkg.tar.zst" | tr '\n' ' '`
+  echo "Do build for ${new_dir} at `cygpath -w ${PWD}` exist_packages:'$exist_packages'"
 
-  if [[ "$MSYS_BUILD_WITH_CLEAN" == "enabled" ]]; then
-    rm -rf ${new_dir}-tmp-full.tar
+  build_finished_file=${new_dir}-${MSYS_BOOTSTRAP_STAGE}-build-finished.build
+  if [[ "$MSYS_BOOTSTRAP_STAGE" == "" ]]; then
+    build_finished_file=${new_dir}-stage2-build-finished.build
   fi
+  if [[ "$MSYS_BUILD_WITH_CLEAN" == "enabled" ]]; then
+    rm -rf "$build_finished_file"
+  fi
+  echo "The build_finished_file is $build_finished_file MSYS_BOOTSTRAP_STAGE:$MSYS_BOOTSTRAP_STAGE"
 
   if [[ "$MSYS_BUILD_PKGSUMS" == "enabled" ]]; then
     updpkgsums
@@ -20,15 +25,22 @@ do_build() {
     sh "${pkg_root_dir}/build-install/${new_dir}-prepare.sh"
   fi
 
+  need_makepkg=1
   if [[ "$exist_packages" == "" ]]; then
-    echo "There is no packages for ${new_dir}"
-    rm -rf ${new_dir}-tmp-full.tar
+    echo "There is no packages for '${new_dir}', build it"
+  else
+    if [ -f "$build_finished_file" ]; then
+      echo "The '$build_finished_file' exist, there is no need build '${new_dir}'"
+      need_makepkg=0
+    fi
   fi
 
-  if [ -f ${new_dir}-tmp-full.tar ]; then
+  if [[ "$need_makepkg" == "0" ]]; then
     echo "There is no need build for '${new_dir}'"
   else
     echo "Building with makepkg for '${new_dir}'"
+    echo "Remove existing packages first"
+    find . -maxdepth 1 -name "*.pkg.tar.zst" | xargs -I ARG rm -f ARG
     makepkg --cleanbuild --syncdeps --force --noconfirm --nocheck --skippgpcheck
     # makepkg -e --force --noconfirm --nocheck --skippgpcheck
     # makepkg --nobuild --cleanbuild
@@ -43,65 +55,74 @@ do_build() {
   fi
 
   if [ $retVal -ne 0 ]; then
-      echo "Error for pkgbase: ${new_dir} with retcode:$retVal"
-      find . -maxdepth 1 -name "*.pkg.tar.zst" | xargs -I ARG rm -f ARG
-      # exit $retVal
+    echo "Error for pkgbase: ${new_dir} with retcode:$retVal"
+    find . -maxdepth 1 -name "*.pkg.tar.zst" | xargs -I ARG rm -f ARG
+    # exit $retVal
+  else
+    touch "$build_finished_file"
   fi
   echo "Building '${new_dir}' finished"
 
   echo "All packages:"
   find . -maxdepth 1 -name "*.pkg.tar.zst"
   echo "Backup packages"
-  find . -maxdepth 1 -name "*.pkg.tar.zst" | xargs -I ARG cp -arf ARG ../../dist/
+  if [[ "$MSYS_BOOTSTRAP_STAGE" == "stage1" ]]; then
+    find . -maxdepth 1 -name "*.pkg.tar.zst" | xargs -I ARG cp -arf ARG ../../dist/
+  elif [[ "$MSYS_BOOTSTRAP_STAGE" == "stage0" ]]; then
+    find . -maxdepth 1 -name "*.pkg.tar.zst" | xargs -I ARG cp -arf ARG ../../dist-init/
+  elif [[ "$MSYS_BOOTSTRAP_STAGE" == "" ]]; then
+    find . -maxdepth 1 -name "*.pkg.tar.zst" | xargs -I ARG cp -arf ARG ../../dist-final/
+  fi
 
   echo "Install packages:"
-  rm -rf tmp
-  mkdir -p tmp
-  find -name "*.pkg.tar.zst" | xargs -I ARG tar -xf ARG -C tmp
-  pushd tmp
-  rm .BUILDINFO .MTREE .PKGINFO
-  popd
-
-  rm -rf ${new_dir}-tmp-full.tar
-  tar -cf ${new_dir}-tmp-full.tar -C tmp .
-
   if [[ "$MSYS_BOOTSTRAP_STAGE" == "stage1" ]]; then
+    rm -rf tmp
+    mkdir -p tmp
+    find -name "*.pkg.tar.zst" | xargs -I ARG tar -xf ARG -C tmp
     pushd tmp
-    find | grep .exe$
+    rm .BUILDINFO .MTREE .PKGINFO
+    popd
 
-    dlls_to_remove=`find | grep .dll$ | grep -v "^./usr/bin" | tr '\n' ' '`
-    if [[ "$dlls_to_remove" != "" ]]; then
-      echo "Clean the list of dlls: '$dlls_to_remove'"
+    rm -rf ${new_dir}-tmp-full.tar
+    tar -cf ${new_dir}-tmp-full.tar -C tmp .
+
+    if [[ "$MSYS_BOOTSTRAP_STAGE" == "stage1" ]]; then
+      pushd tmp
+      find | grep .exe$
+
+      dlls_to_remove=`find | grep .dll$ | grep -v "^./usr/bin" | tr '\n' ' '`
+      if [[ "$dlls_to_remove" != "" ]]; then
+        echo "Clean the list of dlls: '$dlls_to_remove'"
+      fi
+
+      echo "Clean dll and exe:"
+
+      find | grep .exe$ | xargs -I ARG rm -f ARG
+      find | grep .dll$ | grep -v "^./usr/bin" | xargs -I ARG rm -f ARG
+      echo "Finished clean dll and exe"
+      find | grep .dll$
+      popd
     fi
 
-    echo "Clean dll and exe:"
+    rm -rf ${new_dir}-tmp.tar
+    tar -cf ${new_dir}-tmp.tar -C tmp .
 
-    find | grep .exe$ | xargs -I ARG rm -f ARG
-    find | grep .dll$ | grep -v "^./usr/bin" | xargs -I ARG rm -f ARG
-    echo "Finished clean dll and exe"
-    find | grep .dll$
-    popd
+    echo "Install to system for ${new_dir}"
+
+    if [ -f "${pkg_root_dir}/build-install/${new_dir}.sh" ]; then
+      new_dir=${new_dir} pkg_root_dir=${pkg_root_dir} \
+      sh "${pkg_root_dir}/build-install/${new_dir}.sh"
+    else
+      tar xf ${new_dir}-tmp.tar -C /
+    fi
+  elif [[ "$MSYS_BOOTSTRAP_STAGE" == "" ]]; then
+    find -name "*.pkg.tar.zst" | xargs -I ARG pacman -U --noconfirm --overwrite \* ARG
   fi
-
-  rm -rf ${new_dir}-tmp.tar
-  tar -cf ${new_dir}-tmp.tar -C tmp .
-
-  echo "Install to system for ${new_dir}"
-
-  if [ -f "${pkg_root_dir}/build-install/${new_dir}.sh" ]; then
-    new_dir=${new_dir} pkg_root_dir=${pkg_root_dir} \
-    sh "${pkg_root_dir}/build-install/${new_dir}.sh"
-  else
-    tar xf ${new_dir}-tmp.tar -C /
-  fi
-
   echo "Install '${new_dir}' finished"
 }
 
 if [[ "$MSYS_BOOTSTRAP_STAGE" == "cleanup" ]]; then
   echo "Do cleanup for ${new_dir} at `cygpath -w ${PWD}`"
-  rm -rf ${new_dir}-tmp.tar
-  rm -rf ${new_dir}-tmp-full.tar
   find . -maxdepth 1 -name "*.pkg.tar.zst" | xargs -I ARG rm -f ARG
 else
   do_build
