@@ -129,6 +129,12 @@ async function write_script(
   let dirs = [];
   let dir_set = new Set();
   let script = script_init_content;
+  let packages_in_dir = {};
+  for (let pkg of Object.keys(dir_for_package)) {
+    let new_dir = dir_for_package[pkg];
+    if (!(new_dir in packages_in_dir)) packages_in_dir[new_dir] = [];
+    packages_in_dir[new_dir].push(pkg);
+  }
   for (let pkg of packages) {
     let new_dir = dir_for_package[pkg];
     if (new_dir === undefined) {
@@ -145,6 +151,7 @@ async function write_script(
   for (let new_dir of dirs) {
     if (!filter_out_set.has(new_dir)) {
       script += `sh build-single.sh ${new_dir}\n`;
+      packages.push(...packages_in_dir[new_dir]);
     }
   }
   // console.log(dirs)
@@ -239,8 +246,6 @@ async function main() {
   let packages_base_devel = packages.filter((x) =>
     packages_to_include_base_devel.has(x)
   );
-  let packages_base_devel_set = new Set(packages_base_devel);
-  let packages_other = packages.filter((x) => !packages_base_devel_set.has(x));
 
   await write_script(
     "",
@@ -252,6 +257,10 @@ async function main() {
       "mingw-w64-cross-gcc",
     ])
   );
+
+  let packages_base_devel_set = new Set(packages_base_devel);
+  let packages_other = packages.filter((x) => !packages_base_devel_set.has(x));
+
   await write_script(
     `#!/bin/bash
 `,
