@@ -17,16 +17,22 @@ const packages_provides_by = {
   "libuuid-devel": "libutil-linux-devel",
 };
 
-const packages_deferred_to_tail = ["autotools", "cmake", "git", "gtk-doc"];
+const packages_deferred_to_tail = [
+  "autotools",
+  "cmake",
+  "git",
+  "gtk-doc",
 
-const packages_deferred_to_stage2 = [
+  // iconv should be built at the stage0
+  "libiconv-devel",
+  "libiconv",
 ];
+
+const packages_deferred_to_stage2 = [];
 
 // Remove deps that prevent bootstrap
 const deps_remove_map = {
   perl: ["groff", "libxcrypt-devel", "libxcrypt"],
-  "gettext-devel": ["libiconv", "iconv", "libiconv-devel"],
-  libintl: ["libiconv"],
   libxslt: ["libxml2", "libxml2-devel"],
   "docbook-xsl": ["libxml2", "libxml2-devel", "po4a"],
   clang: ["llvm-libs"],
@@ -36,7 +42,7 @@ const deps_remove_map = {
   doxygen: ["liblzma", "liblzma-devel"],
 
   // This is for building git at the stage1
-  "rust": ["git"]
+  rust: ["git"],
 };
 
 function calc_deps(deps_map, pkg_name) {
