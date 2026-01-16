@@ -11,15 +11,14 @@ fi
 pushd build-install
 sh perl-create-syms-for-pkg.sh
 popd
-sh msys-base-devel-list.sh
+sh msys-stage1-list.sh
 
 do_other() {
-    sh ./build-base-devel.sh >out.txt 2>&1
+    sh ./build-stage1.sh >build-stage1.txt 2>&1
+    sh install-for-stage2.sh
 
     Clean dll and exe: '.+'
-    sh ./build-all.sh >build-all.txt 2>&1
-
-    pacman -Sl msys  >msys.txt
+    sh ./build-stage2.sh >build-stage2.txt 2>&1
 
     sh build-single.sh nano
     sh build-single.sh gnupg
