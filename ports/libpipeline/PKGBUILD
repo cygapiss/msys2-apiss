@@ -19,6 +19,10 @@ validpgpkeys=('AC0A4FF12611B6FCCF01C111393587D97D86500B') # "Colin Watson <cjwat
 prepare() {
   cd "${pkgname}-${pkgver}"
 
+  # Use gnulib https://gitweb.git.savannah.gnu.org/gitweb/?p=gnulib.git;a=shortlog;h=refs/heads/stable-202601
+  sed -i "s/GNULIB_REVISION=.*/GNULIB_REVISION=2a288c048e2a23ea9cd8cbef9a60aa4ac82bdc3d/g" bootstrap.conf
+  ./bootstrap
+
   autoreconf -fi
 }
 
