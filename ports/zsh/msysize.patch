@@ -6,7 +6,7 @@ diff -Naur zsh-5.0.7-orig/Src/Makefile.in zsh-5.0.7/Src/Makefile.in
  NLIST = `cat stamp-modobjs`
  
 -LIBZSH = libzsh-$(VERSION).$(DL_EXT)
-+LIBZSH = msys-zsh-$(VERSION).$(DL_EXT)
++LIBZSH = cygzsh-$(VERSION).$(DL_EXT)
  NIBZSH =
  INSTLIB = @INSTLIB@
  UNINSTLIB = @UNINSTLIB@
@@ -18,7 +18,7 @@ diff -Naur zsh-5.0.7-orig/Src/mkmakemod.sh zsh-5.0.7/Src/mkmakemod.sh
  		    case "$dep" in
  			zsh/main )
 -			    mdll="\$(dir_top)/Src/libzsh-\$(VERSION).\$(DL_EXT) "
-+			    mdll="\$(dir_top)/Src/msys-zsh-\$(VERSION).\$(DL_EXT) "
++			    mdll="\$(dir_top)/Src/cygzsh-\$(VERSION).\$(DL_EXT) "
  			;;
  			* )
  			    mdll="${depbase}.\$(DL_EXT) "
@@ -27,7 +27,7 @@ diff -Naur zsh-5.0.7-orig/Src/mkmakemod.sh zsh-5.0.7/Src/mkmakemod.sh
  		    case "$dep" in
  			zsh/main )
 -			    mdll="\$(dir_top)/Src/libzsh-\$(VERSION).\$(DL_EXT) "
-+			    mdll="\$(dir_top)/Src/msys-zsh-\$(VERSION).\$(DL_EXT) "
++			    mdll="\$(dir_top)/Src/cygzsh-\$(VERSION).\$(DL_EXT) "
  			;;
  			* )
  			    mdll="\$(dir_top)/$loc/${depbase}.\$(DL_EXT) "
@@ -36,7 +36,7 @@ diff -Naur zsh-5.0.7-orig/Src/mkmakemod.sh zsh-5.0.7/Src/mkmakemod.sh
  		    case "$dep" in
  			zsh/main )
 -			    mdll="\$(dir_top)/Src/libzsh-\$(VERSION).\$(DL_EXT) "
-+			    mdll="\$(dir_top)/Src/msys-zsh-\$(VERSION).\$(DL_EXT) "
++			    mdll="\$(dir_top)/Src/cygzsh-\$(VERSION).\$(DL_EXT) "
  			;;
  			* )
  			    mdll="\$(dir_top)/$loc/${depbase}.\$(DL_EXT) "
