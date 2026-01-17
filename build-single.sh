@@ -9,6 +9,11 @@ do_build() {
   build_finished_file=${new_dir}-${MSYS_BOOTSTRAP_STAGE}-build-finished.build
   if [[ "$MSYS_BOOTSTRAP_STAGE" == "" ]]; then
     build_finished_file=${new_dir}-stage2-build-finished.build
+  elif [[ "$MSYS_BOOTSTRAP_STAGE" == "stage1" ]]; then
+    if [ -f "${new_dir}-stage2-build-finished.build" ]; then
+      echo "stage2 build for '${new_dir}' is finished, then do not build it"
+      build_finished_file=${new_dir}-stage2-build-finished.build
+    fi
   fi
   if [[ "$MSYS_BUILD_WITH_CLEAN" == "enabled" ]]; then
     rm -rf "$build_finished_file"
