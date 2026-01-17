@@ -1,17 +1,17 @@
---- scons-4.9.1/SCons/Tool/cyglink.py.orig	2025-04-25 12:07:51.870163400 +0200
-+++ scons-4.9.1/SCons/Tool/cyglink.py	2025-04-25 12:07:59.542045300 +0200
-@@ -179,7 +179,7 @@
- 
-     env['LINKFLAGS'] = CLVar('-Wl,-no-undefined')
- 
--    env['SHLIBPREFIX'] = 'cyg'
-+    env['SHLIBPREFIX'] = 'msys-'
-     env['SHLIBSUFFIX'] = '.dll'
- 
-     env['IMPLIBPREFIX'] = 'lib'
---- scons-4.9.1/SCons/Platform/cygwin.py.orig	2024-09-22 03:25:14.000000000 +0200
-+++ scons-4.9.1/SCons/Platform/cygwin.py	2025-04-25 13:23:07.594688100 +0200
-@@ -43,6 +43,10 @@
+From f434a6ede5da721e6d0d9118063e93f56c862aa8 Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Sun, 18 Jan 2026 06:18:20 +0800
+Subject: [PATCH] msysize
+
+---
+ SCons/Platform/cygwin.py | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/SCons/Platform/cygwin.py b/SCons/Platform/cygwin.py
+index 2353763..56f03f3 100644
+--- a/SCons/Platform/cygwin.py
++++ b/SCons/Platform/cygwin.py
+@@ -43,6 +43,10 @@ if sys.platform == 'win32':
  def generate(env) -> None:
      posix.generate(env)
  
@@ -22,3 +22,6 @@
      env['PROGPREFIX']  = ''
      env['PROGSUFFIX']  = '.exe'
      env['SHLIBPREFIX'] = ''
+-- 
+2.52.0.windows.1
+
