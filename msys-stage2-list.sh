@@ -161,6 +161,7 @@ sh build-single.sh lcov
 sh build-single.sh mingw-w64-cross-mingwarm64-winpthreads
 sh build-single.sh mingw-w64-cross-mingwarm64-winstorecompat
 sh build-single.sh mingw-w64-cross-tools
+sh build-single.sh mingw-w64-cross-windows-default-manifest
 sh build-single.sh perl-Class-Method-Modifiers
 sh build-single.sh perl-Data-OptList
 sh build-single.sh perl-File-Which
@@ -182,6 +183,7 @@ sh build-single.sh perl-Import-Into
 sh build-single.sh perl-Sub-Exporter
 sh build-single.sh perl-Test-YAML
 sh build-single.sh git-flow
+sh build-single.sh mingw-w64-cross-winpthreads
 sh build-single.sh mingw-w64-cross-winstorecompat
 sh build-single.sh perl-alien-build-plugin-download-gitlab
 sh build-single.sh perl-Devel-GlobalDestruction
@@ -257,6 +259,7 @@ sh build-single.sh python-zstandard
 sh build-single.sh scons
 sh build-single.sh txt2tags
 sh build-single.sh vim
+sh build-single.sh winpty
 sh build-single.sh xdelta3
 sh build-single.sh ctags
 sh build-single.sh editorconfig-vim
@@ -270,12 +273,14 @@ sh build-single.sh python-pacdb
 sh build-single.sh python-yaml
 sh build-single.sh serf
 sh build-single.sh vimpager
+sh build-single.sh xorgproto
 sh build-single.sh ccache
 sh build-single.sh docbook-xsl-ns
 sh build-single.sh dtc
 sh build-single.sh guile
 sh build-single.sh libinih
 sh build-single.sh llvm
+sh build-single.sh lndir
 sh build-single.sh mercurial
 sh build-single.sh nnn
 sh build-single.sh openbsd-netcat
@@ -301,7 +306,6 @@ sh build-single.sh python-hatch-vcs
 sh build-single.sh python-typogrify
 sh build-single.sh tig
 sh build-single.sh tio
-sh build-single.sh winpty
 sh build-single.sh yasm
 sh build-single.sh cgdb
 sh build-single.sh gi-docgen

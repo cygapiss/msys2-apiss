@@ -15,6 +15,7 @@ sh build-single.sh mingw-w64-cross-headers
 sh build-single.sh mingw-w64-cross-zlib
 sh build-single.sh mpdecimal
 sh build-single.sh msys2-keyring
+sh build-single.sh msys2-w32api-headers
 sh build-single.sh ncurses
 sh build-single.sh npth
 sh build-single.sh pacman-mirrors
@@ -27,12 +28,14 @@ sh build-single.sh zstd
 sh build-single.sh ed
 sh build-single.sh gettext
 sh build-single.sh mintty
+sh build-single.sh msys2-w32api-runtime
 sh build-single.sh which
 sh build-single.sh cocom
 sh build-single.sh getent
 sh build-single.sh isl
 sh build-single.sh libedit
 sh build-single.sh mpfr
+sh build-single.sh msys2-launcher
 sh build-single.sh nettle
 sh build-single.sh patch
 sh build-single.sh readline
@@ -123,7 +126,6 @@ sh build-single.sh perl-YAML-Syck
 sh build-single.sh intltool
 sh build-single.sh less
 sh build-single.sh mingw-w64-cross-crt
-sh build-single.sh mingw-w64-cross-windows-default-manifest
 sh build-single.sh nasm
 sh build-single.sh perl-HTTP-Message
 sh build-single.sh perl-MIME-tools
@@ -138,7 +140,6 @@ sh build-single.sh perl-HTTP-Cookies
 sh build-single.sh perl-HTTP-Daemon
 sh build-single.sh perl-HTTP-Negotiate
 sh build-single.sh po4a
-sh build-single.sh mingw-w64-cross-winpthreads
 sh build-single.sh perl-libwww
 sh build-single.sh texinfo
 sh build-single.sh xz
@@ -192,13 +193,11 @@ sh build-single.sh libxslt
 sh build-single.sh pkgconf
 sh build-single.sh python-setuptools-scm
 sh build-single.sh python-trove-classifiers
-sh build-single.sh xorgproto
 sh build-single.sh autotools
 sh build-single.sh docbook-xsl
 sh build-single.sh glib2
 sh build-single.sh jsoncpp
 sh build-single.sh libpsl
-sh build-single.sh lndir
 sh build-single.sh openssh
 sh build-single.sh p11-kit
 sh build-single.sh python-pluggy
@@ -210,12 +209,9 @@ sh build-single.sh ca-certificates
 sh build-single.sh cppdap
 sh build-single.sh gnutls
 sh build-single.sh itstool
-sh build-single.sh msys2-launcher
 sh build-single.sh msys2-runtime
-sh build-single.sh msys2-w32api-headers
 sh build-single.sh python-pygments
 sh build-single.sh libssh2
-sh build-single.sh msys2-w32api-runtime
 sh build-single.sh yelp-xsl
 sh build-single.sh emacs
 sh build-single.sh gcc
