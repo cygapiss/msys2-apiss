@@ -1,0 +1,62 @@
+From 7c1c74278946a6791758578a6104661caae42c46 Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Sun, 18 Jan 2026 07:50:31 +0800
+Subject: [PATCH 1/2] fixes compile with gcc 15.x under cygwin
+
+---
+ linein.c | 2 +-
+ main.c   | 4 ++--
+ terms.c  | 2 ++
+ 3 files changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/linein.c b/linein.c
+index b58cad6..fbafd0c 100644
+--- a/linein.c
++++ b/linein.c
+@@ -208,7 +208,7 @@ inputLineHistSearch(char *prompt, char *def_str, int flag, Hist *hist,
+ 	else if (!i_quote && c < 0x20) {	/* Control code */
+ 	    if (incrfunc == NULL
+ 		|| (c = incrfunc((int)c, strBuf, strProp)) < 0x20)
+-		(*InputKeymap[(int)c]) (c);
++		(*InputKeymap[(int)c]) ();
+ 	    if (incrfunc && c != (unsigned char)-1 && c != CTRL_J)
+ 		incrfunc(-1, strBuf, strProp);
+ 	    if (cm_clear)
+diff --git a/main.c b/main.c
+index 45f5a4b..d6102a0 100644
+--- a/main.c
++++ b/main.c
+@@ -1778,7 +1778,7 @@ clear_mark(Line *l)
+ static int
+ srchcore(char *volatile str, int (*func) (Buffer *, char *))
+ {
+-    MySignalHandler(*prevtrap) ();
++    MySignalHandler(*prevtrap) (int);
+     volatile int i, result = SR_NOTFOUND;
+ 
+     if (str != NULL && str != SearchString)
+@@ -2183,7 +2183,7 @@ DEFUN(pipesh, PIPE_SHELL, "Execute shell command and display output")
+ DEFUN(readsh, READ_SHELL, "Execute shell command and display output")
+ {
+     Buffer *buf;
+-    MySignalHandler(*prevtrap) ();
++    MySignalHandler(*prevtrap) (int);
+     char *cmd;
+ 
+     CurrentKeyData = NULL;	/* not allowed in w3m-control: */
+diff --git a/terms.c b/terms.c
+index e272aab..def98f2 100644
+--- a/terms.c
++++ b/terms.c
+@@ -66,6 +66,8 @@ static int isWinConsole = 0;
+ #define TERM_CYGWIN_RESERVE_IME 2
+ static int isLocalConsole = 0;
+ 
++int ttyslot(void);
++
+ #if CYGWIN_VERSION_DLL_MAJOR < 1005 && defined(USE_MOUSE)
+ int cygwin_mouse_btn_swapped = 0;
+ #endif
+-- 
+2.52.0.windows.1
+
