@@ -51,8 +51,8 @@ build() {
   mv ${srcdir}/dest/usr/lib/libserf-${major}-0.a ${srcdir}/dest/usr/lib/libserf-${major}.a
 
   # Install the DLL
-  rm ${srcdir}/dest/usr/lib/msys-serf-${major}-0.dll
-  install -Dm755 msys-serf-${major}-0.dll ${srcdir}/dest/usr/bin/msys-serf-${major}-0.dll
+  rm ${srcdir}/dest/usr/lib/cygserf-${major}-0.dll
+  install -Dm755 cygserf-${major}-0.dll ${srcdir}/dest/usr/bin/cygserf-${major}-0.dll
 }
 
 #check() {
