@@ -31,6 +31,9 @@ const packages_deferred_to_tail = [
 // gcc can only be built after bootstrap, so it's stage2
 const packages_deferred_to_stage2 = [
   "mingw-w64-cross-gcc",
+  "mingw-w64-cross-ucrt64-gcc",
+  "mingw-w64-cross-mingw32-gcc",
+  "mingw-w64-cross-mingw64-gcc",
   "mingw-w64-cross-mingwarm64-gcc",
 ];
 
@@ -128,7 +131,7 @@ async function write_script(
   packages,
   dir_for_package,
   output_filename,
-  filter_out_set,
+  filter_package_out_set,
 ) {
   let dirs = [];
   let dir_set = new Set();
@@ -139,11 +142,16 @@ async function write_script(
     if (!(new_dir in packages_in_dir)) packages_in_dir[new_dir] = [];
     packages_in_dir[new_dir].push(pkg);
   }
+  let packages_will_build = [];
   for (let pkg of packages) {
     let new_dir = dir_for_package[pkg];
     if (new_dir === undefined) {
       console.log(`new_dir: ${new_dir} for ${pkg}`);
     }
+    if (filter_package_out_set.has(pkg)) {
+      continue;
+    }
+    packages_will_build.push(pkg);
     if (!dir_set.has(new_dir)) {
       dirs.push(new_dir);
       dir_set.add(new_dir);
@@ -153,13 +161,12 @@ async function write_script(
   // dirs = dir_lines.split("\n");
   // console.log(dirs)
   for (let new_dir of dirs) {
-    if (!filter_out_set.has(new_dir)) {
-      script += `sh build-single.sh ${new_dir}\n`;
-      packages.push(...packages_in_dir[new_dir]);
-    }
+    script += `sh build-single.sh ${new_dir}\n`;
+    packages_will_build.push(...packages_in_dir[new_dir]);
   }
   // console.log(dirs)
   await fs.writeFile(output_filename, script);
+  return packages_will_build;
 }
 
 async function get_deps_map_make() {
@@ -250,7 +257,7 @@ async function main() {
     packages_to_include_base_devel.has(x),
   );
 
-  await write_script(
+  const packages_will_build = await write_script(
     "",
     packages_base_devel,
     dir_for_package,
@@ -258,8 +265,8 @@ async function main() {
     new Set(packages_deferred_to_stage2),
   );
 
-  let packages_base_devel_set = new Set(packages_base_devel);
-  let packages_other = packages.filter((x) => !packages_base_devel_set.has(x));
+  let packages_will_build_set = new Set(packages_will_build);
+  let packages_other = packages.filter((x) => !packages_will_build_set.has(x));
 
   await write_script(
     // texinfo need build twice as it's called perl in runtime for testing it self
