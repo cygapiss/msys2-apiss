@@ -60,6 +60,6 @@ package() {
   DESTDIR="$pkgdir" cmake --install build
 
   install -Dm644 "$pkgname-$pkgver/epl-v20" "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
-  ln -sf msys-mosquitto-1.dll   "$pkgdir/usr/bin/msys-mosquitto.dll"
-  ln -sf msys-mosquittopp-1.dll "$pkgdir/usr/bin/msys-mosquittopp.dll"
+  ln -sf cygmosquitto-1.dll   "$pkgdir/usr/bin/cygmosquitto.dll"
+  ln -sf cygmosquittopp-1.dll "$pkgdir/usr/bin/cygmosquittopp.dll"
 }
