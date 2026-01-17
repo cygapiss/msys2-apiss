@@ -47,6 +47,31 @@ const deps_remove_map = {
   "perl-Locale-Gettext": ["help2man"],
   pkgconf: ["meson"],
   doxygen: ["liblzma", "liblzma-devel"],
+  "mingw-w64-cross-mingwarm64-gcc": [
+    "mingw-w64-cross-mingwarm64-crt",
+    "mingw-w64-cross-mingwarm64-winpthreads",
+    "mingw-w64-cross-mingwarm64-windows-default-manifest",
+  ],
+  "mingw-w64-cross-gcc": [
+    "mingw-w64-cross-crt",
+    "mingw-w64-cross-ucrt64-crt",
+    "mingw-w64-cross-mingw32-crt",
+    "mingw-w64-cross-mingw64-crt",
+
+    "mingw-w64-cross-ucrt64-gcc",
+    "mingw-w64-cross-mingw32-gcc",
+    "mingw-w64-cross-mingw64-gcc",
+
+    "mingw-w64-cross-winpthreads",
+    "mingw-w64-cross-ucrt64-winpthreads",
+    "mingw-w64-cross-mingw32-winpthreads",
+    "mingw-w64-cross-mingw64-winpthreads",
+
+    "mingw-w64-cross-windows-default-manifest",
+    "mingw-w64-cross-ucrt64-windows-default-manifest",
+    "mingw-w64-cross-mingw32-windows-default-manifest",
+    "mingw-w64-cross-mingw64-windows-default-manifest",
+  ],
 
   // This is for building git at the stage1
   rust: ["git"],
@@ -177,7 +202,7 @@ async function get_deps_map_make() {
   const dir_for_package = {};
 
   let packages_deferred_set = new Set(
-    [].concat(packages_deferred_to_tail, packages_deferred_to_stage2),
+    [].concat(packages_deferred_to_tail),
   );
   for (let pkg of deps_json.pkg_info) {
     for (let pkgname of pkg.pkgname.split(" ")) {
