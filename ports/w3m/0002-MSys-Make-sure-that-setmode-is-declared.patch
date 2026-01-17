@@ -1,7 +1,7 @@
-From e61ab761ab3858cd20e8350ed4384cede4b570e8 Mon Sep 17 00:00:00 2001
+From 4115263ff88441fed7b0da6480d33fcd22b3f56f Mon Sep 17 00:00:00 2001
 From: Johannes Schindelin <johannes.schindelin@gmx.de>
 Date: Thu, 10 Dec 2015 11:04:35 +0100
-Subject: [PATCH] MSys: Make sure that setmode() is declared
+Subject: [PATCH 2/2] MSys: Make sure that setmode() is declared
 
 In MSys2's context, `_setmode()` is declared, and `setmode()` will be
 defined for legacy only when including io.h. So let's do that.
@@ -12,10 +12,10 @@ Signed-off-by: Johannes Schindelin <johannes.schindelin@gmx.de>
  1 file changed, 4 insertions(+)
 
 diff --git a/main.c b/main.c
-index e318cbc..c3bd958 100644
+index d6102a0..494245f 100644
 --- a/main.c
 +++ b/main.c
-@@ -31,6 +31,10 @@ extern int do_getch();
+@@ -35,6 +35,10 @@ extern int do_getch();
  #endif				/* defined(USE_GPM) || defined(USE_SYSMOUSE) */
  #endif
  
@@ -27,5 +27,5 @@ index e318cbc..c3bd958 100644
  #include <winsock.h>
  
 -- 
-2.6.3
+2.52.0.windows.1
 
