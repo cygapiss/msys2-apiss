@@ -35,14 +35,14 @@ prepare() {
 build() {
   cd "${srcdir}/${pkgname}-${pkgver}"
 
-  make all doc PREFIX=/usr LOCALSTATEDIR=/var SYSCONFDIR=/etc SOPREFIX=msys- SOEXT=dll
-  make -j1 DESTDIR="${srcdir}/prefix-${CARCH}" install PREFIX=/usr LOCALSTATEDIR=/var SYSCONFDIR=/etc SOPREFIX=msys- SOEXT=dll
+  make all doc PREFIX=/usr LOCALSTATEDIR=/var SYSCONFDIR=/etc SOPREFIX=cyg SOEXT=dll
+  make -j1 DESTDIR="${srcdir}/prefix-${CARCH}" install PREFIX=/usr LOCALSTATEDIR=/var SYSCONFDIR=/etc SOPREFIX=cyg SOEXT=dll
 }
 
 check() {
   cd "${srcdir}/${pkgname}-${pkgver}"
 
-  make check PREFIX=/usr LOCALSTATEDIR=/var SYSCONFDIR=/etc SOPREFIX=msys- SOEXT=dll
+  make check PREFIX=/usr LOCALSTATEDIR=/var SYSCONFDIR=/etc SOPREFIX=cyg SOEXT=dll
 }
 
 package_pacutils() {
