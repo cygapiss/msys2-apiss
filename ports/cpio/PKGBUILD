@@ -14,8 +14,15 @@ license=('spdx:GPL-3.0-or-later')
 depends=('libintl')
 makedepends=('gettext-devel' 'autotools' 'gcc')
 options=('staticlibs')
-source=(https://ftp.gnu.org/pub/gnu/cpio/cpio-${pkgver}.tar.gz)
-sha256sums=('efa50ef983137eefc0a02fdb51509d624b5e3295c980aa127ceee4183455499e')
+source=(https://ftp.gnu.org/pub/gnu/cpio/cpio-${pkgver}.tar.gz
+        0001-Fix-c23-conformity.patch)
+sha256sums=('efa50ef983137eefc0a02fdb51509d624b5e3295c980aa127ceee4183455499e'
+            'ed010f54d7df42882a4086726b3e679f39126332e31835b9ecfae2bf42a2ac86')
+
+prepare() {
+  pushd "${srcdir}/${pkgname}-${pkgver}"
+  patch -p1 -i "${srcdir}/0001-Fix-c23-conformity.patch"
+}
 
 build() {
   cd ${srcdir}/${pkgname}-${pkgver}
