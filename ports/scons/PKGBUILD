@@ -22,7 +22,7 @@ makedepends=(
 source=("https://pypi.org/packages/source/${pkgname::1}/${pkgname}/${pkgname}-${pkgver}.tar.gz"
         "0001-msysize.patch")
 sha256sums=('99c0e94a42a2c1182fa6859b0be697953db07ba936ecc9817ae0d218ced20b15'
-            '67455ddb48cdd068daa6fb8c2cb0b35feaa0a64b0fb9bd0020d99b74ef399fd3')
+            '410ba848e9678da649da0dca43bb85386f8ea8bdc7ab997d5882b7c3ca24b140')
 
 prepare() {
   cd "${pkgname}-${pkgver}"
