@@ -58,6 +58,7 @@ build() {
   export lt_cv_deplibs_check_method='pass_all'
   cd libtirpc-${pkgver}
 
+  CFLAGS="$CFLAGS -std=gnu17" \
   ./configure \
     --build=${CHOST} \
     --prefix=/usr \
