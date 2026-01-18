@@ -111,7 +111,8 @@ package() {
 
   for y in vimdiff view rview rvim
   do
-    cp -f ${pkgdir}/usr/bin/vim.exe ${pkgdir}/usr/bin/${y}
+    rm -f ${pkgdir}/usr/bin/${y}
+    ln -s ${pkgdir}/usr/bin/vim.exe ${pkgdir}/usr/bin/${y}
   done
 
   mkdir -p ${pkgdir}/usr/share/bash-completion/completions
