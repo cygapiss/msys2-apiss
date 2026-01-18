@@ -13,7 +13,7 @@ _version=21.1.8
 _rc=""
 _tag=llvmorg-${_version}${_rc}
 pkgver=${_version}${_rc/-/}
-pkgrel=1
+pkgrel=2
 pkgdesc="C language family frontend for LLVM"
 arch=('i686' 'x86_64')
 url="https://llvm.org/"
@@ -89,7 +89,7 @@ sha256sums=('d9022ddadb40a15015f6b27e6549a7144704ded8828ba036ffe4b8165707de21'
             '08045ec514a0e9338cc46ad17ffcebb3c421c5eb3dd0ad2bade1bfb4e768f9c2'
             '18320250d0e175d6dabdfa44e6dc6fee6c6ca30ca91e9e1ed1f7c27417b7a671'
             'be30d166830d23cb891d380e4e97287d5d88409eda8d0202e90d52fc183f020b'
-            '31fb13550d55f7517150fa6a367b8e618f4b5ce21067d4d91d8a5b3d22bd0ad7'
+            '4279e74b4d85db081519d4313da448b57105f586c0252fd2b33038211223d3fa'
             'fc4b425f9e88200a0baef63d0dbc23c70dce66f3e08fafa85717078c80ae8e2f')
 validpgpkeys=('B6C8F98282B944E3B0D5C2530FC3042E345AD05D'  # Hans Wennborg, Google.
               '474E22316ABF4785A88C6E8EA2C794A986419D8A'  # Tom Stellard
@@ -212,6 +212,13 @@ build() {
     exit 1
   fi
 
+  if [[ "$MSYS_BOOTSTRAP_STAGE" == "stage1" ]]; then
+    common_cmake_args+=(
+      -DCMAKE_SHARED_LINKER_FLAGS_INIT="-Wl,-e -Wl,_cygwin_dll_entry"
+      -DCMAKE_MODULE_LINKER_FLAGS_INIT="-Wl,-e -Wl,_cygwin_dll_entry"
+    )
+  fi
+
   local _projects="clang;lld"
 
   platform_config+=(-DLLVM_TARGETS_TO_BUILD="AArch64;ARM;X86")
@@ -232,7 +239,9 @@ build() {
 
 check() {
   cd "${srcdir}/build"
-  MSYS=winsymlinks:sys ln -sf msys-clang-${pkgver%.*}.dll bin/libclang.so
+  if [ "${_compiler}" == "clang" ]; then
+    MSYS=winsymlinks:sys ln -sf cygclang-${pkgver%.*}.dll bin/libclang.so
+  fi
   MSYS=winsymlinks:sys PATH="${srcdir}/build/bin:$PATH" ninja -k0 check-all || true
 }
 
@@ -307,7 +316,9 @@ package_llvm() {
   # Runtime libraries
   rm -rf "${srcdir}"/llvm-libs
   mkdir -p "${srcdir}"/llvm-libs/usr/bin
-  mv -f "${pkgdir}"/usr/bin/msys-*.dll "${srcdir}"/llvm-libs/usr/bin
+  if [ "${_compiler}" == "clang" ]; then
+    mv -f "${pkgdir}"/usr/bin/cyg*.dll "${srcdir}"/llvm-libs/usr/bin
+  fi
 
   install -Dm644 "${srcdir}"/llvm/LICENSE.TXT "${pkgdir}"/usr/share/licenses/llvm/LICENSE
 
@@ -327,7 +338,7 @@ package_llvm-libs() {
 
   cp -r "${srcdir}"/llvm-libs/usr "${pkgdir}"/usr
   # HACK to keep rust working to rebuild itself
-  #cp /usr/bin/msys-LLVM-20.dll "${pkgdir}"/usr/bin
+  #cp /usr/bin/cygLLVM-20.dll "${pkgdir}"/usr/bin
 
   install -Dm644 "${srcdir}"/llvm/LICENSE.TXT "${pkgdir}"/usr/share/licenses/llvm-libs/LICENSE
 }
