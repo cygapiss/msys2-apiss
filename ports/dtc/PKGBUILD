@@ -17,7 +17,7 @@ source=("https://git.kernel.org/pub/scm/utils/dtc/dtc.git/snapshot/${pkgname}-${
         01-correct-shared-library-extension.patch
         02-pyext-install.patch)
 sha256sums=('8f1486962f093f28a2f79f01c1fd82f144ef640ceabe555536d43362212ceb7c'
-            'ac65df904e09681cd5a4c12a063a91ce7055fdd24748fde6519c433ced480861'
+            'c6f3524cdd5d3cf2f868eb865374a33424cbcd7d3f073a2c55d5a1c9adfc2bf9'
             '0135724ce6f5a30a381d2097bc6afa561168bdc16c42608fcc34c3990fa5b990')
 
 prepare() {

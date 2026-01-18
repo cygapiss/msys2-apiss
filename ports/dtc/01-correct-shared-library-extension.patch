@@ -1,6 +1,19 @@
---- dtc-1.7.2/Makefile.orig	2024-11-06 04:01:37.000000000 +0100
-+++ dtc-1.7.2/Makefile	2024-12-17 08:16:32.746503200 +0100
-@@ -21,7 +21,7 @@
+From 33fb46bd3a6fa6279d81ee7a9d0c3e359a44db89 Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Sun, 18 Jan 2026 11:45:29 +0800
+Subject: [PATCH] correct shared library extension
+
+---
+ Makefile                   | 16 +++++++---------
+ libfdt/Makefile.libfdt     |  6 ++----
+ pylibfdt/Makefile.pylibfdt |  4 ++--
+ 3 files changed, 11 insertions(+), 15 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index f1f0ab3..d8ae987 100644
+--- a/Makefile
++++ b/Makefile
+@@ -21,7 +21,7 @@ CPPFLAGS = -I libfdt -I . -DFDT_ASSUME_MASK=$(ASSUME_MASK)
  WARNINGS = -Wall -Wpointer-arith -Wcast-qual -Wnested-externs -Wsign-compare \
  	-Wstrict-prototypes -Wmissing-prototypes -Wredundant-decls -Wshadow \
  	-Wsuggest-attribute=format -Wwrite-strings
@@ -9,7 +22,7 @@
  
  BISON = bison
  LEX = flex
-@@ -69,9 +69,9 @@
+@@ -69,9 +69,9 @@ SHAREDLIB_EXT     = dylib
  SHAREDLIB_CFLAGS  = -fPIC
  SHAREDLIB_LDFLAGS = -fPIC -dynamiclib -Wl,-install_name -Wl,
  else ifeq ($(HOSTOS),$(filter $(HOSTOS),msys cygwin))
@@ -21,7 +34,16 @@
  else
  SHAREDLIB_EXT     = so
  SHAREDLIB_CFLAGS  = -fPIC
-@@ -238,9 +238,9 @@
+@@ -217,8 +217,6 @@ $(LIBFDT_lib): $(addprefix $(LIBFDT_dir)/,$(LIBFDT_OBJS)) $(LIBFDT_version)
+ 	@$(VECHO) LD $@
+ 	$(CC) $(LDFLAGS) $(SHAREDLIB_LDFLAGS)$(LIBFDT_soname) -o $(LIBFDT_lib) \
+ 		$(addprefix $(LIBFDT_dir)/,$(LIBFDT_OBJS))
+-	ln -sf $(LIBFDT_LIB) $(LIBFDT_dir)/$(LIBFDT_soname)
+-	ln -sf $(LIBFDT_soname) $(LIBFDT_dir)/$(LIBFDT_so)
+ 
+ ifneq ($(DEPTARGETS),)
+ -include $(LIBFDT_OBJS:%.o=$(LIBFDT_dir)/%.d)
+@@ -238,9 +236,9 @@ install-bin: all $(SCRIPTS)
  install-lib: libfdt
  	@$(VECHO) INSTALL-LIB
  	$(INSTALL) -d $(DESTDIR)$(LIBDIR)
@@ -34,7 +56,7 @@
  	$(INSTALL_DATA) $(LIBFDT_archive) $(DESTDIR)$(LIBDIR)
  
  install-includes:
-@@ -291,7 +291,7 @@
+@@ -291,7 +289,7 @@ PYLIBFDT_dir = pylibfdt
  include $(PYLIBFDT_dir)/Makefile.pylibfdt
  
  .PHONY: pylibfdt
@@ -43,25 +65,15 @@
  
  #
  # Release signing and uploading
---- dtc-1.5.0/pylibfdt/Makefile.pylibfdt.orig	2019-04-25 08:39:00.773172800 +0300
-+++ dtc-1.5.0/pylibfdt/Makefile.pylibfdt	2019-04-25 08:42:12.651441900 +0300
-@@ -2,8 +2,8 @@
+diff --git a/libfdt/Makefile.libfdt b/libfdt/Makefile.libfdt
+index b763b2e..3bf4679 100644
+--- a/libfdt/Makefile.libfdt
++++ b/libfdt/Makefile.libfdt
+@@ -5,18 +5,16 @@
+ # be easily embeddable into other systems of Makefiles.
  #
  
- PYLIBFDT_srcs = $(PYLIBFDT_dir)/libfdt.i
--PYMODULE = $(PYLIBFDT_dir)/_libfdt.so
--PYLIBFDT_CLEANFILES_L = libfdt_wrap.c libfdt.py *.pyc *.so
-+PYMODULE = $(PYLIBFDT_dir)/_libfdt.$(SHAREDLIB_EXT)
-+PYLIBFDT_CLEANFILES_L = libfdt_wrap.c libfdt.py *.pyc *.$(SHAREDLIB_EXT)
- PYLIBFDT_CLEANFILES = $(PYLIBFDT_CLEANFILES_L:%=$(PYLIBFDT_dir)/%)
- PYLIBFDT_CLEANDIRS_L = build __pycache__
- PYLIBFDT_CLEANDIRS = $(PYLIBFDT_CLEANDIRS_L:%=$(PYLIBFDT_dir)/%)
---- dtc-1.7.2/libfdt/Makefile.libfdt.orig	2024-12-17 08:17:19.871970100 +0100
-+++ dtc-1.7.2/libfdt/Makefile.libfdt	2024-12-17 08:18:46.120273700 +0100
-@@ -6,13 +6,13 @@
- #
- 
- LIBFDT_so = libfdt.$(SHAREDLIB_EXT)
+-LIBFDT_so = libfdt.$(SHAREDLIB_EXT)
 -LIBFDT_soname = libfdt.$(SHAREDLIB_EXT).1
 +LIBFDT_soname = libfdt.$(SHAREDLIB_EXT).a
  LIBFDT_INCLUDES = fdt.h libfdt.h libfdt_env.h
@@ -74,3 +86,25 @@
  
  libfdt_clean:
  	@$(VECHO) CLEAN "(libfdt)"
+ 	rm -f $(STD_CLEANFILES:%=$(LIBFDT_dir)/%)
+-	rm -f $(LIBFDT_dir)/$(LIBFDT_so)
+ 	rm -f $(LIBFDT_dir)/$(LIBFDT_soname)
+ 	rm -f $(LIBFDT_dir)/$(LIBFDT_LIB)
+diff --git a/pylibfdt/Makefile.pylibfdt b/pylibfdt/Makefile.pylibfdt
+index 647203f..7aae694 100644
+--- a/pylibfdt/Makefile.pylibfdt
++++ b/pylibfdt/Makefile.pylibfdt
+@@ -3,8 +3,8 @@
+ #
+ 
+ PYLIBFDT_srcs = $(PYLIBFDT_dir)/libfdt.i
+-PYMODULE = $(PYLIBFDT_dir)/_libfdt.so
+-PYLIBFDT_CLEANFILES_L = libfdt_wrap.c libfdt.py *.pyc *.so
++PYMODULE = $(PYLIBFDT_dir)/_libfdt.$(SHAREDLIB_EXT)
++PYLIBFDT_CLEANFILES_L = libfdt_wrap.c libfdt.py *.pyc *.$(SHAREDLIB_EXT)
+ PYLIBFDT_CLEANFILES = $(PYLIBFDT_CLEANFILES_L:%=$(PYLIBFDT_dir)/%)
+ PYLIBFDT_CLEANDIRS_L = __pycache__ libfdt.egg-info
+ PYLIBFDT_CLEANDIRS = build $(PYLIBFDT_CLEANDIRS_L:%=$(PYLIBFDT_dir)/%)
+-- 
+2.52.0.windows.1
+
