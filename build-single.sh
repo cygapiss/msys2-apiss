@@ -124,6 +124,8 @@ do_build() {
     fi
   elif [[ "$MSYS_BOOTSTRAP_STAGE" == "" ]]; then
     find -name "*.pkg.tar.zst" | xargs -I ARG pacman -U --noconfirm --overwrite \* ARG
+  else
+    echo "Do not install for ${MSYS_BOOTSTRAP_STAGE}"
   fi
   echo "Install '${new_dir}' finished"
 }

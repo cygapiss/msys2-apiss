@@ -160,6 +160,7 @@ heimdal-libs
 help2man
 hexcurse
 icmake
+iconv
 icu
 icu-devel
 idutils
