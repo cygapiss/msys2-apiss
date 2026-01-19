@@ -6,22 +6,23 @@ export MSYS_BOOTSTRAP_STAGE=stage0
 mkdir -p dist-init
 mkdir -p dist
 mkdir -p dist-final
-pushd dist-init
-tar xf ./msys2-runtime-devel-3.6.6-2-x86_64.pkg.tar.zst -C / usr/lib
-tar xf ./libiconv-devel-1.18-2-x86_64.pkg.tar.zst -C / usr/lib
-popd
 
+# Init the msys2 system to the init state
+pkg_root_dir=$PWD \
+sh build-install/gcc-prepare.sh
+
+sh build-single.sh cmake
+sh build-single.sh libtool
+sh build-single.sh meson
+sh build-single.sh scons
+
+sh build-single.sh msys2-runtime
+sh build-single.sh libiconv
+sh build-single.sh binutils
 sh build-single.sh gcc
 
 do_build() {
-  sh build-single.sh cmake
-  sh build-single.sh libtool
-  sh build-single.sh meson
-  sh build-single.sh scons
 
-  sh build-single.sh msys2-runtime
-  sh build-single.sh libiconv
-  sh build-single.sh binutils
 
   sh ./build-stage0.sh >build-stage0.txt 2>&1
 
