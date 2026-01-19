@@ -3,6 +3,9 @@ export MSYS_BUILD_PKGSUMS=enabled
 export MSYS_BUILD_WITH_CLEAN=enabled
 export MSYS_BOOTSTRAP_STAGE=stage0
 
+mkdir -p dist-init
+mkdir -p dist
+mkdir -p dist-final
 pushd dist-init
 tar xf ./msys2-runtime-devel-3.6.6-2-x86_64.pkg.tar.zst -C / usr/lib
 tar xf ./libiconv-devel-1.18-2-x86_64.pkg.tar.zst -C / usr/lib
@@ -21,5 +24,18 @@ do_build() {
   sh build-single.sh binutils
 
   sh ./build-stage0.sh >build-stage0.txt 2>&1
+
+  MSYS_BOOTSTRAP_STAGE=stage0 makepkg --cleanbuild --syncdeps --force --noconfirm --nocheck --skippgpcheck >../../gcc.txt
+
+  export MSYS_BOOTSTRAP_STAGE=stage0
+  export pkg_root_dir=$PWD
+  export MSYS_IN_PKGBUILD=enabled
+  sh ${pkg_root_dir}/build-install/gcc-prepare.sh
+  pushd ports/gcc/src
+  export srcdir=$PWD
+  cd ${srcdir}/build-MSYS
+  export PATH=${srcdir}/build-MSYS/x86_64-pc-cygwin/libgcc/shlib:$PATH
+  rm -rf x86_64-pc-cygwin
+  make
 }
 
