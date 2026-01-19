@@ -10,6 +10,7 @@ if [[ "$MSYS_IN_PKGBUILD" == "enabled" ]]; then
         # libiconv
         tar xf ./libiconv-1.18-3-x86_64.pkg.tar.zst -C /
         tar xf ./libiconv-devel-1.18-3-x86_64.pkg.tar.zst -C / usr/lib
+        popd
     elif [[ "$MSYS_BOOTSTRAP_STAGE" == "stage1" ]]; then
         # Combine gcc-libs into stage1 byproduct, as it's not able
         # build gcc-libs
