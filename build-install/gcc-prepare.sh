@@ -37,6 +37,7 @@ else
         pacman -U --noconfirm --overwrite \* ./libtool-2.5.4-4-x86_64.pkg.tar.zst
         tar xf ./msys2-runtime-3.6.6-2-x86_64.pkg.tar.zst -C /
         tar xf ./msys2-runtime-devel-3.6.6-2-x86_64.pkg.tar.zst -C /
+        tar xf ./libiconv-devel-1.18-2-x86_64.pkg.tar.zst -C /
         popd
     fi
 fi
