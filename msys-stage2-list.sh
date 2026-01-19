@@ -266,7 +266,6 @@ sh build-single.sh docbook-xsl-ns
 sh build-single.sh dtc
 sh build-single.sh guile
 sh build-single.sh libinih
-sh build-single.sh llvm
 sh build-single.sh mercurial
 sh build-single.sh nnn
 sh build-single.sh openbsd-netcat
@@ -316,11 +315,9 @@ sh build-single.sh task
 sh build-single.sh u-boot-tools
 sh build-single.sh crosstool-ng
 sh build-single.sh irssi
-sh build-single.sh libgit2
 sh build-single.sh mc
 sh build-single.sh python-sphinx
 sh build-single.sh remake
-sh build-single.sh rust
 sh build-single.sh cargo-c
 sh build-single.sh cargo-edit
 sh build-single.sh fish
