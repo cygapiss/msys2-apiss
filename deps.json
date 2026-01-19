@@ -1050,7 +1050,7 @@
     },
     {
       "makedepends": "txt2tags",
-      "pkgrel": "1",
+      "pkgrel": "2",
       "pkgver": "0.19.26",
       "dir": "grml-zsh-config",
       "pkgname": "grml-zsh-config",
@@ -1402,7 +1402,7 @@
     },
     {
       "makedepends": "autotools gcc gettext-devel",
-      "pkgrel": "2",
+      "pkgrel": "3",
       "pkgver": "1.18",
       "dir": "libiconv",
       "pkgname": "libiconv iconv libiconv-devel",
@@ -1578,7 +1578,7 @@
     },
     {
       "makedepends": "cmake clang ninja pkgconf python git libzstd-devel zlib-devel",
-      "pkgrel": "2",
+      "pkgrel": "3",
       "pkgver": "21.1.1",
       "dir": "llvm",
       "pkgname": "llvm llvm-libs clang clang-analyzer compiler-rt lld",
@@ -4178,7 +4178,7 @@
     },
     {
       "makedepends": "gcc llvm python libgit2-devel pcre2-devel libssh2-devel openssl-devel pkgconf libsqlite-devel liblzma-devel libzstd-devel zlib-devel libcurl-devel rust",
-      "pkgrel": "2",
+      "pkgrel": "3",
       "pkgver": "1.92.0",
       "dir": "rust",
       "pkgname": "rust",
@@ -4466,7 +4466,7 @@
     },
     {
       "makedepends": "libbz2-devel gcc make",
-      "pkgrel": "3",
+      "pkgrel": "4",
       "pkgver": "6.0",
       "dir": "unzip",
       "pkgname": "unzip",
@@ -5304,7 +5304,7 @@
       "libreadline"
     ],
     "gcc": [
-      "gcc-libs=15.2.0-2",
+      "gcc-libs=15.2.0-1",
       "binutils",
       "gmp",
       "isl",
@@ -5313,7 +5313,6 @@
       "mpc",
       "mpfr",
       "zlib",
-      "zstd",
       "msys2-runtime-devel",
       "msys2-w32api-headers",
       "msys2-w32api-runtime",
@@ -5514,6 +5513,11 @@
       "ncurses"
     ],
     "icmake": [],
+    "iconv": [
+      "gcc-libs",
+      "libiconv=1.18",
+      "libintl"
+    ],
     "icu": [
       "gcc-libs"
     ],
@@ -5633,7 +5637,7 @@
     ],
     "libargp": [],
     "libargp-devel": [
-      "libargp=202601"
+      "libargp=20241207"
     ],
     "libasprintf": [
       "gcc-libs"
@@ -6415,8 +6419,7 @@
     "mingw-w64-cross-zlib": [
       "mingw-w64-cross-ucrt64-zlib",
       "mingw-w64-cross-mingw32-zlib",
-      "mingw-w64-cross-mingw64-zlib",
-      "mingw-w64-cross-mingwarm64-zlib"
+      "mingw-w64-cross-mingw64-zlib"
     ],
     "mintty": [
       "sh"
@@ -6665,8 +6668,7 @@
       "gdbm",
       "libxcrypt",
       "coreutils",
-      "sh",
-      "libbsd"
+      "sh"
     ],
     "perl-Algorithm-Diff": [
       "perl"
@@ -7239,9 +7241,7 @@
       "libsqlite",
       "zlib",
       "libxcrypt",
-      "binutils",
-      "libgdbm",
-      "libutil-linux"
+      "binutils"
     ],
     "python-appdirs": [
       "python"
