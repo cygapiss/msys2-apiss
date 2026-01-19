@@ -1,5 +1,5 @@
 if [[ "$MSYS_IN_PKGBUILD" == "enabled" ]]; then
-    echo "Under MSYS_IN_PKGBUILD, building gcc as stage: $MSYS_BOOTSTRAP_STAGE"
+    echo "Under MSYS_IN_PKGBUILD, building gcc as stage: $MSYS_BOOTSTRAP_STAGE pkg_root_dir:$pkg_root_dir"
     if [[ "$MSYS_BOOTSTRAP_STAGE" == "stage0" ]]; then
         pushd ${pkg_root_dir}/dist-init/
         # Then gcc-libs linkage to cygwin msys2-runtime and libiconv
@@ -27,7 +27,7 @@ if [[ "$MSYS_IN_PKGBUILD" == "enabled" ]]; then
         cp -arf ${DESTDIR}/* ${srcdir}/dest/
     fi
 else
-    echo "Prepare building gcc as stage: $MSYS_BOOTSTRAP_STAGE"
+    echo "Prepare building gcc as stage: $MSYS_BOOTSTRAP_STAGE pkg_root_dir:$pkg_root_dir"
     if [[ "$MSYS_BOOTSTRAP_STAGE" == "stage0" ]]; then
         pushd ${pkg_root_dir}/dist-init/
         # The gcc and gcc-libs first linkage to msys
