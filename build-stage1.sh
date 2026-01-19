@@ -29,8 +29,9 @@ do_other() {
     MSYS_BUILD_PKGSUMS=enabled MSYS_BUILD_WITH_CLEAN=enabled sh build-single.sh gnupg >gnupg.txt 2>&1
     MSYS_BUILD_PKGSUMS=enabled MSYS_BUILD_WITH_CLEAN=enabled MSYS_BOOTSTRAP_STAGE=stage1 sh build-single.sh gcc >gcc.txt 2>&1
     MSYS_BOOTSTRAP_STAGE=stage1 sh build-single.sh gcc >gcc.txt 2>&1
+    # repack
     MSYS_BOOTSTRAP_STAGE=stage1 makepkg -R
-    repack with force
+    # repack with force
     MSYS_BOOTSTRAP_STAGE=stage1 makepkg -R -f
 
     pacman -Syu --noconfirm --needed
