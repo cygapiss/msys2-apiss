@@ -4,6 +4,7 @@ pacman -U --noconfirm --overwrite \* ./dist-init/libltdl-2.5.4-5-x86_64.pkg.tar.
 pacman -U --noconfirm --overwrite \* ./dist-init/libtool-2.5.4-5-x86_64.pkg.tar.zst
 pacman -U --noconfirm --overwrite \* ./dist-init/cmake-4.2.1-2-x86_64.pkg.tar.zst
 pacman -U --noconfirm --overwrite \* ./dist-init/meson-1.10.0-2-any.pkg.tar.zst
+pacman -U --noconfirm --overwrite \* ./dist-init/scons-4.10.1-1-any.pkg.tar.zst
 
 echo "Install new runtime and libiconv"
 rm -rf ./tmp
