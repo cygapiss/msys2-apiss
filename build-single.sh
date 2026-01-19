@@ -1,4 +1,4 @@
-pkg_root_dir=$PWD
+export pkg_root_dir=$PWD
 new_dir=$1
 pushd ./ports/${new_dir}
 
@@ -46,8 +46,10 @@ do_build() {
     echo "Building with makepkg for '${new_dir}'"
     echo "Remove existing packages first"
     find . -maxdepth 1 -name "*.pkg.tar.zst" | xargs -I ARG rm -f ARG
+    # Extract source
     makepkg --cleanbuild --syncdeps --force --noconfirm --nocheck --skippgpcheck
-    # makepkg -e --force --noconfirm --nocheck --skippgpcheck
+    # Do not extract source
+    # makepkg --noextract --force --noconfirm --nocheck --skippgpcheck
     # makepkg --nobuild --cleanbuild
   fi
 
@@ -55,7 +57,7 @@ do_build() {
 
   if [ -f "${pkg_root_dir}/build-install/${new_dir}-finish.sh" ]; then
     echo "Finish for ${new_dir}"
-    new_dir=${new_dir} pkg_root_dir=${pkg_root_dir} \
+    new_dir=${new_dir} \
     sh "${pkg_root_dir}/build-install/${new_dir}-finish.sh"
   fi
 
@@ -115,7 +117,7 @@ do_build() {
     echo "Install to system for ${new_dir}"
 
     if [ -f "${pkg_root_dir}/build-install/${new_dir}.sh" ]; then
-      new_dir=${new_dir} pkg_root_dir=${pkg_root_dir} \
+      new_dir=${new_dir} \
       sh "${pkg_root_dir}/build-install/${new_dir}.sh"
     else
       tar xf ${new_dir}-tmp.tar -C /
