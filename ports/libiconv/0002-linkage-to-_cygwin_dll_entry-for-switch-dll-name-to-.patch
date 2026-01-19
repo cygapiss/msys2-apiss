@@ -1,0 +1,39 @@
+From 388a90f38bfcb6b1780732f7463c602803609259 Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Mon, 19 Jan 2026 12:47:54 +0800
+Subject: [PATCH] linkage to _cygwin_dll_entry for switch dll name to cygwin
+
+---
+ lib/Makefile.in            | 2 +-
+ libcharset/lib/Makefile.in | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/lib/Makefile.in b/lib/Makefile.in
+index b93856b..b85bf5d 100644
+--- a/lib/Makefile.in
++++ b/lib/Makefile.in
+@@ -67,7 +67,7 @@ OBJECTS_RES_no =
+ all : libiconv.la
+ 
+ libiconv.la : $(OBJECTS)
+-	$(LIBTOOL_LINK) $(CC) $(LDFLAGS) $(CFLAGS) -o libiconv.la -rpath $(libdir) -version-info $(LIBICONV_VERSION_INFO) -no-undefined $(OBJECTS)
++	$(LIBTOOL_LINK) $(CC) $(LDFLAGS) -Wl,-e -Wl,_cygwin_dll_entry $(CFLAGS) -o libiconv.la -rpath $(libdir) -version-info $(LIBICONV_VERSION_INFO) -no-undefined $(OBJECTS)
+ 
+ iconv.lo : $(srcdir)/iconv.c $(srcdir)/converters.h \
+            $(srcdir)/encodings.def $(srcdir)/encodings_aix.def $(srcdir)/encodings_osf1.def $(srcdir)/encodings_dos.def $(srcdir)/encodings_local.def \
+diff --git a/libcharset/lib/Makefile.in b/libcharset/lib/Makefile.in
+index 9a9ec1a..927be86 100644
+--- a/libcharset/lib/Makefile.in
++++ b/libcharset/lib/Makefile.in
+@@ -52,7 +52,7 @@ OBJECTS = localcharset.lo relocatable-stub.lo
+ all : libcharset.la
+ 
+ libcharset.la : $(OBJECTS)
+-	$(LIBTOOL_LINK) $(CC) $(LDFLAGS) $(CFLAGS) -o libcharset.la -rpath $(libdir) -version-info $(LIBCHARSET_VERSION_INFO) -no-undefined $(OBJECTS)
++	$(LIBTOOL_LINK) $(CC) $(LDFLAGS) -Wl,-e -Wl,_cygwin_dll_entry $(CFLAGS) -o libcharset.la -rpath $(libdir) -version-info $(LIBCHARSET_VERSION_INFO) -no-undefined $(OBJECTS)
+ 
+ localcharset.lo : $(srcdir)/localcharset.c
+ 	$(LIBTOOL_COMPILE) $(CC) $(INCLUDES) $(CFLAGS) $(CPPFLAGS) $(DEFS) -c $(srcdir)/localcharset.c
+-- 
+2.52.0.windows.1
+
