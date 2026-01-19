@@ -73,8 +73,6 @@ const deps_remove_map = {
     "mingw-w64-cross-mingw64-windows-default-manifest",
   ],
 
-  // This is for building git at the stage1, and building rust at the stage2
-  rust: ["git"],
 };
 
 function calc_deps(deps_map, pkg_name) {
