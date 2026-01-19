@@ -21,6 +21,10 @@ sh build-single.sh libiconv
 sh build-single.sh binutils
 sh build-single.sh gcc
 
+# Init the msys2 system to the init state after all build
+pkg_root_dir=$PWD \
+sh build-install/gcc-prepare.sh
+
 do_build() {
 
 
