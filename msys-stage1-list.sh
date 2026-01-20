@@ -202,6 +202,7 @@ sh build-single.sh docbook-xsl
 sh build-single.sh glib2
 sh build-single.sh jsoncpp
 sh build-single.sh libpsl
+sh build-single.sh llvm
 sh build-single.sh lndir
 sh build-single.sh openssh
 sh build-single.sh p11-kit
@@ -226,6 +227,7 @@ sh build-single.sh wget
 sh build-single.sh yelp-tools
 sh build-single.sh curl
 sh build-single.sh gtk-doc
+sh build-single.sh libgit2
 sh build-single.sh msys2-runtime
 sh build-single.sh cmake
 sh build-single.sh gcc
@@ -236,6 +238,3 @@ sh build-single.sh pacman
 sh build-single.sh pacman-contrib
 sh build-single.sh base
 sh build-single.sh base-devel
-sh build-single.sh llvm
-sh build-single.sh libgit2
-sh build-single.sh rust

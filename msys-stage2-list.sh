@@ -1,4 +1,6 @@
 #!/bin/bash
+sh build-single.sh gcc
+MSYS_BUILD_PKGSUMS=enabled MSYS_BOOTSTRAP_RUST=enabled sh build-single.sh rust
 sh build-single.sh texinfo
 sh build-single.sh btyacc
 sh build-single.sh cygnative
@@ -318,6 +320,7 @@ sh build-single.sh irssi
 sh build-single.sh mc
 sh build-single.sh python-sphinx
 sh build-single.sh remake
+sh build-single.sh rust
 sh build-single.sh cargo-c
 sh build-single.sh cargo-edit
 sh build-single.sh fish
