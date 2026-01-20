@@ -10,7 +10,7 @@ process.on("SIGINT", function () {
 });
 
 async function main() {
-  const ci_tools_root = "C:/CI-Tools";
+  const ci_tools_root = "E:/CI-Tools/msys64-stage2";
   const msys_root = path.join(ci_tools_root, "msys64");
   const pkg_root = __dirname;
 

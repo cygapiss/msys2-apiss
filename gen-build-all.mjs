@@ -35,6 +35,7 @@ const packages_deferred_to_stage2 = [
   "mingw-w64-cross-mingw32-gcc",
   "mingw-w64-cross-mingw64-gcc",
   "mingw-w64-cross-mingwarm64-gcc",
+  "rust",
 ];
 
 // Remove deps that prevent bootstrap
@@ -72,7 +73,6 @@ const deps_remove_map = {
     "mingw-w64-cross-mingw32-windows-default-manifest",
     "mingw-w64-cross-mingw64-windows-default-manifest",
   ],
-
 };
 
 function calc_deps(deps_map, pkg_name) {
@@ -294,6 +294,9 @@ async function main() {
   await write_script(
     // texinfo need build twice as it's called perl in runtime for testing it self
     `#!/bin/bash
+sh build-single.sh gcc
+MSYS_BUILD_PKGSUMS=enabled MSYS_BOOTSTRAP_RUST=enabled \
+sh build-single.sh rust
 sh build-single.sh texinfo
 `,
     packages_other,
