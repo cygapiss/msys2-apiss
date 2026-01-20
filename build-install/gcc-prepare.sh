@@ -13,9 +13,9 @@ if [[ "$MSYS_IN_PKGBUILD" == "enabled" ]]; then
         popd
     elif [[ "$MSYS_BOOTSTRAP_STAGE" == "stage1" ]]; then
         # Combine gcc-libs into stage1 byproduct, as it's not able
-        # build gcc-libs
+        # build gcc-libs by the newly built gcc
         rm -rf ${srcdir}/dest
-        mkdir -p ${srcdiBr}/dest
+        mkdir -p ${srcdir}/dest
         pushd ${pkg_root_dir}/dist-init/
         tar xf ./gcc-15.2.0-2-x86_64.pkg.tar.zst -C ${srcdir}/dest
         tar xf ./gcc-libs-15.2.0-2-x86_64.pkg.tar.zst -C ${srcdir}/dest
