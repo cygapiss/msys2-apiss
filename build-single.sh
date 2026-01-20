@@ -2,23 +2,27 @@ export pkg_root_dir=$PWD
 new_dir=$1
 pushd ./ports/${new_dir}
 
+stage_name="$MSYS_BOOTSTRAP_STAGE"
+if [[ "$stage_name" == "" ]]; then
+  stage_name="stage2"
+fi
+
 do_build() {
   exist_packages=`find . -maxdepth 1 -name "*.pkg.tar.zst" | tr '\n' ' '`
   echo "Do build for ${new_dir} at `cygpath -w ${PWD}` exist_packages:'$exist_packages'"
 
-  build_finished_file=${new_dir}-${MSYS_BOOTSTRAP_STAGE}-build-finished.build
-  if [[ "$MSYS_BOOTSTRAP_STAGE" == "" ]]; then
-    build_finished_file=${new_dir}-stage2-build-finished.build
-  elif [[ "$MSYS_BOOTSTRAP_STAGE" == "stage1" ]]; then
-    if [ -f "${new_dir}-stage2-build-finished.build" ]; then
+  build_finished_file=$pkg_root_dir/build-cache/$stage_name/${new_dir}-${stage_name}-build-finished.build
+  build_finished_stage2_file=$pkg_root_dir/build-cache/stage2/${new_dir}-stage2-build-finished.build
+  if [[ "$stage_name" == "stage1" ]]; then
+    if [ -f "${build_finished_stage2_file}" ]; then
       echo "stage2 build for '${new_dir}' is finished, then do not build it"
-      build_finished_file=${new_dir}-stage2-build-finished.build
+      build_finished_file=${build_finished_stage2_file}
     fi
   fi
   if [[ "$MSYS_BUILD_WITH_CLEAN" == "enabled" ]]; then
     rm -rf "$build_finished_file"
   fi
-  echo "The build_finished_file is $build_finished_file MSYS_BOOTSTRAP_STAGE:$MSYS_BOOTSTRAP_STAGE"
+  echo "The build_finished_file for stage_name:$stage_name is $build_finished_file"
 
   if [[ "$MSYS_BUILD_PKGSUMS" == "enabled" ]]; then
     updpkgsums
