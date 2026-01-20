@@ -1,7 +1,7 @@
 import * as fs from "fs/promises";
 import * as path from "path";
 import { fileURLToPath } from "url";
-import process, { exit } from "node:process";
+import process from "node:process";
 import {
   black_list,
   spawnProcessAsync,
@@ -29,7 +29,7 @@ function getYYYYMMDD(date) {
 async function archive_full(ci_tools_root, msys_root, cache_root_cygwin) {
   let target_msys_tar_path = path.join(
     ci_tools_root,
-    `msys2-base-x86_64-${getYYYYMMDD(new Date())}-full.tar`
+    `msys2-base-x86_64-${getYYYYMMDD(new Date())}-full.tar`,
   );
   console.log(`===Compress msys64 into ${target_msys_tar_path}`);
   try {
@@ -44,7 +44,7 @@ async function archive_full(ci_tools_root, msys_root, cache_root_cygwin) {
       "--login",
       "-c",
       [`rm -rf /var/cache/pacman/pkg`, `mkdir -p /var/cache/pacman/pkg`].join(
-        "; "
+        "; ",
       ),
     ],
     {
@@ -53,7 +53,7 @@ async function archive_full(ci_tools_root, msys_root, cache_root_cygwin) {
         MSYSTEM: "MSYS",
         CHERE_INVOKING: "1",
       },
-    }
+    },
   );
   await spawnProcessAsync(`tar`, ["cf", target_msys_tar_path, "msys64"], {
     cwd: ci_tools_root,
@@ -76,7 +76,7 @@ async function archive_full(ci_tools_root, msys_root, cache_root_cygwin) {
         MSYSTEM: "MSYS",
         CHERE_INVOKING: "1",
       },
-    }
+    },
   );
 }
 
@@ -110,7 +110,7 @@ async function main() {
       ["xf", path.join(ci_tools_root, "msys2-base-x86_64-20251213.tar")],
       {
         cwd: ci_tools_root,
-      }
+      },
     );
     console.log("Extract base finished\n");
   }
@@ -126,7 +126,7 @@ async function main() {
       env: {
         MSYSTEM: "MSYS",
       },
-    }
+    },
   );
   const pkg_root_cygwin = (
     await spawnProcessAsyncCapture(`${msys_root}/usr/bin/cygpath.exe`, [
@@ -163,14 +163,14 @@ async function main() {
         MSYSTEM: "MSYS",
         CHERE_INVOKING: "1",
       },
-    }
+    },
   );
 
   console.log("Upgrade base packages finished");
 
   const msys_list_capture = await spawnProcessAsyncCapture(
     `${msys_root}/usr/bin/pacman.exe`,
-    ["-Sl", "msys"]
+    ["-Sl", "msys"],
   );
   const msys_list_content = msys_list_capture.stdout.trim();
   const packages = [];
@@ -198,7 +198,7 @@ async function main() {
   ]);
 
   console.log(
-    `===Installing packages finished, then install newer version msys2-runtime`
+    `===Installing packages finished, then install newer version msys2-runtime`,
   );
 
   const bash_msys_runtime_for_intall = [
@@ -211,7 +211,7 @@ async function main() {
     "--login",
     "-c",
     `cd ${pkg_root_cygwin}/dist-init;  ${bash_msys_runtime_for_intall.join(
-      "; "
+      "; ",
     )}`,
   ]);
 

@@ -15,7 +15,6 @@ sh msys-stage1-list.sh
 
 do_other() {
     sh ./build-stage1.sh >build-stage1.txt 2>&1
-    sh install-for-stage2.sh
 
     Clean dll and exe: '.+'
     sh ./build-stage2.sh >build-stage2.txt 2>&1
