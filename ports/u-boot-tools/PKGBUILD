@@ -14,16 +14,22 @@ msys2_references=(
 license=('spdx:GPL-2.0-only')
 depends=('dtc' 'openssl')
 makedepends=('make' 'gcc' 'openssl-devel' 'libgnutls-devel' 'libuuid-devel')
-source=(https://ftp.denx.de/pub/u-boot/u-boot-${pkgver}.tar.bz2{,.sig})
+source=(https://ftp.denx.de/pub/u-boot/u-boot-${pkgver}.tar.bz2{,.sig}
+        0001-Remove-ansi-for-cygwin.patch)
 noextract=("u-boot-${pkgver}.tar.bz2")
 sha256sums=('0f933f6c5a426895bf306e93e6ac53c60870e4b54cda56d95211bec99e63bec7'
-            'SKIP')
+            'SKIP'
+            '8914d209d99ff45998b6febf83a84f0a3d2bd2bef65bebbafbd576055a7219ad')
 validpgpkeys=('1A3C7F70E08FAB1707809BBF147C39FF9634B72C') # Thomas Rini <trini@konsulko.com>
 
 prepare() {
   # workaround an issue of bsdtar for extracting symbolic links in the tarball
   bsdtar -xzf ${srcdir}/u-boot-${pkgver}.tar.bz2 -C $srcdir || true
   bsdtar -xzf ${srcdir}/u-boot-${pkgver}.tar.bz2 -C $srcdir || true
+
+  pushd ${srcdir}/u-boot-${pkgver}
+  patch -Np1 -i "${srcdir}/0001-Remove-ansi-for-cygwin.patch"
+  popd
 }
 
 build() {
