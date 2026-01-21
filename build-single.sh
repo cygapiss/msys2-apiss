@@ -50,11 +50,16 @@ do_build() {
     echo "Building with makepkg for '${new_dir}'"
     echo "Remove existing packages first"
     find . -maxdepth 1 -name "*.pkg.tar.zst" | xargs -I ARG rm -f ARG
-    # Extract source
-    makepkg --cleanbuild --syncdeps --force --noconfirm --nocheck --skippgpcheck
-    # Do not extract source
-    # makepkg --noextract --force --noconfirm --nocheck --skippgpcheck
-    # makepkg --nobuild --cleanbuild
+    if [[ "$MSYS_BUILD_NOEXTRACT" == "enabled" ]]; then
+      # Do not extract source
+      echo "Building '${new_dir}' without extract "
+      makepkg --noextract --force --noconfirm --nocheck --skippgpcheck
+      # makepkg --nobuild --cleanbuild
+    else
+      # Extract source
+      echo "Building '${new_dir}' with extract "
+      makepkg --cleanbuild --syncdeps --force --noconfirm --nocheck --skippgpcheck
+    fi
   fi
 
   retVal=$?

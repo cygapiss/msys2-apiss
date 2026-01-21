@@ -1,6 +1,4 @@
 #!/bin/bash
-sh build-single.sh gcc
-MSYS_BUILD_PKGSUMS=enabled MSYS_BOOTSTRAP_RUST=enabled sh build-single.sh rust
 sh build-single.sh texinfo
 sh build-single.sh btyacc
 sh build-single.sh cygnative
