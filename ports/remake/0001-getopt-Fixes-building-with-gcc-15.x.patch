@@ -1,0 +1,148 @@
+From d1547fb5be2a3383a674b5abd8917791016e1f8a Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Wed, 21 Jan 2026 18:42:15 +0800
+Subject: [PATCH] getopt: Fixes building with gcc 15.x
+
+---
+ glob/fnmatch.c | 4 ----
+ lib/fnmatch.c  | 9 +--------
+ src/getopt.c   | 5 +----
+ src/getopt.h   | 4 ----
+ src/make.h     | 9 ---------
+ src/makeint.h  | 9 ---------
+ 6 files changed, 2 insertions(+), 38 deletions(-)
+
+diff --git a/glob/fnmatch.c b/glob/fnmatch.c
+index 4da8c5f..0686a83 100644
+--- a/glob/fnmatch.c
++++ b/glob/fnmatch.c
+@@ -120,10 +120,6 @@ USA.  */
+ /* Avoid depending on library functions or files
+    whose names are inconsistent.  */
+ 
+-# if !defined _LIBC && !defined getenv
+-extern char *getenv ();
+-# endif
+-
+ # ifndef errno
+ extern int errno;
+ # endif
+diff --git a/lib/fnmatch.c b/lib/fnmatch.c
+index 4da8c5f..3097db2 100644
+--- a/lib/fnmatch.c
++++ b/lib/fnmatch.c
+@@ -29,6 +29,7 @@ USA.  */
+ #include <errno.h>
+ #include <fnmatch.h>
+ #include <ctype.h>
++#include <stdlib.h>
+ 
+ #if HAVE_STRING_H || defined _LIBC
+ # include <string.h>
+@@ -36,10 +37,6 @@ USA.  */
+ # include <strings.h>
+ #endif
+ 
+-#if defined STDC_HEADERS || defined _LIBC
+-# include <stdlib.h>
+-#endif
+-
+ /* For platform which support the ISO C amendement 1 functionality we
+    support user defined character classes.  */
+ #if defined _LIBC || (defined HAVE_WCTYPE_H && defined HAVE_WCHAR_H)
+@@ -120,10 +117,6 @@ USA.  */
+ /* Avoid depending on library functions or files
+    whose names are inconsistent.  */
+ 
+-# if !defined _LIBC && !defined getenv
+-extern char *getenv ();
+-# endif
+-
+ # ifndef errno
+ extern int errno;
+ # endif
+diff --git a/src/getopt.c b/src/getopt.c
+index 525e1b0..928f96c 100644
+--- a/src/getopt.c
++++ b/src/getopt.c
+@@ -39,6 +39,7 @@ this program.  If not, see <http://www.gnu.org/licenses/>.  */
+ #endif
+ 
+ #include <stdio.h>
++#include <stdlib.h>
+ 
+ #ifdef _GNU_SOURCE
+ # define ATTRIBUTE_UNUSED __attribute__((unused))
+@@ -207,10 +208,6 @@ static char *posixly_correct;
+ /* Avoid depending on library functions or files
+    whose names are inconsistent.  */
+ 
+-#ifndef getenv
+-extern char *getenv ();
+-#endif
+-
+ static char *
+ my_index (const char *str, int chr)
+ {
+diff --git a/src/getopt.h b/src/getopt.h
+index abfc31e..546fdc7 100644
+--- a/src/getopt.h
++++ b/src/getopt.h
+@@ -96,14 +96,10 @@ struct option
+ #define optional_argument	2
+ 
+ #if defined (__STDC__) && __STDC__
+-#ifdef __GNU_LIBRARY__
+ /* Many other libraries have conflicting prototypes for getopt, with
+    differences in the consts, in stdlib.h.  To avoid compilation
+    errors, only prototype getopt for the GNU C library.  */
+ extern int getopt (int argc, char *const *argv, const char *shortopts);
+-#else /* not __GNU_LIBRARY__ */
+-extern int getopt ();
+-#endif /* __GNU_LIBRARY__ */
+ extern int getopt_long (int argc, char *const *argv, const char *shortopts,
+ 		        const struct option *longopts, int *longind);
+ extern int getopt_long_only (int argc, char *const *argv,
+diff --git a/src/make.h b/src/make.h
+index 5da3831..30f5e5a 100644
+--- a/src/make.h
++++ b/src/make.h
+@@ -415,15 +415,6 @@ long int lseek ();
+ 
+ #endif  /* Not GNU C library or POSIX.  */
+ 
+-#ifdef  HAVE_GETCWD
+-# if !defined(VMS) && !defined(__DECC)
+-char *getcwd ();
+-# endif
+-#else
+-char *getwd ();
+-# define getcwd(buf, len)       getwd (buf)
+-#endif
+-
+ #if !HAVE_STRCASECMP
+ # if HAVE_STRICMP
+ #  define strcasecmp stricmp
+diff --git a/src/makeint.h b/src/makeint.h
+index 9bf867d..77d5a07 100644
+--- a/src/makeint.h
++++ b/src/makeint.h
+@@ -611,15 +611,6 @@ long int lseek ();
+ 
+ #endif  /* Not GNU C library or POSIX.  */
+ 
+-#ifdef  HAVE_GETCWD
+-# if !defined(VMS) && !defined(__DECC)
+-char *getcwd ();
+-# endif
+-#else
+-char *getwd ();
+-# define getcwd(buf, len)       getwd (buf)
+-#endif
+-
+ #if !HAVE_STRCASECMP
+ # if HAVE_STRICMP
+ #  define strcasecmp stricmp
+-- 
+2.52.0.windows.1
+
