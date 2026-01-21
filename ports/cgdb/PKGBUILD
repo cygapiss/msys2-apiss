@@ -10,11 +10,17 @@ msys2_repository_url='https://github.com/cgdb/cgdb'
 license=('spdx:GPL-2.0-or-later')
 depends=('libreadline' 'ncurses' 'gdb')
 makedepends=('help2man' 'libreadline-devel' 'ncurses-devel' 'autotools' 'gcc')
-source=("https://cgdb.me/files/${pkgname}-${pkgver}.tar.gz")
-sha256sums=('0d38b524d377257b106bad6d856d8ae3304140e1ee24085343e6ddf1b65811f1')
+source=(
+  "https://cgdb.me/files/${pkgname}-${pkgver}.tar.gz"
+  "0001-check-readline-properly.patch"
+)
+sha256sums=('0d38b524d377257b106bad6d856d8ae3304140e1ee24085343e6ddf1b65811f1'
+            'fd0b13f46062cc4085c525c84a0b454d2d48f2e876408c0eb518f27be1914346')
 
 prepare() {
   cd "${srcdir}/${pkgname}-${pkgver}"
+
+  patch -p1 -i ${srcdir}/0001-check-readline-properly.patch
 
   echo "$pkgver" > VERSION
   autoreconf -vfi -I config
@@ -25,8 +31,8 @@ build() {
 
   export MSYSTEM=CYGWIN
 
-  CFLAGS+=" -D_GNU_SOURCE"
-  CXXFLAGS+="   -D_GNU_SOURCE"
+  export CFLAGS="$CFLAGS -D_GNU_SOURCE -std=gnu17"
+  export CXXFLAGS="$CXXFLAGS -D_GNU_SOURCE -std=gnu++17"
   ./configure \
     --prefix=/usr \
     --build=${CHOST} \
