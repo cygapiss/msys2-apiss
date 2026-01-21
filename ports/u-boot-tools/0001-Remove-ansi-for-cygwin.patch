@@ -1,0 +1,27 @@
+From cb663923697dcaf26f7a75931250ec4f11cd4291 Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Wed, 21 Jan 2026 18:06:18 +0800
+Subject: [PATCH] Remove -ansi for cygwin
+
+---
+ Makefile | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 1a5c77d..8d26efb 100644
+--- a/Makefile
++++ b/Makefile
+@@ -301,10 +301,6 @@ KBUILD_HOSTLDLIBS   := $(HOST_LFS_LIBS) $(HOSTLDLIBS)
+ CSTD_FLAG := -std=gnu11
+ KBUILD_HOSTCFLAGS += $(CSTD_FLAG)
+ 
+-ifeq ($(HOSTOS),cygwin)
+-KBUILD_HOSTCFLAGS	+= -ansi
+-endif
+-
+ # Mac OS X / Darwin's C preprocessor is Apple specific.  It
+ # generates numerous errors and warnings.  We want to bypass it
+ # and use GNU C's cpp.	To do this we pass the -traditional-cpp
+-- 
+2.52.0.windows.1
+
