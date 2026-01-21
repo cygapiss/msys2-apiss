@@ -1,5 +1,5 @@
 @echo off
-:: sh build-single.sh rust
+
 goto :cargo
 
 bash --login -c "rm -rf /etc/rebase.db.x86_64"
@@ -50,12 +50,14 @@ cp -arf ports/rust/rust-1.92.0-3-x86_64.pkg.tar.zst dist-rust/rust-1.92.0-3-x86_
 set MSYS=winsymlinks:native
 set MSYSTEM=CYGWIN
 set CHERE_INVOKING=1
-bash --login -c "pacman -U --noconfirm --overwrite \* ./dist-final/rust-1.92.0-3-x86_64.pkg.tar.zst"
+pushd dist-final
+bash --login -c "pacman -U --noconfirm --overwrite \* ./rust-1.92.0-3-x86_64.pkg.tar.zst ./gcc-libs-15.2.0-2-x86_64.pkg.tar.zst ./gcc-15.2.0-2-x86_64.pkg.tar.zst"
+popd
 
 ::bash --login -c "MSYS_BUILD_WITH_CLEAN=enabled MSYS_BUILD_PKGSUMS=enabled sh build-single.sh cargo-c"
 ::bash --login -c "MSYS_BUILD_NOEXTRACT=enabled MSYS_BUILD_PKGSUMS=enabled sh build-single.sh cargo-c"
 echo "Building the cargo by native"
-bash --login -c "MSYS_BUILD_WITH_CLEAN=enabled MSYS_BUILD_PKGSUMS=enabled sh build-single.sh cargo-c"
+bash --login -c "MSYS_BUILD_PKGSUMS=enabled sh build-single.sh cargo-c"
 
 echo "Building the rest packages"
 bash --login -c "sh msys-stage2-list.sh >build-stage2.txt 2>&1"
