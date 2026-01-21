@@ -44,7 +44,9 @@ prepare() {
 build() {
   cd ${srcdir}/${pkgname}-${_basever}
 
-  ./configure \
+  export CFLAGS="$CFLAGS -std=gnu17 -Wno-implicit-function-declaration"
+
+    ./configure \
     --prefix=/usr \
     --sbindir=/usr/bin \
     --build=${CHOST} \
