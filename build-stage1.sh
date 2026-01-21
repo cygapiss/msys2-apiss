@@ -33,6 +33,9 @@ do_other() {
     # repack with force
     MSYS_BOOTSTRAP_STAGE=stage1 makepkg -R -f
 
+    # repack at stage 2
+    MSYS_BOOTSTRAP_STAGE= makepkg -R -f
+
     pacman -Syu --noconfirm --needed
     pacman -Syu --noconfirm --needed
     pacman -S ca-certificates --noconfirm --needed
