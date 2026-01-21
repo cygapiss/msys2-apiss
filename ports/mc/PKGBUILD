@@ -43,7 +43,6 @@ prepare() {
   tar -xzf ${srcdir}/${pkgname}-${pkgver}.tar.gz -C ${srcdir} || true
 
   cd "${srcdir}/${pkgname}-${pkgver}"
-  cp -f doc/{INSTALL,NEWS,README} .
 
   # work around version.sh git repo dependencies so mc gets a version number
   sed -i "s/CURR_MC_VERSION=.*/CURR_MC_VERSION=${pkgver}/" version.sh
@@ -61,7 +60,7 @@ prepare() {
 
 build() {
   cd "${srcdir}/${pkgname}-${pkgver}"
-
+  CFLAGS="$CFLAGS -Wno-implicit-function-declaration"
   ./configure --build=${CHOST} \
     --prefix=/usr \
     --sysconfdir=/etc \
