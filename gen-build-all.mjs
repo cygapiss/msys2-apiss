@@ -294,9 +294,6 @@ async function main() {
   await write_script(
     // texinfo need build twice as it's called perl in runtime for testing it self
     `#!/bin/bash
-sh build-single.sh gcc
-MSYS_BUILD_PKGSUMS=enabled MSYS_BOOTSTRAP_RUST=enabled \
-sh build-single.sh rust
 sh build-single.sh texinfo
 `,
     packages_other,
