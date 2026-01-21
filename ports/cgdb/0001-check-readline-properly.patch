@@ -1,0 +1,25 @@
+From 526e57552d695aa918b737014705724be0eb579e Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Wed, 21 Jan 2026 17:21:18 +0800
+Subject: [PATCH] check readline properly
+
+---
+ config/readline_check_version.m4 | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/config/readline_check_version.m4 b/config/readline_check_version.m4
+index 01e61c2..71fccf1 100644
+--- a/config/readline_check_version.m4
++++ b/config/readline_check_version.m4
+@@ -86,7 +86,7 @@ AC_CACHE_VAL(ac_cv_rl_version,
+ #include <stdlib.h>
+ #include <readline/readline.h>
+ 
+-main()
++int main()
+ {
+ 	FILE *fp;
+ 	fp = fopen("conftest.rlv", "w");
+-- 
+2.52.0.windows.1
+
