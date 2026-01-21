@@ -50,7 +50,7 @@ prepare() {
   # ones across now.
   pushd "${srcdir}"/${_realname}
     for _file in database deptest query remove sync upgrade version; do
-      cp -f pycman/action_${_file}.py scripts/pycman-${_file}
+      cp -arf pycman/action_${_file}.py scripts/pycman-${_file} || true
     done
   popd
 }
