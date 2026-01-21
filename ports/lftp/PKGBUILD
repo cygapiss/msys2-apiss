@@ -40,13 +40,16 @@ msys2_references=(
 )
 backup=('etc/lftp.conf')
 source=(https://lftp.yar.ru/ftp/${pkgname}-${pkgver}.tar.xz
-        lftp-4.7.6-no-undefined.patch)
+        lftp-4.7.6-no-undefined.patch
+        0001-stddef-Fixes-building-with-gcc-15.x.patch)
 sha256sums=('96e7199d7935be33cf6b1161e955b2aab40ab77ecdf2a19cea4fc1193f457edc'
-            'e9a289f30d0d7fd9994165b6991a722dbe529f1fdbd738d5b44b48ec9c773bf4')
+            'e9a289f30d0d7fd9994165b6991a722dbe529f1fdbd738d5b44b48ec9c773bf4'
+            '0d838c86f2238ea197e17f2887628110d3a981e697ef55c198bc566e20c07389')
 
 prepare() {
   cd ${srcdir}/${pkgname}-${pkgver}
   patch -p1 -i ${srcdir}/lftp-4.7.6-no-undefined.patch
+  patch -p1 -i ${srcdir}/0001-stddef-Fixes-building-with-gcc-15.x.patch
 
   autoreconf -fiv
 }
