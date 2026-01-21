@@ -17,10 +17,12 @@ options=('staticlibs')
 makedepends=('autotools' 'gcc' 'xmlto')
 source=(https://www.tortall.net/projects/yasm/releases/${pkgname}-${pkgver}.tar.gz
         'yasm-1.2.0-1.src.patch'
-        '001-debian-autoconf.patch')
+        '001-debian-autoconf.patch'
+        '0002-include-stdbool.h-for-bitvect.h.patch')
 sha256sums=('3dce6601b495f5b3d45b59f7d2492a340ee7e84b5beca17e48f862502bd5603f'
             '10a8dee681519d6fe14bf7f4dc9cb5b0f55cc7210c4e532e6939c4363cb0d3c0'
-            '258af057cbf8fc055192552dc1b510f072ddb30c495502c00374c884347ec476')
+            '258af057cbf8fc055192552dc1b510f072ddb30c495502c00374c884347ec476'
+            '0d5ac90cc222387bdfd6a5f55e1c11a48d5a2966d840be6d5b305b3d2491001d')
 
 prepare() {
   cd ${pkgname}-${pkgver}
@@ -28,6 +30,7 @@ prepare() {
 
   # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=997338
   patch -p1 -i ${srcdir}/001-debian-autoconf.patch
+  patch -p1 -i ${srcdir}/0002-include-stdbool.h-for-bitvect.h.patch
 
   autoreconf -fi
 }
