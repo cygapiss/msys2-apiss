@@ -1,0 +1,42 @@
+From 755c141201cc2ee8518ce1325104d0b8df2fa688 Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Wed, 21 Jan 2026 16:58:26 +0800
+Subject: [PATCH] include stdbool.h for bitvect.h
+
+---
+ libyasm/bitvect.h | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
+
+diff --git a/libyasm/bitvect.h b/libyasm/bitvect.h
+index 3aee3a5..e61f0ab 100644
+--- a/libyasm/bitvect.h
++++ b/libyasm/bitvect.h
+@@ -17,6 +17,8 @@
+ #define YASM_LIB_DECL
+ #endif
+ 
++#include <stdbool.h>
++
+ typedef  unsigned   char    N_char;
+ typedef  unsigned   char    N_byte;
+ typedef  unsigned   short   N_short;
+@@ -77,15 +79,7 @@ typedef  Z_longword         *Z_longwordptr;
+ #define TRUE        (0==0)
+ #endif
+ 
+-#ifdef __cplusplus
+-    typedef bool boolean;
+-#else
+-    #ifdef MACOS_TRADITIONAL
+-        #define boolean Boolean
+-    #else
+-        typedef enum boolean { false = FALSE, true = TRUE } boolean;
+-    #endif
+-#endif
++typedef bool boolean;
+ 
+ /*****************************************************************************/
+ /*  MODULE INTERFACE:                                                        */
+-- 
+2.52.0.windows.1
+
