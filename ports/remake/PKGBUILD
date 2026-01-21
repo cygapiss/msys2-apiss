@@ -20,11 +20,16 @@ makedepends=('gettext'
              'wget'
              'autotools'
              'libreadline-devel')
-source=("https://sourceforge.net/projects/bashdb/files/remake/4.3%2B${_remakever}/remake-4.3%2B${_remakever}.tar.gz")
-sha256sums=('f6a0c6179cd92524ad5dd04787477c0cd45afb5822d977be93d083b810647b87')
+source=(
+  "https://sourceforge.net/projects/bashdb/files/remake/4.3%2B${_remakever}/remake-4.3%2B${_remakever}.tar.gz"
+  "0001-getopt-Fixes-building-with-gcc-15.x.patch"
+)
+sha256sums=('f6a0c6179cd92524ad5dd04787477c0cd45afb5822d977be93d083b810647b87'
+            '846f4d6e80425084a432b23aed30e4b5151c95b0584e8ac39395174b771c8dc2')
 
 prepare() {
   cd ${srcdir}/${pkgname}-4.3+${_remakever}
+  patch -p1 -i ${srcdir}/0001-getopt-Fixes-building-with-gcc-15.x.patch
   autoreconf -fiv
 }
 
