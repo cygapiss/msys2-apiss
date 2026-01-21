@@ -7,6 +7,8 @@ set CHERE_INVOKING=1
 bash --login -c "rm -rf /etc/rebase.db.x86_64"
 bash --login -c "rm -rf /var/lib/pacman/db.lck"
 
+bash --login -c "pacman -S --noconfirm --overwrite \* mingw-w64-x86_64-python mingw-w64-x86_64-llvm mingw-w64-x86_64-clang"
+
 bash --login -c "MSYS_BUILD_WITH_CLEAN=enabled MSYS_BUILD_NOEXTRACT=enabled MSYS_BUILD_PKGSUMS=enabled sh build-single.sh gcc >build-stage2-gcc.txt 2>&1"
 
 bash --login -c "MSYS_BUILD_WITH_CLEAN=enabled MSYS_BUILD_NOEXTRACT=enabled MSYS_BUILD_PKGSUMS=enabled MSYS_BOOTSTRAP_RUST=enabled sh build-single.sh rust >build-stage2-rust0.txt 2>&1"
