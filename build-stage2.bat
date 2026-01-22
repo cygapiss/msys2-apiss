@@ -35,6 +35,8 @@ echo "Building the rust by native"
 if exist dist-rust/rust-1.92.0-3-x86_64.pkg.tar.zst (
   cp -arf dist-rust/rust-1.92.0-3-x86_64.pkg.tar.zst ports/rust/rust-1.92.0-3-x86_64.pkg.tar.zst
 ) else (
+  rd /s /q ports\rust\src\rustc-1.92.0-src\cygwin-build-11
+  echo "Building the rust by native claerly"
   rm -rf build-cache\stage2\rust-stage2-build-finished.build
 )
 bash --login -c "MSYS_BUILD_NOEXTRACT=enabled MSYS_BUILD_PKGSUMS=enabled sh build-single.sh rust >build-stage2-rust2.txt 2>&1"
