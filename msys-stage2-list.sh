@@ -1,4 +1,3 @@
-#!/bin/bash
 sh build-single.sh texinfo
 sh build-single.sh btyacc
 sh build-single.sh cygnative

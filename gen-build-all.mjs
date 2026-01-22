@@ -293,8 +293,7 @@ async function main() {
 
   await write_script(
     // texinfo need build twice as it's called perl in runtime for testing it self
-    `#!/bin/bash
-sh build-single.sh texinfo
+    `sh build-single.sh texinfo
 `,
     packages_other,
     dir_for_package,
