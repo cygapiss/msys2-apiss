@@ -1,7 +1,5 @@
 @echo off
 
-goto :cargo
-
 bash --login -c "rm -rf /etc/rebase.db.x86_64"
 bash --login -c "rm -rf /var/lib/pacman/db.lck"
 
