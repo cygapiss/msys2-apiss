@@ -1,4 +1,6 @@
 sh build-single.sh texinfo
+MSYS_BUILD_WITH_CLEAN=enabled sh build-single.sh libxslt
+MSYS_BUILD_WITH_CLEAN=enabled sh build-single.sh libxml2
 sh build-single.sh btyacc
 sh build-single.sh cygnative
 sh build-single.sh cygrunsrv
