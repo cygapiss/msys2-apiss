@@ -67,10 +67,12 @@ sh build-single.sh libassuan
 sh build-single.sh libgcrypt
 sh build-single.sh libksba
 sh build-single.sh libmd
+sh build-single.sh libtool
 sh build-single.sh lz4
 sh build-single.sh patch
 sh build-single.sh tzcode
 sh build-single.sh zlib
+sh build-single.sh autotools
 sh build-single.sh binutils
 sh build-single.sh bison
 sh build-single.sh bzip2
@@ -89,6 +91,12 @@ sh build-single.sh autoconf2.13
 sh build-single.sh autoconf2.69
 sh build-single.sh autoconf2.71
 sh build-single.sh autoconf2.72
+sh build-single.sh automake1.11
+sh build-single.sh automake1.12
+sh build-single.sh automake1.13
+sh build-single.sh automake1.14
+sh build-single.sh automake1.15
+sh build-single.sh automake1.16
 sh build-single.sh dos2unix
 sh build-single.sh less
 sh build-single.sh mingw-w64-cross-mingwarm64-crt
@@ -124,12 +132,6 @@ sh build-single.sh perl-XML-Parser
 sh build-single.sh perl-YAML-Syck
 sh build-single.sh perl-YAML-Tiny
 sh build-single.sh util-linux
-sh build-single.sh automake1.11
-sh build-single.sh automake1.12
-sh build-single.sh automake1.13
-sh build-single.sh automake1.14
-sh build-single.sh automake1.15
-sh build-single.sh automake1.16
 sh build-single.sh gzip
 sh build-single.sh intltool
 sh build-single.sh mingw-w64-cross-mingwarm64-winpthreads
@@ -176,7 +178,6 @@ sh build-single.sh doxygen
 sh build-single.sh file
 sh build-single.sh gnutls
 sh build-single.sh heimdal
-sh build-single.sh libtool
 sh build-single.sh llvm
 sh build-single.sh mingw-w64-cross-zlib
 sh build-single.sh msys2-launcher
@@ -187,7 +188,6 @@ sh build-single.sh python-flit-core
 sh build-single.sh python-setuptools
 sh build-single.sh re2c
 sh build-single.sh rebase
-sh build-single.sh autotools
 sh build-single.sh libxml2
 sh build-single.sh msys2-w32api-runtime
 sh build-single.sh nano
