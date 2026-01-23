@@ -46,7 +46,7 @@ if exist dist-rust/rust-%RUST_VERSION%-x86_64.pkg.tar.zst (
   echo "Building the rust by native clearly"
   rm -rf build-cache\stage2\rust-stage2-build-finished.build
 )
-bash --login -c "MSYS_BUILD_NOEXTRACT=enabled MSYS_BUILD_PKGSUMS=enabled sh build-single.sh rust >build-stage2-rust2.txt 2>&1"
+bash --login -c "MSYS_BUILD_NOEXTRACT=enabled MSYS_BUILD_PKGSUMS=enabled sh build-single.sh rust >build-stage2-rust1.txt 2>&1"
 cp -arf ports/rust/rust-%RUST_VERSION%-x86_64.pkg.tar.zst dist-rust/rust-%RUST_VERSION%-x86_64.pkg.tar.zst
 
 :: goto :eof
