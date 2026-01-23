@@ -14,7 +14,18 @@ process.on("SIGINT", function () {
 
 const packages_provides_by = {
   "perl-CPAN-Meta": "perl",
+  "perl-Test-Simple": "perl",
+  "perl-Scalar-List-Utils": "perl",
+  "perl-Exporter": "perl",
+  "perl-IO-Socket-IP": "perl",
+  "perl-IO-stringy": "perl-IO-Stringy",
   "libuuid-devel": "libutil-linux-devel",
+  libuuid: "libutil-linux",
+  awk: "gawk",
+  sh: "bash",
+  python3: "python",
+  man: "man-db",
+  autoconf: "autoconf2.72",
 };
 
 const packages_deferred_to_tail = [
@@ -22,10 +33,9 @@ const packages_deferred_to_tail = [
   "cmake",
   "git",
   "gtk-doc",
-
-  // iconv should be built at the stage0
-  "libiconv-devel",
-  "libiconv",
+  "make",
+  "meson",
+  "ninja",
 ];
 
 // gcc can only be built after bootstrap, so it's stage2
@@ -40,14 +50,12 @@ const packages_deferred_to_stage2 = [
 
 // Remove deps that prevent bootstrap
 const deps_remove_map = {
-  perl: ["groff", "libxcrypt-devel", "libxcrypt"],
-  libxslt: ["libxml2", "libxml2-devel"],
-  "docbook-xsl": ["libxml2", "libxml2-devel", "po4a"],
-  clang: ["llvm-libs"],
-  ninja: ["re2c", "libzstd", "libzstd-devel"],
+  gettext: ["libiconv"],
+  libxslt: ["libxml2"],
+  perl: ["groff", "libxcrypt"],
+  "docbook-xsl": ["libxml2", "po4a"],
   "perl-Locale-Gettext": ["help2man"],
-  pkgconf: ["meson"],
-  doxygen: ["liblzma", "liblzma-devel"],
+  doxygen: ["xz"],
   "mingw-w64-cross-mingwarm64-gcc": [
     "mingw-w64-cross-mingwarm64-crt",
     "mingw-w64-cross-mingwarm64-winpthreads",
@@ -55,23 +63,8 @@ const deps_remove_map = {
   ],
   "mingw-w64-cross-gcc": [
     "mingw-w64-cross-crt",
-    "mingw-w64-cross-ucrt64-crt",
-    "mingw-w64-cross-mingw32-crt",
-    "mingw-w64-cross-mingw64-crt",
-
-    "mingw-w64-cross-ucrt64-gcc",
-    "mingw-w64-cross-mingw32-gcc",
-    "mingw-w64-cross-mingw64-gcc",
-
     "mingw-w64-cross-winpthreads",
-    "mingw-w64-cross-ucrt64-winpthreads",
-    "mingw-w64-cross-mingw32-winpthreads",
-    "mingw-w64-cross-mingw64-winpthreads",
-
     "mingw-w64-cross-windows-default-manifest",
-    "mingw-w64-cross-ucrt64-windows-default-manifest",
-    "mingw-w64-cross-mingw32-windows-default-manifest",
-    "mingw-w64-cross-mingw64-windows-default-manifest",
   ],
 };
 
@@ -130,10 +123,7 @@ function dump_deps(deps_map) {
     for (let key of keys) {
       let items = deps_map[key];
       items = items.filter((element) => {
-        let item = element.split("=")[0];
-        item = element.split(">")[0];
-        item = element.split("<")[0];
-        if (Object.hasOwn(deps_map, item)) {
+        if (Object.hasOwn(deps_map, element)) {
           return true;
         }
       });
@@ -152,42 +142,19 @@ function dump_deps(deps_map) {
 async function write_script(
   script_init_content,
   packages,
-  dir_for_package,
   output_filename,
   filter_package_out_set,
 ) {
-  let dirs = [];
-  let dir_set = new Set();
   let script = script_init_content;
-  let packages_in_dir = {};
-  for (let pkg of Object.keys(dir_for_package)) {
-    let new_dir = dir_for_package[pkg];
-    if (!(new_dir in packages_in_dir)) packages_in_dir[new_dir] = [];
-    packages_in_dir[new_dir].push(pkg);
-  }
   let packages_will_build = [];
   for (let pkg of packages) {
-    let new_dir = dir_for_package[pkg];
-    if (new_dir === undefined) {
-      console.log(`new_dir: ${new_dir} for ${pkg}`);
-    }
     if (filter_package_out_set.has(pkg)) {
       continue;
     }
+    script += `sh build-single.sh ${pkg}\n`;
     packages_will_build.push(pkg);
-    if (!dir_set.has(new_dir)) {
-      dirs.push(new_dir);
-      dir_set.add(new_dir);
-    }
   }
-  // let dir_lines = await fs.readFile("failed_dirs.txt", "utf-8");
-  // dirs = dir_lines.split("\n");
-  // console.log(dirs)
-  for (let new_dir of dirs) {
-    script += `sh build-single.sh ${new_dir}\n`;
-    packages_will_build.push(...packages_in_dir[new_dir]);
-  }
-  // console.log(dirs)
+  console.log(JSON.stringify(packages, null, 2));
   await fs.writeFile(output_filename, script);
   return packages_will_build;
 }
@@ -196,14 +163,13 @@ async function get_deps_map_make() {
   const deps_json_filepath = path.join(__dirname, "deps.json");
   const deps_json = JSON.parse(await fs.readFile(deps_json_filepath, "utf-8"));
   // dump_deps(deps_json.deps_map);
-  const deps_map_make = {};
+  const deps_map_make_pkg = {};
   const dir_for_package = {};
 
-  let packages_deferred_set = new Set(
-    [].concat(packages_deferred_to_tail),
-  );
+  let packages_deferred_set = new Set([].concat(packages_deferred_to_tail));
   for (let pkg of deps_json.pkg_info) {
-    for (let pkgname of pkg.pkgname.split(" ")) {
+    let packages_for_subdir = pkg.pkgname.split(" ");
+    for (let pkgname of packages_for_subdir) {
       let items = [];
       if (!deps_json.deps_map[pkgname]) {
         deps_json.deps_map[pkgname] = [];
@@ -226,6 +192,9 @@ async function get_deps_map_make() {
         let item = element.split("=")[0];
         item = item.split(">")[0];
         item = item.split("<")[0];
+        if (item in packages_provides_by) {
+          item = packages_provides_by[item];
+        }
         return item;
       });
       items = items.filter(
@@ -238,31 +207,54 @@ async function get_deps_map_make() {
       );
       items = Array.from(new Set(items));
       // console.log(pkgname, items);
-      deps_map_make[pkgname] = items;
+      deps_map_make_pkg[pkgname] = items;
       dir_for_package[pkgname] = pkg.dir;
-      // console.log(deps_map_make[pkgname]);
+      // console.log(deps_map_make_pkg[pkgname]);
     }
+  }
+
+  let deps_map_make = {};
+  for (let key of Object.keys(deps_map_make_pkg)) {
+    let dir_name = dir_for_package[key];
+    if (!(dir_name in deps_map_make)) {
+      deps_map_make[dir_name] = [];
+    }
+    let values = deps_map_make_pkg[key];
+    let values_set = new Set(
+      [].concat(
+        deps_map_make[dir_name],
+        values.map((x) => {
+          let new_dir = dir_for_package[x];
+          if (!new_dir) {
+            console.log(key, x);
+          }
+          return new_dir;
+        }),
+      ),
+    );
+    if (values_set.has(dir_name)) values_set.delete(dir_name);
+    deps_map_make[dir_name] = Array.from(values_set);
   }
 
   for (let filter_key of Object.keys(deps_remove_map)) {
     for (let pkg of deps_remove_map[filter_key]) {
-      deps_map_make[pkg] = deps_map_make[pkg].filter((x) => x != filter_key);
+      if (pkg in deps_map_make) {
+        deps_map_make[pkg] = deps_map_make[pkg].filter((x) => x != filter_key);
+      } else {
+        console.log(`Invalid ${pkg}`);
+      }
     }
   }
 
   deps_map_make["base-devel"].push(...packages_deferred_to_tail);
 
-  deps_map_make["base-devel"].push("tcl-doc");
-  deps_map_make["base-devel"].push("tcl-devel");
-  deps_map_make["base-devel"].push("bash-devel");
-
   deps_map_make["base-devel"].push("gcc");
 
-  return { deps_map_make, dir_for_package };
+  return deps_map_make;
 }
 
 async function main() {
-  let { deps_map_make, dir_for_package } = await get_deps_map_make();
+  let deps_map_make = await get_deps_map_make();
 
   console.log("deps_map_make update finished");
   // console.log(JSON.stringify(deps_map_make, null, 2))
@@ -275,7 +267,6 @@ async function main() {
       calc_deps(deps_map_make_cloned, "base-devel"),
     );
   }
-
   let packages_base_devel = packages.filter((x) =>
     packages_to_include_base_devel.has(x),
   );
@@ -283,7 +274,6 @@ async function main() {
   const packages_will_build = await write_script(
     "",
     packages_base_devel,
-    dir_for_package,
     "msys-stage1-list.sh",
     new Set(packages_deferred_to_stage2),
   );
@@ -298,7 +288,6 @@ MSYS_BUILD_WITH_CLEAN=enabled sh build-single.sh libxslt
 MSYS_BUILD_WITH_CLEAN=enabled sh build-single.sh libxml2
 `,
     packages_other,
-    dir_for_package,
     "msys-stage2-list.sh",
     new Set([
       // :: cmake-bootstrap-4.2.1-1 and cmake-4.2.1-2 are in conflict. Remove cmake? [Y/n]
