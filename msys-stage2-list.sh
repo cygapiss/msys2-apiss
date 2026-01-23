@@ -184,6 +184,7 @@ sh build-single.sh perl-Import-Into
 sh build-single.sh perl-Test-YAML
 sh build-single.sh sharutils
 sh build-single.sh axel
+sh build-single.sh global
 sh build-single.sh guile
 sh build-single.sh iperf3
 sh build-single.sh libidn
@@ -218,7 +219,6 @@ sh build-single.sh atool
 sh build-single.sh cgdb
 sh build-single.sh cloc
 sh build-single.sh cvs
-sh build-single.sh global
 sh build-single.sh libtirpc
 sh build-single.sh man-pages-posix
 sh build-single.sh man2html
