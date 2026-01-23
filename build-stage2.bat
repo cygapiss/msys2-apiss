@@ -10,8 +10,14 @@ touch build-cache\stage2\gcc-stage2-build-finished.build
 bash --login -c "MSYS_BUILD_NOEXTRACT=enabled MSYS_BUILD_PKGSUMS=enabled sh build-single.sh gcc >build-stage2-gcc.txt 2>&1"
 
 echo "Building rust by cross"
-touch build-cache\stage2\rust-stage2-build-finished.build
-cp -arf dist-rust/rust-1.92.0-3-x86_64-cross.pkg.tar.zst ports/rust/rust-1.92.0-3-x86_64.pkg.tar.zst
+if exist dist-rust/rust-1.92.0-3-x86_64.pkg.tar.zst (
+  echo "Building rust by cross use exist"
+  cp -arf dist-rust/rust-1.92.0-3-x86_64-cross.pkg.tar.zst ports/rust/rust-1.92.0-3-x86_64.pkg.tar.zst
+  touch build-cache\stage2\rust-stage2-build-finished.build
+) else (
+  echo "Building the rust by cross clearly"
+  rm -rf build-cache\stage2\rust-stage2-build-finished.build
+)
 bash --login -c "MSYS_BUILD_NOEXTRACT=enabled MSYS_BUILD_PKGSUMS=enabled MSYS_BOOTSTRAP_RUST=enabled sh build-single.sh rust >build-stage2-rust0.txt 2>&1"
 cp -arf ports/rust/rust-1.92.0-3-x86_64.pkg.tar.zst dist-rust/rust-1.92.0-3-x86_64-cross.pkg.tar.zst
 
@@ -33,6 +39,7 @@ set CHERE_INVOKING=1
 
 echo "Building the rust by native"
 if exist dist-rust/rust-1.92.0-3-x86_64.pkg.tar.zst (
+  echo "Building rust by native use exist"
   cp -arf dist-rust/rust-1.92.0-3-x86_64.pkg.tar.zst ports/rust/rust-1.92.0-3-x86_64.pkg.tar.zst
 ) else (
   rd /s /q ports\rust\src\rustc-1.92.0-src\cygwin-build-11
