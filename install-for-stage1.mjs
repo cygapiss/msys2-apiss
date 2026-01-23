@@ -26,11 +26,10 @@ function getYYYYMMDD(date) {
   return year + month + day;
 }
 
-async function archive_full(ci_tools_root, msys_root, cache_root_cygwin) {
-  let target_msys_tar_path = path.join(
-    ci_tools_root,
-    `msys2-base-x86_64-${getYYYYMMDD(new Date())}-full.tar`,
-  );
+async function archive_full(ci_tools_root, msys_root, ci_tools_root_cygwin) {
+  const msys2_base_filename = `msys2-base-x86_64-${getYYYYMMDD(new Date())}-full.tar`;
+  let target_msys_tar_path = path.join(ci_tools_root, msys2_base_filename);
+  let target_msys_tar_path_cygwin = `${ci_tools_root_cygwin}/${msys2_base_filename}`;
   console.log(`===Compress msys64 into ${target_msys_tar_path}`);
   try {
     await fs.rm(target_msys_tar_path, { force: true, recursive: true });
@@ -55,6 +54,19 @@ async function archive_full(ci_tools_root, msys_root, cache_root_cygwin) {
       },
     },
   );
+  await spawnProcessAsync(
+    `${msys_root}/usr/bin/tar.exe`,
+    ["cf", target_msys_tar_path_cygwin, "msys64"],
+    {
+      cwd: ci_tools_root,
+      env: {
+        MSYS: "winsymlinks:native",
+        MSYSTEM: "MSYS",
+        CHERE_INVOKING: "1",
+      },
+    },
+  );
+
   await spawnProcessAsync(`tar`, ["cf", target_msys_tar_path, "msys64"], {
     cwd: ci_tools_root,
   });
@@ -67,7 +79,7 @@ async function archive_full(ci_tools_root, msys_root, cache_root_cygwin) {
         `mkdir -p /var/cache/pacman/pkg`,
         `rm -rf /var/cache/pacman/pkg`,
         `cd /var/cache/pacman/`,
-        `ln -s -T ${cache_root_cygwin}/var-cache/pacman/pkg pkg`,
+        `ln -s -T /e/CI-Tools/var-cache/pacman/pkg pkg`,
       ].join("; "),
     ],
     {
@@ -91,11 +103,11 @@ async function clear_msys64(msys_root) {
 }
 
 async function main() {
-  const ci_tools_root = "C:/CI-Tools";
+  const ci_tools_root = "E:/CI-Tools/msys64-stage1";
   const msys_root = path.join(ci_tools_root, "msys64");
   const pkg_root = __dirname;
 
-  // await clear_msys64(msys_root);
+  await clear_msys64(msys_root);
 
   console.log(`===Init env`);
   let has_msys64 = false;
@@ -134,7 +146,7 @@ async function main() {
     ])
   ).stdout.trim();
 
-  const cache_root_cygwin = (
+  const ci_tools_root_cygwin = (
     await spawnProcessAsyncCapture(`${msys_root}/usr/bin/cygpath.exe`, [
       ci_tools_root,
     ])
@@ -151,9 +163,9 @@ async function main() {
         `mkdir -p /var/cache/pacman/pkg`,
         `rm -rf /var/cache/pacman/pkg`,
         `cd /var/cache/pacman/`,
-        `ln -s -T ${cache_root_cygwin}/var-cache/pacman/pkg pkg`,
+        `ln -s -T /e/CI-Tools/var-cache/pacman/pkg pkg`,
         `cat /etc/pacman.conf | grep ^SigLevel`,
-        `cd ${cache_root_cygwin}/`,
+        `cd ${ci_tools_root_cygwin}/`,
         `pacman -Syu --noconfirm`,
       ].join("; "),
     ],
@@ -218,7 +230,7 @@ async function main() {
   console.log(`===Newer msys2-runtime install finished`);
 
   if (!has_msys64) {
-    await archive_full(ci_tools_root, msys_root, cache_root_cygwin);
+    await archive_full(ci_tools_root, msys_root, ci_tools_root_cygwin);
   }
   process.exit(0);
 }
