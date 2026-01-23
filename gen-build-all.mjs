@@ -25,12 +25,14 @@ const packages_provides_by = {
   sh: "bash",
   python3: "python",
   man: "man-db",
-  autoconf: "autoconf2.72",
+  autoconf: "autoconf-wrapper",
 };
 
 const packages_deferred_to_tail = [
+  "autotools-wrappers",
   "autotools",
   "cmake",
+  "gcc",
   "git",
   "gtk-doc",
   "meson",
@@ -83,9 +85,6 @@ function calc_deps(deps_map, pkg_name) {
       if (pkg == undefined) {
         console.log(`Failed ${current_pkg_name}`);
         continue;
-      }
-      if (pkg in packages_provides_by) {
-        pkg = packages_provides_by[pkg];
       }
       if (pkg_set.has(pkg)) {
         continue;
@@ -167,7 +166,6 @@ async function get_deps_map_make() {
   const deps_map_make_pkg = {};
   const dir_for_package = {};
 
-  let packages_deferred_set = new Set([].concat(packages_deferred_to_tail));
   for (let pkg of deps_json.pkg_info) {
     let packages_for_subdir = pkg.pkgname.split(" ");
     for (let pkgname of packages_for_subdir) {
@@ -198,14 +196,6 @@ async function get_deps_map_make() {
         }
         return item;
       });
-      items = items.filter(
-        (x) =>
-          !packages_deferred_set.has(x) &&
-          x != "gcc-libs" &&
-          x != "gcc" &&
-          x != pkgname &&
-          x != "",
-      );
       items = Array.from(new Set(items));
       // console.log(pkgname, items);
       deps_map_make_pkg[pkgname] = items;
@@ -234,6 +224,11 @@ async function get_deps_map_make() {
       ),
     );
     if (values_set.has(dir_name)) values_set.delete(dir_name);
+    for (let package_defer of packages_deferred_to_tail) {
+      if (values_set.has(package_defer)) {
+        values_set.delete(package_defer);
+      }
+    }
     deps_map_make[dir_name] = Array.from(values_set);
   }
 
@@ -256,7 +251,10 @@ async function get_deps_map_make() {
 
 async function main() {
   let deps_map_make = await get_deps_map_make();
-  await fs.writeFile('deps-map-make.json', JSON.stringify(deps_map_make, null, 2));
+  await fs.writeFile(
+    "deps-map-make.json",
+    JSON.stringify(deps_map_make, null, 2),
+  );
   console.log("deps_map_make update finished");
   // console.log(JSON.stringify(deps_map_make, null, 2))
   let deps_map_make_cloned = JSON.parse(JSON.stringify(deps_map_make));
