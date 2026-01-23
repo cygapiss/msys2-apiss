@@ -33,7 +33,6 @@ const packages_deferred_to_tail = [
   "cmake",
   "git",
   "gtk-doc",
-  "make",
   "meson",
   "ninja",
 ];
@@ -135,6 +134,9 @@ function dump_deps(deps_map) {
   console.log(`Circular map ${final_keys.length}`);
   for (let key of final_keys) {
     console.log(`${key}: ${JSON.stringify(deps_map[key])}`);
+  }
+  if (final_keys.length > 0) {
+    process.exit(0);
   }
   return packages;
 }
