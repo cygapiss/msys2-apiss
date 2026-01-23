@@ -1,5 +1,5 @@
 #!/bin/bash
-
+mkdir -p build-cache/stage1
 export MSYS_BOOTSTRAP_STAGE=stage1
 # export MSYS_BOOTSTRAP_STAGE=cleanup
 if [[ "$MSYS_BOOTSTRAP_STAGE" == "cleanup" ]]; then
