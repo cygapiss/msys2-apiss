@@ -283,7 +283,6 @@ async function main() {
   await write_script(
     // texinfo need build twice as it's called perl in runtime for testing it self
     `sh build-single.sh texinfo
-MSYS_BUILD_WITH_CLEAN=enabled sh build-single.sh libxslt
 MSYS_BUILD_WITH_CLEAN=enabled sh build-single.sh libxml2
 `,
     packages_other,
