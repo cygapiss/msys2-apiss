@@ -222,7 +222,6 @@ sh build-single.sh cvs
 sh build-single.sh libtirpc
 sh build-single.sh man-pages-posix
 sh build-single.sh man2html
-sh build-single.sh mingw-w64-cross-compiler-rt
 sh build-single.sh perl-LWP-Protocol-https
 sh build-single.sh task
 sh build-single.sh tmate
@@ -236,6 +235,7 @@ sh build-single.sh python-pyparsing
 sh build-single.sh sshpass
 sh build-single.sh docbook-xsl-ns
 sh build-single.sh editorconfig-vim
+sh build-single.sh mingw-w64-cross-compiler-rt
 sh build-single.sh perl-XML-LibXML
 sh build-single.sh vimpager
 sh build-single.sh moreutils
@@ -253,7 +253,6 @@ sh build-single.sh python-imagesize
 sh build-single.sh python-markdown
 sh build-single.sh python-markupsafe
 sh build-single.sh python-more-itertools
-sh build-single.sh python-patiencediff
 sh build-single.sh python-pip
 sh build-single.sh python-poetry-core
 sh build-single.sh python-py3c
@@ -271,7 +270,6 @@ sh build-single.sh python-sphinxcontrib-htmlhelp
 sh build-single.sh python-sphinxcontrib-jsmath
 sh build-single.sh python-sphinxcontrib-qthelp
 sh build-single.sh python-sphinxcontrib-serializinghtml
-sh build-single.sh python-wcwidth
 sh build-single.sh python-zstandard
 sh build-single.sh scons
 sh build-single.sh txt2tags
@@ -308,6 +306,7 @@ sh build-single.sh python-colorama
 sh build-single.sh python-hatch-fancy-pypi-readme
 sh build-single.sh python-hatch-vcs
 sh build-single.sh python-typogrify
+sh build-single.sh python-wcwidth
 sh build-single.sh rust
 sh build-single.sh cargo-c
 sh build-single.sh cargo-edit
@@ -325,6 +324,7 @@ sh build-single.sh mutt
 sh build-single.sh neomutt
 sh build-single.sh python-dulwich
 sh build-single.sh python-fastbencode
+sh build-single.sh python-patiencediff
 sh build-single.sh python-pytest
 sh build-single.sh python-requests
 sh build-single.sh breezy
