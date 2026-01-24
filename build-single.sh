@@ -30,11 +30,13 @@ do_build() {
   need_makepkg=1
   if [[ "$exist_packages" == "" ]]; then
     echo "There is no packages for '${new_dir}', build it"
+    rm -rf "$build_finished_file"
+  elif [ -f "$build_finished_file" ]; then
+    echo "The '$build_finished_file' exist, there is no need build '${new_dir}'"
+    need_makepkg=0
   else
-    if [ -f "$build_finished_file" ]; then
-      echo "The '$build_finished_file' exist, there is no need build '${new_dir}'"
-      need_makepkg=0
-    fi
+    echo "The '$build_finished_file' not exist, build '${new_dir}'"
+    need_makepkg=1
   fi
 
   if [[ "$need_makepkg" == "0" ]]; then
@@ -67,7 +69,10 @@ do_build() {
     echo "Error for pkgbase: ${new_dir} with retcode:$retVal"
     find . -maxdepth 1 -name "*.pkg.tar.zst" | xargs -I ARG rm -f ARG
     # exit $retVal
+  elif [ -f "$build_finished_file" ]; then
+    echo "The file $build_finished_file already present, do not touch it" 
   else
+    echo "Touch file $build_finished_file" 
     touch "$build_finished_file"
   fi
   echo "Building '${new_dir}' finished"
