@@ -178,7 +178,6 @@ sh build-single.sh doxygen
 sh build-single.sh file
 sh build-single.sh gnutls
 sh build-single.sh heimdal
-sh build-single.sh llvm
 sh build-single.sh mingw-w64-cross-zlib
 sh build-single.sh msys2-launcher
 sh build-single.sh msys2-w32api-headers
@@ -198,6 +197,7 @@ sh build-single.sh ruby
 sh build-single.sh docbook-xml
 sh build-single.sh libarchive
 sh build-single.sh libxslt
+sh build-single.sh llvm
 sh build-single.sh python-packaging
 sh build-single.sh python-pyproject-hooks
 sh build-single.sh vim
