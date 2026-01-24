@@ -58,7 +58,7 @@ async function main() {
       break;
     }
     const deps = await spawnProcessAsyncCapture(
-      `C:/CI-Tools/msys64/usr/bin/pactree.exe`,
+      `E:/CI-Tools/msys64-stage1/msys64/usr/bin/pactree.exe`,
       [pkg_name, "-u", "-d", "1"]
     );
     console.log(`Deps for ${pkg_name} is :[\n${deps.stdout}\n]`);
