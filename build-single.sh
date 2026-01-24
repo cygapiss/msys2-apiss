@@ -12,13 +12,6 @@ do_build() {
   echo "Do build for ${new_dir} at `cygpath -w ${PWD}` exist_packages:'$exist_packages'"
 
   build_finished_file=$pkg_root_dir/build-cache/$stage_name/${new_dir}-${stage_name}-build-finished.build
-  build_finished_stage2_file=$pkg_root_dir/build-cache/stage2/${new_dir}-stage2-build-finished.build
-  if [[ "$stage_name" == "stage1" ]]; then
-    if [ -f "${build_finished_stage2_file}" ]; then
-      echo "stage2 build for '${new_dir}' is finished, then do not build it"
-      build_finished_file=${build_finished_stage2_file}
-    fi
-  fi
   if [[ "$MSYS_BUILD_WITH_CLEAN" == "enabled" ]]; then
     rm -rf "$build_finished_file"
   fi
