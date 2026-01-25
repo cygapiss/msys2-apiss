@@ -145,7 +145,10 @@ package_python() {
   make DESTDIR="${pkgdir}" install
 
   # Why are these not done by default...
-  ln -sf python3               "${pkgdir}"/usr/bin/python.exe
+  ln -sf python3.12.exe        "${pkgdir}"/usr/bin/python.exe
+  rm -f "${pkgdir}"/usr/bin/python3
+  ln -sf python3.12.exe        "${pkgdir}"/usr/bin/python3.exe
+  ln -sf python3.12.exe        "${pkgdir}"/usr/bin/python3
   ln -sf python3-config        "${pkgdir}"/usr/bin/python-config
   ln -sf idle3                 "${pkgdir}"/usr/bin/idle
   ln -sf pydoc3                "${pkgdir}"/usr/bin/pydoc
