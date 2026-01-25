@@ -50,7 +50,6 @@ prepare() {
   patch -p2 -i ${srcdir}/7.3-cygwin-mouse.patch
   patch -p2 -i ${srcdir}/7.3-virc.patch
   patch -p2 -i ${srcdir}/7.3-cygwin-python-dyn.patch
-  patch -p1 -i ${srcdir}/pretend-cygwin-msys.patch
   patch -p1 -i ${srcdir}/accept-crlf.patch
 
   # define the place for the global (g)vimrc file (set to /etc/vimrc)
@@ -109,11 +108,13 @@ package() {
   #  cp -f vi.exe ${pkgdir}/usr/bin/${x}
   #done
 
+  pushd ${pkgdir}/usr/bin/
   for y in vimdiff view rview rvim
   do
-    rm -f ${pkgdir}/usr/bin/${y}
-    ln -s ${pkgdir}/usr/bin/vim.exe ${pkgdir}/usr/bin/${y}
+    rm -f ${y}
+    ln -s vim.exe ${y}
   done
+  popd
 
   mkdir -p ${pkgdir}/usr/share/bash-completion/completions
   cp -f ${srcdir}/vim-completion ${pkgdir}/usr/share/bash-completion/completions/vim
