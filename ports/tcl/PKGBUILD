@@ -92,10 +92,16 @@ package_tcl() {
       -i "${pkgdir}/usr/lib/$itclver/itclConfig.sh"
 
   # make the default tcl version
-  ln -s "${pkgdir}/usr/bin/tclsh${pkgver%.*}.exe" "${pkgdir}/usr/bin/tclsh.exe"
-  ln -s "${pkgdir}/usr/lib/libtcl${pkgver%.*}.dll.a" "${pkgdir}/usr/lib/libtcl.dll.a"
-  ln -s "${pkgdir}/usr/lib/libtclstub${pkgver%.*}.a" "${pkgdir}/usr/lib/libtclstub.a"
-  ln -s "${pkgdir}/usr/lib/tclConfig.sh" "${pkgdir}/usr/lib/tcl${pkgver%.*}/tclConfig.sh"
+  pushd ${pkgdir}/usr/bin/
+  ln -s "tclsh${pkgver%.*}.exe" "tclsh.exe"
+  popd
+  pushd ${pkgdir}/usr/lib/
+  ln -s "libtcl${pkgver%.*}.dll.a" "libtcl.dll.a"
+  ln -s "libtclstub${pkgver%.*}.a" "libtclstub.a"
+  pushd tcl${pkgver%.*}
+  ln -s "../tclConfig.sh" "tclConfig.sh"
+  popd
+  popd
 
   # split package (from Alpine Linux)
   cd "$pkgdir"
