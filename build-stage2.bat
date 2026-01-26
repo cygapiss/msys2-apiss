@@ -6,7 +6,7 @@ bash --login -c "rm -rf /var/lib/pacman/db.lck"
 bash --login -c "pacman -S --noconfirm --overwrite \* mingw-w64-x86_64-python mingw-w64-x86_64-llvm mingw-w64-x86_64-clang"
 
 echo "Building gcc bootstrap"
-touch build-cache\stage2\gcc-stage2-build-finished.build
+::touch build-cache\stage2\gcc-stage2-build-finished.build
 bash --login -c "MSYS_BUILD_NOEXTRACT=enabled MSYS_BUILD_PKGSUMS=enabled sh build-single.sh gcc >build-stage2-gcc.txt 2>&1"
 
 echo "Building rust by cross"

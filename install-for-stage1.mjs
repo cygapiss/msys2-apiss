@@ -6,6 +6,7 @@ import {
   black_list,
   spawnProcessAsync,
   spawnProcessAsyncCapture,
+  archiveFull
 } from "./utils.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -14,83 +15,6 @@ const __dirname = path.dirname(__filename);
 process.on("SIGINT", function () {
   console.log("Caught interrupt signal");
 });
-function getYYYYMMDD(date) {
-  const year = date.getFullYear();
-  let month = (date.getMonth() + 1).toString(); // getMonth() is zero-based
-  let day = date.getDate().toString();
-
-  // Pad month and day with a leading zero if single digit
-  if (month.length < 2) month = "0" + month;
-  if (day.length < 2) day = "0" + day;
-
-  return year + month + day;
-}
-
-async function archive_full(ci_tools_root, msys_root, ci_tools_root_cygwin) {
-  const msys2_base_filename = `msys2-base-x86_64-${getYYYYMMDD(new Date())}-full.tar`;
-  let target_msys_tar_path = path.join(ci_tools_root, msys2_base_filename);
-  let target_msys_tar_path_cygwin = `${ci_tools_root_cygwin}/${msys2_base_filename}`;
-  console.log(`===Compress msys64 into ${target_msys_tar_path}`);
-  try {
-    await fs.rm(target_msys_tar_path, { force: true, recursive: true });
-  } catch (e) {
-    console.log(`remove ${target_msys_tar_path} failed with: ${e}`);
-  }
-
-  await spawnProcessAsync(
-    `${msys_root}/usr/bin/bash.exe`,
-    [
-      "--login",
-      "-c",
-      [`rm -rf /var/cache/pacman/pkg`, `mkdir -p /var/cache/pacman/pkg`].join(
-        "; ",
-      ),
-    ],
-    {
-      env: {
-        MSYS: "winsymlinks:native",
-        MSYSTEM: "MSYS",
-        CHERE_INVOKING: "1",
-      },
-    },
-  );
-  await spawnProcessAsync(
-    `${msys_root}/usr/bin/tar.exe`,
-    ["cf", target_msys_tar_path_cygwin, "msys64"],
-    {
-      cwd: ci_tools_root,
-      env: {
-        MSYS: "winsymlinks:native",
-        MSYSTEM: "MSYS",
-        CHERE_INVOKING: "1",
-      },
-    },
-  );
-
-  await spawnProcessAsync(`tar`, ["cf", target_msys_tar_path, "msys64"], {
-    cwd: ci_tools_root,
-  });
-  await spawnProcessAsync(
-    `${msys_root}/usr/bin/bash.exe`,
-    [
-      "--login",
-      "-c",
-      [
-        `mkdir -p /var/cache/pacman/pkg`,
-        `rm -rf /var/cache/pacman/pkg`,
-        `cd /var/cache/pacman/`,
-        `ln -s -T /e/CI-Tools/var-cache/pacman/pkg pkg`,
-      ].join("; "),
-    ],
-    {
-      env: {
-        MSYS: "winsymlinks:native",
-        MSYSTEM: "MSYS",
-        CHERE_INVOKING: "1",
-      },
-    },
-  );
-}
 
 async function clear_msys64(msys_root) {
   console.log(`Remove existing ${msys_root}`);
@@ -230,7 +154,7 @@ async function main() {
   console.log(`===Newer msys2-runtime install finished`);
 
   if (!has_msys64) {
-    await archive_full(ci_tools_root, msys_root, ci_tools_root_cygwin);
+    await archiveFull(ci_tools_root, msys_root, ci_tools_root_cygwin);
   }
   process.exit(0);
 }
