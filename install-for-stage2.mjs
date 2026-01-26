@@ -1,7 +1,11 @@
 import * as path from "path";
-import * as fs from "fs/promises";
 import { fileURLToPath } from "url";
-import { spawnProcessAsync } from "./utils.mjs";
+import {
+  spawnProcessAsync,
+  spawnProcessAsyncCapture,
+  removeDirectory,
+  archiveFull,
+} from "./utils.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -10,52 +14,60 @@ process.on("SIGINT", function () {
   console.log("Caught interrupt signal");
 });
 
-async function rm_dir(folder_dir) {
-  console.log(`Remove existing ${folder_dir}`);
-  try {
-    await fs.rm(folder_dir, { recursive: true, force: true });
-  } catch (e) {
-    console.log(`remove with error: ${e}`);
-    process.exit(0);
-  }
-}
-
-async function do_link_home(msys_root) {
-  await rm_dir(path.join(msys_root, "home"));
-  await rm_dir(path.join(msys_root, "var/cache/pacman/pkg"));
-
-  await spawnProcessAsync(
-    "cmd.exe",
-    ["/C", "mklink /D home E:\\CI-Tools\\msys64-home\\home"],
-    {
-      cwd: msys_root,
-      env: {
-        MSYS: "winsymlinks:native",
-        MSYSTEM: "MSYS",
-        CHERE_INVOKING: "1",
-      },
-    },
-  );
-  await spawnProcessAsync(
-    "cmd.exe",
-    ["/C", "mklink /D pkg E:\\CI-Tools\\var-cache\\pacman\\pkg"],
-    {
-      cwd: path.join(msys_root, "var/cache/pacman/"),
-      env: {
-        MSYS: "winsymlinks:native",
-        MSYSTEM: "MSYS",
-        CHERE_INVOKING: "1",
-      },
-    },
-  );
-}
-
 async function main() {
   const ci_tools_root = "E:/CI-Tools/msys64-stage2";
-  // const ci_tools_root = "C:/CI-Tools";
   const msys_root = path.join(ci_tools_root, "msys64");
   const pkg_root = __dirname;
-  await do_link_home(msys_root);
+  await removeDirectory(msys_root);
+  await spawnProcessAsync(
+    `tar`,
+    ["xf", path.join(ci_tools_root, "msys2-base-x86_64-20251213.tar.zst")],
+    {
+      cwd: ci_tools_root,
+    },
+  );
+  console.log("Extract base finished\n");
+  await spawnProcessAsync(
+    `${msys_root}/usr/bin/bash.exe`,
+    [
+      "--login",
+      "-c",
+      `echo "Init msys with $MSYSTEM finished"; rm -rf /var/lib/pacman/db.lck; pacman -Syu --noconfirm`,
+    ],
+    {
+      env: {
+        MSYSTEM: "MSYS",
+      },
+    },
+  );
+  const ci_tools_root_cygwin = (
+    await spawnProcessAsyncCapture(`${msys_root}/usr/bin/cygpath.exe`, [
+      ci_tools_root,
+    ])
+  ).stdout.trim();
+  await spawnProcessAsync(
+    `${msys_root}/usr/bin/bash.exe`,
+    [
+      "--login",
+      "-c",
+      [
+        `mkdir -p /var/cache/pacman/pkg`,
+        `rm -rf /var/cache/pacman/pkg`,
+        `cd /var/cache/pacman/`,
+        `ln -s -T /e/CI-Tools/var-cache/pacman/pkg pkg`,
+        `cat /etc/pacman.conf | grep ^SigLevel`,
+        `cd ${ci_tools_root_cygwin}/`,
+        `pacman -Syu --noconfirm`,
+      ].join("; "),
+    ],
+    {
+      env: {
+        MSYS: "winsymlinks:native",
+        MSYSTEM: "MSYS",
+        CHERE_INVOKING: "1",
+      },
+    },
+  );
   for (let i = 0; i < 2; i += 1) {
     await spawnProcessAsync(
       `${msys_root}/usr/bin/bash.exe`,
@@ -74,7 +86,9 @@ async function main() {
       },
     );
   }
-  await do_link_home(msys_root);
+  console.log("===Switch to cygwin finished");
+  await archiveFull(ci_tools_root, msys_root, ci_tools_root_cygwin);
+  console.log("===Archive stage2 finished");
 }
 
 main();
