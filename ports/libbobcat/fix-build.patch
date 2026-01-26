@@ -9,7 +9,7 @@ diff -Naur bobcat-4.07.00-1-orig/bobcat/configfile/build bobcat-4.07.00-1/bobcat
 -        libxxx = libso + ".";
 -        libsomajor = libxxx + element(0, version);
 -        libxxx += BUILD_LIBRARY;
-+        libxxx = "msys-" + library + ".dll";
++        libxxx = "cyg" + library + ".dll";
 +        libso = "lib" + library + ".dll.a";
      
          for (index = 0; index < nClasses; index++)
@@ -47,7 +47,7 @@ diff -Naur bobcat-4.07.00-1-orig/bobcat/hostname/build bobcat-4.07.00-1/bobcat/h
 -        libxxx = libso + ".";
 -        libsomajor = libxxx + element(0, version);
 -        libxxx += BUILD_LIBRARY;
-+        libxxx = "msys-" + library + ".dll";
++        libxxx = "cyg" + library + ".dll";
 +        libso = "lib" + library + ".dll.a";
      
          for (index = 0; index < nClasses; index++)
@@ -115,7 +115,7 @@ diff -Naur bobcat-4.07.00-1-orig/bobcat/icmake/libraries bobcat-4.07.00-1/bobcat
  #ifdef BUILD_SHARED
 -    libso = "lib" LIBRARY ".so";
 -    libsoshared = libso + "." + g_version;
-+    libso = "msys-" LIBRARY ".dll";
++    libso = "cyg" LIBRARY ".dll";
 +    libsoshared = "lib" LIBRARY ".dll.a";
  
      g_copt += " -fPIC";
@@ -137,7 +137,7 @@ diff -Naur bobcat-4.07.00-1-orig/bobcat/redirector/driver/build bobcat-4.07.00-1
  {
      printf("\n");
 -    system("mv ../../lib/libbobcat.so ../../lib/libbobcat.OFF");
-+    system("mv ../../lib/msys-bobcat.dll ../../lib/msys-bobcat.OFF");
++    system("mv ../../lib/cygbobcat.dll ../../lib/cygbobcat.OFF");
      exec(COMPILER, "-o", programname,
               ofiles,
           libs,
@@ -146,7 +146,7 @@ diff -Naur bobcat-4.07.00-1-orig/bobcat/redirector/driver/build bobcat-4.07.00-1
          #endif
      );
 -    system("mv ../../lib/libbobcat.OFF ../../lib/libbobcat.so");
-+    system("mv ../../lib/msys-bobcat.OFF ../../lib/msys-bobcat.dll");
++    system("mv ../../lib/cygbobcat.OFF ../../lib/cygbobcat.dll");
      printf("ok: ", programname, "\n");
  }
  /*
