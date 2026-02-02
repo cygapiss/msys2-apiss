@@ -15,7 +15,7 @@ process.on("SIGINT", function () {
 });
 
 async function main() {
-  const ci_tools_root = "E:/CI-Tools/msys64-stage3";
+  const ci_tools_root = "D:/CI-Tools/msys64-stage3";
   const msys_root = path.join(ci_tools_root, "msys64");
   const pkg_root = __dirname;
   await removeDirectory(msys_root);
@@ -54,7 +54,7 @@ async function main() {
         `mkdir -p /var/cache/pacman/pkg`,
         `rm -rf /var/cache/pacman/pkg`,
         `cd /var/cache/pacman/`,
-        `ln -s -T /e/CI-Tools/var-cache/pacman/pkg pkg`,
+        `ln -s -T /d/CI-Tools/var-cache/pacman/pkg pkg`,
         `cat /etc/pacman.conf | grep ^SigLevel`,
         `cd ${ci_tools_root_cygwin}/`,
         `pacman -Syu --noconfirm`,
@@ -74,7 +74,7 @@ async function main() {
       [
         "--login",
         "-c",
-        "pacman -U --noconfirm --overwrite \\* `ls | tr '\n' ' '`",
+        "pacman -U --noconfirm --overwrite \\* `ls *.pkg.tar.zst | tr '\n' ' '`",
       ],
       {
         cwd: path.join(pkg_root, "dist"),

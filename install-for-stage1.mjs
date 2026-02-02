@@ -27,7 +27,7 @@ async function clear_msys64(msys_root) {
 }
 
 async function main() {
-  const ci_tools_root = "E:/CI-Tools/msys64-stage1";
+  const ci_tools_root = "D:/CI-Tools/msys64-stage1";
   const msys_root = path.join(ci_tools_root, "msys64");
   const pkg_root = __dirname;
 
@@ -43,7 +43,7 @@ async function main() {
     console.log(`===Extracting base`);
     await spawnProcessAsync(
       `tar`,
-      ["xf", path.join(ci_tools_root, "msys2-base-x86_64-20251213.tar")],
+      ["xf", path.join(ci_tools_root, "msys2-base-x86_64-20251213.tar.zst")],
       {
         cwd: ci_tools_root,
       },
@@ -87,7 +87,7 @@ async function main() {
         `mkdir -p /var/cache/pacman/pkg`,
         `rm -rf /var/cache/pacman/pkg`,
         `cd /var/cache/pacman/`,
-        `ln -s -T /e/CI-Tools/var-cache/pacman/pkg pkg`,
+        `ln -s -T /d/CI-Tools/var-cache/pacman/pkg pkg`,
         `cat /etc/pacman.conf | grep ^SigLevel`,
         `cd ${ci_tools_root_cygwin}/`,
         `pacman -Syu --noconfirm`,
