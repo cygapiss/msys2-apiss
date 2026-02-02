@@ -640,6 +640,7 @@ python-mallard-ducktype
 python-markdown
 python-markupsafe
 python-maturin
+python-merge3
 python-more-itertools
 python-pacdb
 python-packaging
@@ -661,6 +662,7 @@ python-resolvelib
 python-roman-numerals
 python-semantic-version
 python-setuptools
+python-setuptools-gettext
 python-setuptools-rust
 python-setuptools-scm
 python-six
