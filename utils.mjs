@@ -141,7 +141,7 @@ export async function archiveFull(
         `mkdir -p /var/cache/pacman/pkg`,
         `rm -rf /var/cache/pacman/pkg`,
         `cd /var/cache/pacman/`,
-        `ln -s -T /e/CI-Tools/var-cache/pacman/pkg pkg`,
+        `ln -s -T /d/CI-Tools/var-cache/pacman/pkg pkg`,
       ].join("; "),
     ],
     {
