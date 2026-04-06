@@ -27,11 +27,11 @@
 _realname=slepc
 pkgbase=mingw-w64-${_realname}
 pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}")
-pkgver=3.24.3
+pkgver=3.25.0
 pkgrel=1
+pkgdesc="Scalable library for eigenvalue problem computations (mingw-w64)"
 arch=('any')
 mingw_arch=('mingw64' 'ucrt64' 'clang64' 'clangarm64')
-pkgdesc="Scalable library for eigenvalue problem computations (mingw-w64)"
 url="https://slepc.upv.es/"
 msys2_repository_url="https://gitlab.com/slepc/slepc"
 msys2_references=(
@@ -39,12 +39,14 @@ msys2_references=(
 )
 license=('spdx:BSD-2-Clause')
 depends=("${MINGW_PACKAGE_PREFIX}-petsc"
-         $([[ ${MINGW_PACKAGE_PREFIX} == *-clang-* ]] || echo "${MINGW_PACKAGE_PREFIX}-gcc-libgfortran"))
+         "${MINGW_PACKAGE_PREFIX}-cc-libs"
+         $([[ ${MINGW_PACKAGE_PREFIX} == *-clang-* ]] || echo "${MINGW_PACKAGE_PREFIX}-gcc-libgfortran")
+         "${MINGW_PACKAGE_PREFIX}-openblas")
 makedepends=("python"
              "${MINGW_PACKAGE_PREFIX}-cc"
              "${MINGW_PACKAGE_PREFIX}-pkgconf"
              $([[ ${CARCH} == aarch64 ]] || echo "${MINGW_PACKAGE_PREFIX}-msmpi")
-             $([[ ${MINGW_PACKAGE_PREFIX} == *-clang-* ]] || echo "${MINGW_PACKAGE_PREFIX}-fc")
+             "${MINGW_PACKAGE_PREFIX}-fc"
              "${MINGW_PACKAGE_PREFIX}-petsc-build")
 optdepends=("${MINGW_PACKAGE_PREFIX}-tcl: build & run test suite")
 source=("https://slepc.upv.es/download/distrib/${_realname}-${pkgver}.tar.gz"
@@ -53,7 +55,7 @@ source=("https://slepc.upv.es/download/distrib/${_realname}-${pkgver}.tar.gz"
         'buildme-0.tm'
         'xyz-0.tm')
 noextract=("${_realname}-${pkgver}.tar.gz")
-sha256sums=('3f13421f3fcd68fd720a143088506e0f91e24243844703997597eee793225452'
+sha256sums=('ba2d1cd42d637a7577cab63b0f9e910921fdd60db58290dd1041d60152655f78'
             '1c341cd82f6bd8db447a21f88ba81378605ca6b0eabc443212d53fad6113c9fe'
             '8d8f5670ffdf34a10b0d027bff976131824e2e6b053f8a13d207ecddd4663d6d'
             'd0db2aa573c9aaf57b30cb3c2bd7c66e1677f3f468002f467da98b75943076b1'
@@ -77,6 +79,8 @@ build() {
 
   if [[ ${MINGW_PACKAGE_PREFIX} != *-clang-* ]]; then
     extra_libs+=" -lgfortran"
+  else
+    extra_libs+=" -lflang_rt.runtime"
   fi
 
   for build in ${petsc_builds}; do
@@ -128,9 +132,7 @@ package() {
       cd ${build}/include
       mkdir -p "${pkgdir}"${MINGW_PREFIX}/include/${_realname}/${build}
       cp *.h "${pkgdir}"${MINGW_PREFIX}/include/${_realname}/${build}
-      if [[ ${MINGW_PACKAGE_PREFIX} != *-clang-* ]]; then
-        cp *.mod "${pkgdir}"${MINGW_PREFIX}/include/${_realname}/${build}
-      fi
+      cp *.mod "${pkgdir}"${MINGW_PREFIX}/include/${_realname}/${build}
     )
     case ${build} in
       ?m?) desc="MPI parallel";;
