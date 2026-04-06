@@ -7,7 +7,7 @@ pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}"
 # Note: pyside6 needs to be rebuilt even for patch-only releases
 _qtver=6.11.0
 pkgver=${_qtver/-/}
-pkgrel=1
+pkgrel=2
 pkgdesc="A cross-platform application and UI framework (mingw-w64)"
 arch=(any)
 mingw_arch=('mingw64' 'ucrt64' 'clang64' 'clangarm64')
@@ -125,10 +125,8 @@ prepare() {
 }
 
 build() {
-  mkdir -p build-${MSYSTEM} && cd build-${MSYSTEM}
-
   if [[ ${CC} == clang ]]; then
-    CXXFLAGS+=" -Wno-character-conversion"
+    CXXFLAGS+=" -Wno-character-conversion -Wno-implicit-function-declaration"
   fi
 
   MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
@@ -168,12 +166,15 @@ build() {
     -DFEATURE_gtk3=OFF \
     -DFEATURE_regularexpression=ON \
     -DFEATURE_cxx20=ON \
+    -DFEATURE_windows_ioring=$([[ ${MSYSTEM} != MINGW64 ]] && echo "ON" || echo "OFF") \
     -DFEATURE_cpp_winrt=OFF \
     -DFEATURE_force_debug_info=ON \
     -DFEATURE_separate_debug_info=ON \
-    ../${_pkgfn}
+    -S ${_pkgfn} \
+    -B build-${MSYSTEM}
 
-  PATH=$PWD/bin:$PATH ${MINGW_PREFIX}/bin/cmake --build .
+  PATH="${srcdir}"/build-${MSYSTEM}/bin:$PATH \
+    ${MINGW_PREFIX}/bin/cmake --build build-${MSYSTEM}
 }
 
 package_qt6-base() {
