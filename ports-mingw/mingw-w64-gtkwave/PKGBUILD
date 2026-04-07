@@ -4,12 +4,13 @@
 _realname=gtkwave
 pkgbase=mingw-w64-${_realname}
 pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}")
-pkgver=3.3.124
+pkgver=3.3.126
 pkgrel=1
 pkgdesc='A wave viewer which reads LXT, LXT2, VZT, GHW and VCD/EVCD files (mingw-w64)'
 arch=('any')
 mingw_arch=('mingw64' 'ucrt64' 'clang64' 'clangarm64')
 url='https://gtkwave.sourceforge.net/'
+msys2_repository_url="https://github.com/gtkwave/gtkwave"
 license=('spdx:GPL-2.0-or-later')
 groups=("${MINGW_PACKAGE_PREFIX}-eda")
 depends=(
@@ -37,13 +38,27 @@ makedepends=(
   'perlxml'
   'intltool'
 )
-source=("https://downloads.sourceforge.net/project/${_realname}/${_realname}-gtk3-${pkgver}/${_realname}-gtk3-${pkgver}.tar.gz")
-sha256sums=('4b1590e05e3e3ae26e34fa80aff369254397379b2f970cfa99150b8b97e535cf')
+source=("https://downloads.sourceforge.net/project/${_realname}/${_realname}-gtk3-${pkgver}/${_realname}-gtk3-${pkgver}.tar.gz"
+        "001-fix-build-on-mingw.patch"
+        "002-fix-build-with-std-gnu23.patch"
+        "003-fix-segfault-with-gtk3.patch")
+sha256sums=('965019d74829746b5d1d382a9cf1e272246c91101d0e131f0da512c94ba5816a'
+            '66439db585317d8f83ec4c000c1a610370f069b7c50433a75bdb92cf47865589'
+            'e2d71149f50003b9ea3bcbcd553fa5a042518f8560b9cb98d1b6dd54182a7d2e'
+            '120a2ffa812a9ce649f4a2bc7bd938eb323ed633b2e75750b6328a371f239f1c')
+
+prepare() {
+  cd ${_realname}-gtk3-${pkgver}
+  patch -p1 -i "${srcdir}"/001-fix-build-on-mingw.patch
+  patch -p1 -i "${srcdir}"/002-fix-build-with-std-gnu23.patch
+  # https://github.com/gtkwave/gtkwave/commit/b19c9535
+  patch -p1 -i "${srcdir}"/003-fix-segfault-with-gtk3.patch
+}
 
 build() {
   mkdir "${srcdir}/build-${MSYSTEM}" && cd "${srcdir}/build-${MSYSTEM}"
 
-  CFLAGS+=" -std=gnu17" \
+  CFLAGS+=" -std=gnu23 -Wno-int-conversion" \
   "${srcdir}"/${_realname}-gtk3-${pkgver}/configure \
     --prefix="${MINGW_PREFIX}" \
     --with-tcl="${MINGW_PREFIX}"/lib \

@@ -1,0 +1,24 @@
+--- a/src/globals.c
++++ b/src/globals.c
+@@ -18,7 +18,11 @@
+ #include "fgetdynamic.h"
+ #include "ghw.h"
+ #include "globals.h"
++#ifdef HAVE_GETOPT_LONG
++#include <getopt.h>
++#else
+ #include "gnu-getopt.h"
++#endif
+ #include "gnu_regex.h"
+ #include "gtk23compat.h"
+ #include "lx2.h"
+--- a/src/helpers/vcd2fst.c
++++ b/src/helpers/vcd2fst.c
+@@ -21,6 +21,7 @@
+  */
+ 
+ #include <config.h>
++#include <string.h>
+ 
+ #if HAVE_GETOPT_H
+ #include <getopt.h>
