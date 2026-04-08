@@ -368,9 +368,6 @@ package_msys2-runtime() {
   else
     rm -f "${pkgdir}"/usr/bin/cygwin1.dbg
   fi
-  rm -f "${pkgdir}"/usr/bin/cyglsa-config
-  rm -f "${pkgdir}"/usr/bin/cyglsa.dll
-  rm -f "${pkgdir}"/usr/bin/cyglsa64.dll
   rm -f "${pkgdir}"/usr/bin/cygserver-config
   cp -rf "${srcdir}"/dest/usr/share "${pkgdir}"/usr/
 }
@@ -389,6 +386,7 @@ package_msys2-runtime-devel() {
   else
     cp -f "${srcdir}"/dest/usr/bin/cygwin1.dbg "${pkgdir}"/usr/bin/
   fi
+  cp -f "${srcdir}"/dest/usr/bin/cygserver-config "${pkgdir}"/usr/bin/
   cp -rLf "${srcdir}"/dest/usr/${CHOST}/include "${pkgdir}"/usr/
   rm -f "${pkgdir}"/usr/include/iconv.h
   rm -f "${pkgdir}"/usr/include/unctrl.h
