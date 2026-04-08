@@ -29,49 +29,60 @@ makedepends=('cocom'
              'docbook-xsl')
 # re zipman: https://github.com/msys2/MSYS2-packages/pull/2687#issuecomment-965714874
 options=('!zipman')
-source=('msys2-runtime'::git://sourceware.org/git/newlib-cygwin.git#tag=cygwin-${pkgver}
-        msys2-runtime.commit
-        0001-Fix-msys-library-name-in-import-libraries.patch
-        0002-Rename-dll-from-cygwin-to-msys.patch
-        0003-Add-functionality-for-converting-UNIX-paths-in-argum.patch
-        0004-Add-functionality-for-changing-OS-name-via-MSYSTEM-e.patch
-        0005-Move-root-to-usr.-Change-sorting-mount-points.-By-de.patch
-        0006-Instead-of-creating-Cygwin-symlinks-use-deep-copy-by.patch
-        0007-Automatically-rewrite-TERM-msys-to-TERM-cygwin.patch
-        0008-Do-not-convert-environment-for-strace.patch
-        0009-strace.cc-Don-t-set-MSYS-noglob.patch
-        0010-Add-debugging-for-strace-make_command_line.patch
-        0011-strace-quiet-be-really-quiet.patch
-        0012-path_conv-special-case-root-directory-to-have-traili.patch
-        0013-When-converting-to-a-Unix-path-avoid-double-trailing.patch
-        0014-msys2_path_conv-pass-PC_NOFULL-to-path_conv.patch
-        0015-path-conversion-Introduce-ability-to-switch-off-conv.patch
-        0016-dcrt0.cc-Untangle-allow_glob-from-winshell.patch
-        0017-dcrt0.cc-globify-Don-t-quote-literal-strings-differe.patch
-        0018-Add-debugging-for-build_argv.patch
-        0019-environ.cc-New-facility-environment-variable-MSYS2_E.patch
-        0020-Introduce-the-enable_pcon-value-for-MSYS.patch
-        0021-popen-call-usr-bin-sh-instead-of-bin-sh.patch
-        0022-Expose-full-command-lines-to-other-Win32-processes-b.patch
-        0023-Add-a-helper-to-obtain-a-function-s-address-in-kerne.patch
-        0024-Emulate-GenerateConsoleCtrlEvent-upon-Ctrl-C.patch
-        0025-kill-kill-Win32-processes-more-gently.patch
-        0026-Cygwin-make-option-for-native-inner-link-handling.patch
-        0027-docs-skip-building-texinfo-and-PDF-files.patch
-        0028-install-libs-depend-on-the-toollibs.patch
-        0029-POSIX-ify-the-SHELL-variable.patch
-        0030-Handle-ORIGINAL_PATH-just-like-PATH.patch
-        0031-uname-allow-setting-the-system-name-to-CYGWIN.patch
-        0032-Pass-environment-variables-with-empty-values.patch
-        0033-Optionally-disallow-empty-environment-values-again.patch
-        0034-build_env-respect-the-MSYS-environment-variable.patch
-        0035-Revert-Cygwin-Enable-dynamicbase-on-the-Cygwin-DLL-b.patch
-        0036-Avoid-sharing-cygheaps-across-Cygwin-versions.patch
-        0037-uname-report-msys2-runtime-commit-hash-too.patch
-        0038-Cygwin-Adjust-CWD-magic-to-accommodate-for-the-lates.patch
-        0039-Cygwin-Fix-segfault-when-XSAVE-area-sizes-are-unalig.patch
-        0040-cygcheck-remove-an-unused-variable-causing-a-build-e.patch
-        0041-Cygwin-console-fix-deadlock-in-pcon-teardown.patch)
+
+_patches=(
+  # patches from https://github.com/msys2/msys2-runtime
+  0001-Fix-msys-library-name-in-import-libraries.patch
+  0002-Rename-dll-from-cygwin-to-msys.patch
+  0003-Add-functionality-for-converting-UNIX-paths-in-argum.patch
+  0004-Add-functionality-for-changing-OS-name-via-MSYSTEM-e.patch
+  0005-Move-root-to-usr.-Change-sorting-mount-points.-By-de.patch
+  0006-Instead-of-creating-Cygwin-symlinks-use-deep-copy-by.patch
+  0007-Automatically-rewrite-TERM-msys-to-TERM-cygwin.patch
+  0008-Do-not-convert-environment-for-strace.patch
+  0009-strace.cc-Don-t-set-MSYS-noglob.patch
+  0010-Add-debugging-for-strace-make_command_line.patch
+  0011-strace-quiet-be-really-quiet.patch
+  0012-path_conv-special-case-root-directory-to-have-traili.patch
+  0013-When-converting-to-a-Unix-path-avoid-double-trailing.patch
+  0014-msys2_path_conv-pass-PC_NOFULL-to-path_conv.patch
+  0015-path-conversion-Introduce-ability-to-switch-off-conv.patch
+  0016-dcrt0.cc-Untangle-allow_glob-from-winshell.patch
+  0017-dcrt0.cc-globify-Don-t-quote-literal-strings-differe.patch
+  0018-Add-debugging-for-build_argv.patch
+  0019-environ.cc-New-facility-environment-variable-MSYS2_E.patch
+  0020-Introduce-the-enable_pcon-value-for-MSYS.patch
+  0021-popen-call-usr-bin-sh-instead-of-bin-sh.patch
+  0022-Expose-full-command-lines-to-other-Win32-processes-b.patch
+  0023-Add-a-helper-to-obtain-a-function-s-address-in-kerne.patch
+  0024-Emulate-GenerateConsoleCtrlEvent-upon-Ctrl-C.patch
+  0025-kill-kill-Win32-processes-more-gently.patch
+  0026-Cygwin-make-option-for-native-inner-link-handling.patch
+  0027-docs-skip-building-texinfo-and-PDF-files.patch
+  0028-install-libs-depend-on-the-toollibs.patch
+  0029-POSIX-ify-the-SHELL-variable.patch
+  0030-Handle-ORIGINAL_PATH-just-like-PATH.patch
+  0031-uname-allow-setting-the-system-name-to-CYGWIN.patch
+  0032-Pass-environment-variables-with-empty-values.patch
+  0033-Optionally-disallow-empty-environment-values-again.patch
+  0034-build_env-respect-the-MSYS-environment-variable.patch
+  0035-Revert-Cygwin-Enable-dynamicbase-on-the-Cygwin-DLL-b.patch
+  0036-Avoid-sharing-cygheaps-across-Cygwin-versions.patch
+  0037-uname-report-msys2-runtime-commit-hash-too.patch
+  0038-Cygwin-Adjust-CWD-magic-to-accommodate-for-the-lates.patch
+  0039-Cygwin-Fix-segfault-when-XSAVE-area-sizes-are-unalig.patch
+  0040-cygcheck-remove-an-unused-variable-causing-a-build-e.patch
+  0041-Cygwin-console-fix-deadlock-in-pcon-teardown.patch
+)
+
+source=(
+  'msys2-runtime'::git://sourceware.org/git/newlib-cygwin.git#tag=cygwin-${pkgver}
+
+  ${_patches[@]}
+
+  msys2-runtime.commit
+)
+
 sha256sums=('f05acd30000aa003b1bb040cdf24ac4c85e85d0bc924126e5cafc66de975342d'
             '73f62e3cb77d300137766a9e0b6e7f819c574b54ea11555f843ef0bdc63f20fd'
             'eae9773ed4d226f1938aceb4e0f25047ff3844758677a2c0f8a8b98bd7701015'
@@ -153,47 +164,9 @@ prepare() {
   del_file_exists winsup/cygwin/msys2_path_conv.cc \
     winsup/cygwin/msys2_path_conv.h
 
- apply_git_am_with_msg 0001-Fix-msys-library-name-in-import-libraries.patch \
-  0002-Rename-dll-from-cygwin-to-msys.patch \
-  0003-Add-functionality-for-converting-UNIX-paths-in-argum.patch \
-  0004-Add-functionality-for-changing-OS-name-via-MSYSTEM-e.patch \
-  0005-Move-root-to-usr.-Change-sorting-mount-points.-By-de.patch \
-  0006-Instead-of-creating-Cygwin-symlinks-use-deep-copy-by.patch \
-  0007-Automatically-rewrite-TERM-msys-to-TERM-cygwin.patch \
-  0008-Do-not-convert-environment-for-strace.patch \
-  0009-strace.cc-Don-t-set-MSYS-noglob.patch \
-  0010-Add-debugging-for-strace-make_command_line.patch \
-  0011-strace-quiet-be-really-quiet.patch \
-  0012-path_conv-special-case-root-directory-to-have-traili.patch \
-  0013-When-converting-to-a-Unix-path-avoid-double-trailing.patch \
-  0014-msys2_path_conv-pass-PC_NOFULL-to-path_conv.patch \
-  0015-path-conversion-Introduce-ability-to-switch-off-conv.patch \
-  0016-dcrt0.cc-Untangle-allow_glob-from-winshell.patch \
-  0017-dcrt0.cc-globify-Don-t-quote-literal-strings-differe.patch \
-  0018-Add-debugging-for-build_argv.patch \
-  0019-environ.cc-New-facility-environment-variable-MSYS2_E.patch \
-  0020-Introduce-the-enable_pcon-value-for-MSYS.patch \
-  0021-popen-call-usr-bin-sh-instead-of-bin-sh.patch \
-  0022-Expose-full-command-lines-to-other-Win32-processes-b.patch \
-  0023-Add-a-helper-to-obtain-a-function-s-address-in-kerne.patch \
-  0024-Emulate-GenerateConsoleCtrlEvent-upon-Ctrl-C.patch \
-  0025-kill-kill-Win32-processes-more-gently.patch \
-  0026-Cygwin-make-option-for-native-inner-link-handling.patch \
-  0027-docs-skip-building-texinfo-and-PDF-files.patch \
-  0028-install-libs-depend-on-the-toollibs.patch \
-  0029-POSIX-ify-the-SHELL-variable.patch \
-  0030-Handle-ORIGINAL_PATH-just-like-PATH.patch \
-  0031-uname-allow-setting-the-system-name-to-CYGWIN.patch \
-  0032-Pass-environment-variables-with-empty-values.patch \
-  0033-Optionally-disallow-empty-environment-values-again.patch \
-  0034-build_env-respect-the-MSYS-environment-variable.patch \
-  0035-Revert-Cygwin-Enable-dynamicbase-on-the-Cygwin-DLL-b.patch \
-  0036-Avoid-sharing-cygheaps-across-Cygwin-versions.patch \
-  0037-uname-report-msys2-runtime-commit-hash-too.patch \
-  0038-Cygwin-Adjust-CWD-magic-to-accommodate-for-the-lates.patch \
-  0039-Cygwin-Fix-segfault-when-XSAVE-area-sizes-are-unalig.patch \
-  0040-cygcheck-remove-an-unused-variable-causing-a-build-e.patch \
-  0041-Cygwin-console-fix-deadlock-in-pcon-teardown.patch
+  for patch_filename in "${_patches[@]}"; do
+    apply_git_am_with_msg ${patch_filename}
+  done
 }
 
 build() {
