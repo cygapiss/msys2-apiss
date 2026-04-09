@@ -1,16 +1,16 @@
 # Maintainer: Raphael Amorim <rapha850@gmail.com>
+
 _realname=rio
 pkgbase=mingw-w64-${_realname}
 pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}")
 pkgver=0.3.2
-pkgrel=1
+pkgrel=2
 pkgdesc="A hardware-accelerated GPU terminal emulator focusing to run in desktops and browsers (mingw-w64)"
 arch=('any')
 mingw_arch=('ucrt64' 'clang64' 'clangarm64')
 url="https://github.com/raphamorim/rio"
 msys2_repository_url='https://github.com/raphamorim/rio'
 msys2_changelog_url='https://rioterm.com/changelog'
-license=('spdx:MIT')
 msys2_references=(
   'archlinux: rio'
   'aur: rio-git'
@@ -21,10 +21,11 @@ msys2_references=(
   'purl: pkg:cargo/rio-window'
   'purl: pkg:cargo/sugarloaf'
 )
+license=('spdx:MIT')
 depends=("${MINGW_PACKAGE_PREFIX}-cc-libs")
 makedepends=("${MINGW_PACKAGE_PREFIX}-rust")
 source=("https://github.com/raphamorim/${_realname}/archive/v${pkgver}/${_realname}-${pkgver}.tar.gz")
-sha256sums=('f4bc82c8eb259feb34974e7ff2a817706cfa10030e8d08555f93912624c77bb7')
+sha256sums=('21c96402bd171b2b3349cc9ee2c8bf3ef0031b060816f6edffcde2bb8f9cf106')
 
 prepare() {
   cd "${_realname}-${pkgver}"
