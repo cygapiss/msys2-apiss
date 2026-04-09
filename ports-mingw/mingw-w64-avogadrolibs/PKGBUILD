@@ -3,9 +3,9 @@
 _realname=avogadrolibs
 pkgbase=mingw-w64-${_realname}
 pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}"
-         "${MINGW_PACKAGE_PREFIX}-${_realname}-qt6")
-pkgver=1.102.1
-pkgrel=4
+         "${MINGW_PACKAGE_PREFIX}-${_realname}-qt")
+pkgver=2.0.0
+pkgrel=1
 pkgdesc='Libraries that provide 3D rendering, visualization, analysis and data processing useful in computational chemistry, molecular modeling, bioinformatics, materials science, and related areas (mingw-w64)'
 arch=(any)
 mingw_arch=(ucrt64 clang64 clangarm64)
@@ -28,24 +28,22 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-cc"
              "${MINGW_PACKAGE_PREFIX}-nlohmann-json"
              "${MINGW_PACKAGE_PREFIX}-pybind11"
              "${MINGW_PACKAGE_PREFIX}-python"
+             "${MINGW_PACKAGE_PREFIX}-pugixml"
              "${MINGW_PACKAGE_PREFIX}-qt6-base"
              "${MINGW_PACKAGE_PREFIX}-qt6-svg"
              "${MINGW_PACKAGE_PREFIX}-qt6-tools"
              "${MINGW_PACKAGE_PREFIX}-spglib"
-             "${MINGW_PACKAGE_PREFIX}-vtk"
              "${MINGW_PACKAGE_PREFIX}-fast_float"
              "${MINGW_PACKAGE_PREFIX}-utf8cpp")
 source=(https://github.com/OpenChemistry/avogadrolibs/archive/${pkgver}/${_realname}-${pkgver}.tar.gz
         https://github.com/OpenChemistry/crystals/archive/${pkgver}/crystals-${pkgver}.tar.gz
         https://github.com/OpenChemistry/fragments/archive/${pkgver}/fragments-${pkgver}.tar.gz
         https://github.com/OpenChemistry/molecules/archive/${pkgver}/molecules-${pkgver}.tar.gz
-        003-fix-install-python-modules.patch
         005-fix-cmake-config-file.patch)
-sha256sums=('cceae6c36d20382685aa7ea286f0f068fd83d25f5ab4047adbc69c215470361f'
-            'aaf911f4a27d604c924ecef675cc53d90277ddb421908f7090b5bdb615b77f1d'
-            '079dfe8a546242875e33f25af93ea0b632dba79e182682452a55f21f7231967a'
-            '2499fcb84ab66c0f70ea1cb47c765c6e81d7d37e7800dde971d4d4c8fe314369'
-            'a47e551f39ea1cff22dcea5c6bf5b9c3aba5f69038351794c171e26638f314e7'
+sha256sums=('08adefeb8122cf018587fc12872ed470bbf92b72fb73f0af1861ab58031cadfd'
+            '2747a70fab3d5f32ead0622229189fc74732aa0eadf4ea60b80f75368fb0b442'
+            'e9a4ba1dd1b357bef94188dbf8fb7f60219dba7854b69be767e28a4fb1938ce9'
+            'bb7377f254932ccd4156035eabfc5b1ed9f551359b520ed86b51064a114a1d99'
             '38f452b157ed6f89f0ffc584066abd14fe62c75ad452970d3cdcfdc4aba390a9')
 
 apply_patch_with_msg() {
@@ -63,7 +61,6 @@ prepare() {
 
   cd ${_realname}-${pkgver}
   apply_patch_with_msg \
-    003-fix-install-python-modules.patch \
     005-fix-cmake-config-file.patch
 }
 
@@ -89,9 +86,9 @@ build() {
     -DUSE_PYTHON=ON \
     -DUSE_QT=ON \
     -DUSE_SPGLIB=ON \
-    -DUSE_VTK=ON \
     -DUSE_EXTERNAL_NLOHMANN=ON \
     -DUSE_EXTERNAL_PUGIXML=ON \
+    -DUSE_SYSTEM_GENXRDPATTERN=ON \
     -DBUILD_STATIC_PLUGINS=OFF \
     -DQT_VERSION=6 \
     -DPython_EXECUTABLE=${MINGW_PREFIX}/bin/python \
@@ -109,7 +106,7 @@ package_avogadrolibs() {
            "${MINGW_PACKAGE_PREFIX}-pugixml"
            "${MINGW_PACKAGE_PREFIX}-spglib")
   optdepends=("${MINGW_PACKAGE_PREFIX}-python: Python bindings"
-              "${MINGW_PACKAGE_PREFIX}-avogadrolibs-qt6: For the VTK and Qt plugins")
+              "${MINGW_PACKAGE_PREFIX}-avogadrolibs-qt: For Qt plugins")
 
   DESTDIR="${pkgdir}" ${MINGW_PREFIX}/bin/cmake --install build-${MSYSTEM}
 
@@ -117,10 +114,8 @@ package_avogadrolibs() {
         "${pkgdir}"${MINGW_PREFIX}/lib/libAvogadroQt* \
         "${pkgdir}"${MINGW_PREFIX}/bin/libAvogadroMoleQueue* \
         "${pkgdir}"${MINGW_PREFIX}/lib/libAvogadroMoleQueue* \
-        "${pkgdir}"${MINGW_PREFIX}/bin/libAvogadroVtk* \
-        "${pkgdir}"${MINGW_PREFIX}/lib/libAvogadroVtk* \
-        "${pkgdir}"${MINGW_PREFIX}/include/avogadro/{molequeue,qt*,vtk} \
-        "${pkgdir}"${MINGW_PREFIX}/lib/avogadro2/{scripts,plugins}
+        "${pkgdir}"${MINGW_PREFIX}/include/avogadro/{molequeue,qt*} \
+        "${pkgdir}"${MINGW_PREFIX}/lib/avogadro2/plugins
 
   for _dir in crystals fragments molecules; do
     cp -r ${_realname}-${pkgver}/${_dir} "${pkgdir}"${MINGW_PREFIX}/share/avogadro2/
@@ -129,8 +124,11 @@ package_avogadrolibs() {
   install -Dm644 ${_realname}-${pkgver}/LICENSE -t "${pkgdir}"${MINGW_PREFIX}/share/licenses/${_realname}
 }
 
-package_avogadrolibs-qt6() {
-  pkgdesc="Qt6 modules for Avogadro (mingw-w64)"
+package_avogadrolibs-qt() {
+  pkgdesc="Qt modules for Avogadro (mingw-w64)"
+  provides=("${MINGW_PACKAGE_PREFIX}-avogadrolibs-qt6")
+  conflicts=("${MINGW_PACKAGE_PREFIX}-avogadrolibs-qt6")
+  replaces=("${MINGW_PACKAGE_PREFIX}-avogadrolibs-qt6")
   depends=("${MINGW_PACKAGE_PREFIX}-avogadrolibs"
            "${MINGW_PACKAGE_PREFIX}-cc-libs"
            "${MINGW_PACKAGE_PREFIX}-glew"
@@ -138,14 +136,12 @@ package_avogadrolibs-qt6() {
            "${MINGW_PACKAGE_PREFIX}-libarchive"
            "${MINGW_PACKAGE_PREFIX}-libmsym"
            "${MINGW_PACKAGE_PREFIX}-qt6-base"
-           "${MINGW_PACKAGE_PREFIX}-qt6-svg"
-           "${MINGW_PACKAGE_PREFIX}-vtk")
+           "${MINGW_PACKAGE_PREFIX}-qt6-svg")
 
   DESTDIR="${pkgdir}" ${MINGW_PREFIX}/bin/cmake --install build-${MSYSTEM}/avogadro/molequeue
   DESTDIR="${pkgdir}" ${MINGW_PREFIX}/bin/cmake --install build-${MSYSTEM}/avogadro/qtgui
   DESTDIR="${pkgdir}" ${MINGW_PREFIX}/bin/cmake --install build-${MSYSTEM}/avogadro/qtopengl
   DESTDIR="${pkgdir}" ${MINGW_PREFIX}/bin/cmake --install build-${MSYSTEM}/avogadro/qtplugins
-  DESTDIR="${pkgdir}" ${MINGW_PREFIX}/bin/cmake --install build-${MSYSTEM}/avogadro/vtk
 
   for _dir in crystals fragments molecules; do
     rm -rf "${pkgdir}"${MINGW_PREFIX}/share/avogadro2/${_dir}
