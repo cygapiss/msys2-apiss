@@ -3,7 +3,7 @@
 _realname=avogadroapp
 pkgbase=mingw-w64-${_realname}
 pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}")
-pkgver=1.102.1
+pkgver=2.0.0
 pkgrel=1
 pkgdesc='Advanced molecular editor designed for cross-platform use in computational chemistry, molecular modeling, bioinformatics, materials science, and related areas (mingw-w64)'
 arch=(any)
@@ -12,23 +12,22 @@ url='https://www.openchemistry.org/'
 msys2_repository_url="https://github.com/OpenChemistry/avogadroapp"
 license=(spdx:BSD-3-Clause)
 depends=("${MINGW_PACKAGE_PREFIX}-avogadrolibs"
-         "${MINGW_PACKAGE_PREFIX}-avogadrolibs-qt6"
-         "${MINGW_PACKAGE_PREFIX}-molequeue"
-         "${MINGW_PACKAGE_PREFIX}-qt6-5compat"
+         "${MINGW_PACKAGE_PREFIX}-avogadrolibs-qt"
+         "${MINGW_PACKAGE_PREFIX}-cc-libs"
          "${MINGW_PACKAGE_PREFIX}-qt6-base")
 makedepends=("${MINGW_PACKAGE_PREFIX}-cc"
              "${MINGW_PACKAGE_PREFIX}-cmake"
              "${MINGW_PACKAGE_PREFIX}-eigen3"
-             "${MINGW_PACKAGE_PREFIX}-vtk"
              "${MINGW_PACKAGE_PREFIX}-fast_float"
              "${MINGW_PACKAGE_PREFIX}-nlohmann-json"
              "${MINGW_PACKAGE_PREFIX}-utf8cpp")
+optdepends=("${MINGW_PACKAGE_PREFIX}-openbabel")
 source=(https://github.com/OpenChemistry/avogadroapp/archive/${pkgver}/${_realname}-${pkgver}.tar.gz
         https://github.com/OpenChemistry/avogadro-i18n/archive/${pkgver}/avogadro-i18n-${pkgver}.tar.gz
         001-fix-build-on-mingw.patch)
-sha256sums=('d5867376ee1a8cf06672178706615599c5968fe887871fb2001a2052b4b50882'
-            'a842d258e47c8a9850e663cad4cc5c1b6a18565f0cc8a731d99588d4e5bc3e48'
-            'dd4f67e8f80ca96f024a142831ef1ba5cd6c57dca6590230a44b9268e6302508')
+sha256sums=('df9978a8cc86b2fbf4c2bc155b87654b5953099a42717c18a85115069e05d02a'
+            'a23cb09ddd7a9d554a822c6970d35d86e2b92f09bcc9409105f58f4e1392255d'
+            'c531eaad501f0664383ab0cc38cec32dc97a622b10b5ddaca0648700cb913a06')
 
 prepare() {
   mv avogadro-i18n-${pkgver} avogadro-i18n
@@ -51,8 +50,7 @@ build() {
     -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
     -DCMAKE_DLL_NAME_WITH_SOVERSION=ON \
     "${_extra_config[@]}" \
-    -DAvogadro_ENABLE_RPC=OFF \
-    -DUSE_VTK=ON \
+    -DAvogadro_ENABLE_RPC=ON \
     -DQT_VERSION=6 \
     -B build-${MSYSTEM} \
     -S ${_realname}-${pkgver}
