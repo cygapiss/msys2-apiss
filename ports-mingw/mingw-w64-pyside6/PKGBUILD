@@ -5,7 +5,7 @@ pkgbase=mingw-w64-${_realname}
 pkgname=(${MINGW_PACKAGE_PREFIX}-shiboken6
          ${MINGW_PACKAGE_PREFIX}-${_realname}
          ${MINGW_PACKAGE_PREFIX}-${_realname}-tools)
-pkgver=6.10.3
+pkgver=6.11.0
 pkgrel=1
 pkgdesc="Enables the use of Qt6 APIs in Python applications (mingw-w64)"
 arch=('any')
@@ -60,10 +60,10 @@ source=(https://download.qt.io/official_releases/QtForPython/pyside6/PySide6-${p
         003-fix-build-with-llvm-22.patch
         https://invent.kde.org/qt/pyside/pyside-setup/-/commit/c9d602ab.patch
         https://invent.kde.org/qt/pyside/pyside-setup/-/commit/05e32847.patch)
-sha256sums=('2c7462fe0cecb5b8ac0a3d92014b8d0b88bd4d9f8646709dab5286d9416f45bc'
-            '5f71b618e0ad687e9282fa4b8c3815beaf69b78666516bfce57cb039822f4ac6'
+sha256sums=('48d5c44d7c3ed861055d5491486e6a220ef5006573cae01a5fae3fb69d786336'
+            '8faabf95564166ee9b439f40904ed8846bf90d37e8a84479e7f89dbdf238c38b'
             '3bc87409ea3dc41847f1d5d7612fd97931b67f1b40510b465543a8ef5c9764ff'
-            '6f218794db7745d75f964649244b646a316d61cde8a8f987ae60de2655702ece'
+            '706add8e6447738beede6441a08d7ec617def039fcd83f04cd5768e52dba57f7'
             '67da2a6f80ba394925f5913d51b11644f38c7753e1a26f89915ca0932da4310e'
             'db4877f111320cde42adfc593aed13954209614e55e560992f4123a54efaea51')
 
@@ -127,6 +127,7 @@ package_shiboken6() {
            "${MINGW_PACKAGE_PREFIX}-libxslt")
 
   DESTDIR="${pkgdir}" ${MINGW_PREFIX}/bin/cmake --install build-${MSYSTEM}/sources/shiboken6
+  DESTDIR="${pkgdir}" ${MINGW_PREFIX}/bin/cmake --install build-${MSYSTEM}/sources/shiboken6_generator
 
   install -Dm644 ${_pkgfn}/sources/shiboken6/COPYING \
     "$pkgdir"${MINGW_PREFIX}/share/licenses/shiboken6/LICENSE

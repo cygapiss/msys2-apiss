@@ -1,5 +1,5 @@
---- a/sources/shiboken6/ApiExtractor/CMakeLists.txt
-+++ b/sources/shiboken6/ApiExtractor/CMakeLists.txt
+--- a/sources/shiboken6_generator/ApiExtractor/CMakeLists.txt
++++ b/sources/shiboken6_generator/ApiExtractor/CMakeLists.txt
 @@ -77,7 +77,8 @@
  clangparser/clangbuilder.cpp clangparser/clangbuilder.h
  clangparser/clangdebugutils.cpp clangparser/clangdebugutils.h
@@ -8,11 +8,11 @@
 +clangparser/clangtype.cpp clangparser/clangtype.h
 +clangparser/clangutils.cpp clangparser/clangutils.h clangparser/clang_typedefs.h
  clangparser/compilersupport.cpp clangparser/compilersupport.h
+ clangparser/triplet.cpp clangparser/triplet.h
  # Old parser
- parser/codemodel.cpp parser/codemodel.h parser/codemodel_fwd.h parser/codemodel_enums.h
---- a/sources/shiboken6/ApiExtractor/abstractmetabuilder.cpp
-+++ b/sources/shiboken6/ApiExtractor/abstractmetabuilder.cpp
-@@ -489,6 +489,10 @@
+--- a/sources/shiboken6_generator/ApiExtractor/abstractmetabuilder.cpp
++++ b/sources/shiboken6_generator/ApiExtractor/abstractmetabuilder.cpp
+@@ -535,6 +535,10 @@
          for (qsizetype i = 0; i < diagnosticsCount; ++i)
              d << "  " << diagnostics.at(i) << '\n';
      }
@@ -23,7 +23,7 @@
      return result;
  }
  
-@@ -2795,7 +2799,7 @@
+@@ -2874,7 +2878,7 @@
          newInfo.setIndirectionsV(typeInfo.indirectionsV());
          newInfo.setConstant(typeInfo.isConstant());
          newInfo.setVolatile(typeInfo.isVolatile());
@@ -34,7 +34,7 @@
          newInfo.setVolatile(typeInfo.isVolatile());
 new file mode 100644
 --- /dev/null
-+++ b/sources/shiboken6/ApiExtractor/clangparser/clang_typedefs.h
++++ b/sources/shiboken6_generator/ApiExtractor/clangparser/clang_typedefs.h
 @@ -0,0 +1,19 @@
 +// Copyright (C) 2026 The Qt Company Ltd.
 +// SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
@@ -55,8 +55,8 @@ new file mode 100644
 +} // namespace clang
 +
 +#endif // CLANG_TYPEDEFS_H
---- a/sources/shiboken6/ApiExtractor/clangparser/clangbuilder.cpp
-+++ b/sources/shiboken6/ApiExtractor/clangparser/clangbuilder.cpp
+--- a/sources/shiboken6_generator/ApiExtractor/clangparser/clangbuilder.cpp
++++ b/sources/shiboken6_generator/ApiExtractor/clangparser/clangbuilder.cpp
 @@ -4,6 +4,7 @@
  #include "clangbuilder.h"
  #include "compilersupport.h"
@@ -149,7 +149,7 @@ new file mode 100644
      result->setAccessPolicy(accessPolicy(clang_getCXXAccessSpecifier(cursor)));
      result->setConstant(clang_CXXMethod_isConst(cursor) != 0);
      result->setAttribute(FunctionAttribute::Static, clang_CXXMethod_isStatic(cursor) != 0);
-@@ -424,45 +437,31 @@
+@@ -425,45 +438,31 @@
  
  TemplateParameterModelItem BuilderPrivate::createNonTypeTemplateParameter(const CXCursor &cursor) const
  {
@@ -205,7 +205,7 @@ new file mode 100644
  static bool isArrayType(CXTypeKind k)
  {
      return k == CXType_ConstantArray || k == CXType_IncompleteArray
-@@ -488,7 +487,10 @@
+@@ -489,7 +488,10 @@
                  // of a non-type template (template <int v>).
                  if (argType.kind == CXType_Invalid)
                      return false;
@@ -217,7 +217,7 @@ new file mode 100644
              }
          }
          break;
-@@ -498,10 +500,8 @@
+@@ -499,10 +501,8 @@
      return true;
  }
  
@@ -229,7 +229,7 @@ new file mode 100644
                                                 TypeInfo *t) const
  {
      // In most cases, for templates like "Vector<A>", Clang will give us the
-@@ -512,16 +512,12 @@
+@@ -513,16 +513,12 @@
      //    Vector(const Vector&);
      // };
      // In that case, have TypeInfo parse the list from the spelling.
@@ -249,7 +249,7 @@ new file mode 100644
  }
  
  static TypeCategory typeCategoryFromClang(CXTypeKind k)
-@@ -545,22 +541,59 @@
+@@ -546,22 +542,59 @@
      return TypeCategory::Other;
  }
  
@@ -322,7 +322,7 @@ new file mode 100644
      }
  
      TypeInfo typeInfo;
-@@ -594,9 +627,12 @@
+@@ -595,9 +628,12 @@
      typeInfo.setConstant(clang_isConstQualifiedType(nestedType) != 0);
      typeInfo.setVolatile(clang_isVolatileQualifiedType(nestedType) != 0);
  
@@ -338,7 +338,7 @@ new file mode 100644
      }
  
      // For typedefs within templates or nested classes within templates (iterators):
-@@ -618,33 +654,44 @@
+@@ -619,33 +655,44 @@
  
      // Obtain template instantiations if the name has '<' (thus excluding
      // typedefs like "std::string".
@@ -392,7 +392,7 @@ new file mode 100644
      item->setScope(m_scope);
      item->setAccessPolicy(accessPolicy(clang_getCXXAccessSpecifier(cursor)));
      m_scopeStack.back()->addTypeDef(item);
-@@ -674,8 +721,10 @@
+@@ -675,8 +722,10 @@
      // Usually "<elaborated>std::list<T>" or "<unexposed>Container1<T>",
      // as obtained with parser of PYSIDE-323
      if (type.kind == CXType_Unexposed || type.kind == CXType_Elaborated) {
@@ -405,7 +405,7 @@ new file mode 100644
      }
      m_currentTemplateTypeAlias.reset();
  }
-@@ -732,9 +781,11 @@
+@@ -733,9 +782,11 @@
  {
      const auto decl = resolveBaseClassType(type);
      // Note: spelling has "struct baseClass", use type
@@ -420,7 +420,7 @@ new file mode 100644
  
      auto it = m_cursorClassHash.constFind(decl.declaration);
      // Not found: Set unqualified name. This happens in cases like
-@@ -916,6 +967,11 @@
+@@ -917,6 +968,11 @@
      return std::dynamic_pointer_cast<_FileModelItem>(rootScope);
  }
  
@@ -432,7 +432,7 @@ new file mode 100644
  static QString msgOutOfOrder(const CXCursor &cursor, const char *expectedScope)
  {
      return getCursorKindName(cursor.kind) + u' '
-@@ -944,7 +1000,7 @@
+@@ -945,7 +1001,7 @@
      return NamespaceType::Default;
  }
  
@@ -441,7 +441,7 @@ new file mode 100644
  {
      QString name = getCursorSpelling(cursor); // "enum Foo { v1, v2 };"
      if (name.contains(u"unnamed enum")) // Clang 16.0
-@@ -952,7 +1008,7 @@
+@@ -953,7 +1009,7 @@
      if (name.isEmpty()) {
          // PYSIDE-1228: For "typedef enum { v1, v2 } Foo;", type will return
          // "Foo" as expected. Care must be taken to exclude real anonymous enums.
@@ -450,7 +450,7 @@ new file mode 100644
          if (name.contains(u"(unnamed") // Clang 12.0.1
              || name.contains(u"(anonymous")) { // earlier
              name.clear();
-@@ -1010,7 +1066,7 @@
+@@ -1011,7 +1067,7 @@
          d->m_scope.back() += "<>"_L1;
          break;
      case CXCursor_EnumDecl: {
@@ -459,7 +459,7 @@ new file mode 100644
          EnumKind kind = CEnum;
          if (name.isEmpty()) {
              kind = AnonymousEnum;
-@@ -1030,7 +1086,7 @@
+@@ -1031,7 +1087,7 @@
              d->m_currentEnum->setDeprecated(true);
          const auto enumType = fullyResolveType(clang_getEnumDeclIntegerType(cursor));
          d->m_currentEnum->setSigned(isSigned(enumType.kind));
@@ -468,7 +468,7 @@ new file mode 100644
          if (std::dynamic_pointer_cast<_ClassModelItem>(d->m_scopeStack.back()))
              d->m_currentEnum->setAccessPolicy(accessPolicy(clang_getCXXAccessSpecifier(cursor)));
      }
-@@ -1058,10 +1114,8 @@
+@@ -1059,10 +1115,8 @@
          break;
      case CXCursor_VarDecl:
          // static class members are seen as CXCursor_VarDecl
@@ -481,7 +481,7 @@ new file mode 100644
          break;
      case CXCursor_FieldDecl:
          d->addField(cursor);
-@@ -1072,13 +1126,16 @@
+@@ -1073,13 +1127,16 @@
      case CXCursor_Constructor:
      case CXCursor_Destructor: // Note: Also use clang_CXXConstructor_is..Constructor?
      case CXCursor_CXXMethod:
@@ -501,7 +501,7 @@ new file mode 100644
          break;
      // Not fully supported, currently, seen as normal function
      // Note: May appear inside class (member template) or outside (free template).
-@@ -1086,31 +1143,30 @@
+@@ -1087,31 +1144,30 @@
          const CXCursor semParent = clang_getCursorSemanticParent(cursor);
          if (isClassCursor(semParent)) {
              if (semParent == clang_getCursorLexicalParent(cursor)) {
@@ -546,7 +546,7 @@ new file mode 100644
          }
          break;
      case CXCursor_Namespace: {
-@@ -1143,10 +1199,15 @@
+@@ -1144,10 +1200,15 @@
          // and function pointer typedefs.
          if (!d->m_currentArgument && d->m_currentFunction) {
              const QString name = getCursorSpelling(cursor);
@@ -564,7 +564,7 @@ new file mode 100644
              d->m_currentFunction->addArgument(d->m_currentArgument);
              QString defaultValueExpression = BuilderPrivate::cursorValueExpression(this, cursor);
              if (!defaultValueExpression.isEmpty()) {
-@@ -1163,10 +1224,30 @@
+@@ -1164,10 +1225,30 @@
              ? d->createTemplateParameter(cursor) : d->createNonTypeTemplateParameter(cursor);
          // Apply to function/member template?
          if (d->m_currentFunction) {
@@ -596,7 +596,7 @@ new file mode 100644
              const QString &tplParmName = tItem->name();
              if (Q_UNLIKELY(!insertTemplateParameterIntoClassName(tplParmName, d->m_currentClass)
                             || !insertTemplateParameterIntoClassName(tplParmName, &d->m_scope.back()))) {
-@@ -1177,7 +1258,7 @@
+@@ -1178,7 +1259,7 @@
                  appendDiagnostic(d);
                  return Error;
              }
@@ -605,7 +605,7 @@ new file mode 100644
          }
      }
          break;
-@@ -1288,9 +1369,10 @@
+@@ -1289,9 +1370,10 @@
          d->m_currentField.reset();
          break;
      case CXCursor_Constructor:
@@ -617,7 +617,7 @@ new file mode 100644
              d->m_currentFunction.reset();
          }
          break;
-@@ -1300,12 +1382,28 @@
+@@ -1301,12 +1383,28 @@
      case CXCursor_FunctionTemplate:
          if (d->m_currentFunction) {
              d->m_currentFunction->_determineType();
@@ -646,8 +646,8 @@ new file mode 100644
              d->m_currentFunction.reset();
          }
          break;
---- a/sources/shiboken6/ApiExtractor/clangparser/clangbuilder.h
-+++ b/sources/shiboken6/ApiExtractor/clangparser/clangbuilder.h
+--- a/sources/shiboken6_generator/ApiExtractor/clangparser/clangbuilder.h
++++ b/sources/shiboken6_generator/ApiExtractor/clangparser/clangbuilder.h
 @@ -33,6 +33,8 @@
  
      FileModelItem dom() const;
@@ -657,19 +657,19 @@ new file mode 100644
  private:
      BuilderPrivate *d;
  };
---- a/sources/shiboken6/ApiExtractor/clangparser/clangparser.cpp
-+++ b/sources/shiboken6/ApiExtractor/clangparser/clangparser.cpp
-@@ -286,7 +286,8 @@
+--- a/sources/shiboken6_generator/ApiExtractor/clangparser/clangparser.cpp
++++ b/sources/shiboken6_generator/ApiExtractor/clangparser/clangparser.cpp
+@@ -285,7 +285,8 @@
      QString message;
      {
          QTextStream str(&message);
 -        str << "CLANG v" << CINDEX_VERSION_MAJOR << '.' << CINDEX_VERSION_MINOR
 +        str << "CLANG v" << LLVM_VERSION << '/'
 +            << CINDEX_VERSION_MAJOR << '.' << CINDEX_VERSION_MINOR
-             << " targeting \"" << targetTriple() << "\"/"
-             << clang::compilerTripletValue(clang::compiler())
-             << ", " << pointerSize() << "bit";
-@@ -321,9 +322,19 @@
+             << " targeting \"" << targetTriple << "\"/"
+             << optionsTriplet().compilerTripletValue()
+             << ", " << pointerSize << "bit";
+@@ -320,9 +321,19 @@
      setupTarget(translationUnit);
  
      CXCursor rootCursor = clang_getTranslationUnitCursor(translationUnit);
@@ -689,8 +689,8 @@ new file mode 100644
      QList<Diagnostic> diagnostics = getDiagnostics(translationUnit);
      diagnostics.append(bv.diagnostics());
      bv.setDiagnostics(diagnostics);
---- a/sources/shiboken6/ApiExtractor/clangparser/clangparser.h
-+++ b/sources/shiboken6/ApiExtractor/clangparser/clangparser.h
+--- a/sources/shiboken6_generator/ApiExtractor/clangparser/clangparser.h
++++ b/sources/shiboken6_generator/ApiExtractor/clangparser/clangparser.h
 @@ -4,7 +4,7 @@
  #ifndef CLANGPARSER_H
  #define CLANGPARSER_H
@@ -717,7 +717,7 @@ new file mode 100644
  
 new file mode 100644
 --- /dev/null
-+++ b/sources/shiboken6/ApiExtractor/clangparser/clangtype.cpp
++++ b/sources/shiboken6_generator/ApiExtractor/clangparser/clangtype.cpp
 @@ -0,0 +1,83 @@
 +// Copyright (C) 2026 The Qt Company Ltd.
 +// SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
@@ -804,7 +804,7 @@ new file mode 100644
 +} // namespace clang
 new file mode 100644
 --- /dev/null
-+++ b/sources/shiboken6/ApiExtractor/clangparser/clangtype.h
++++ b/sources/shiboken6_generator/ApiExtractor/clangparser/clangtype.h
 @@ -0,0 +1,28 @@
 +// Copyright (C) 2026 The Qt Company Ltd.
 +// SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
@@ -834,8 +834,8 @@ new file mode 100644
 +} // namespace clang
 +
 +#endif // CLANGTYPE_H
---- a/sources/shiboken6/ApiExtractor/clangparser/clangutils.cpp
-+++ b/sources/shiboken6/ApiExtractor/clangparser/clangutils.cpp
+--- a/sources/shiboken6_generator/ApiExtractor/clangparser/clangutils.cpp
++++ b/sources/shiboken6_generator/ApiExtractor/clangparser/clangutils.cpp
 @@ -10,6 +10,8 @@
  
  #include <string_view>
@@ -845,7 +845,7 @@ new file mode 100644
  bool operator==(const CXCursor &c1, const CXCursor &c2) noexcept
  {
      return c1.kind == c2.kind
-@@ -137,11 +139,26 @@
+@@ -137,8 +139,23 @@
      return resolveTypedef(resolveElaboratedType(type));
  }
  
@@ -870,10 +870,7 @@ new file mode 100644
      CXString typeSpelling = clang_getTypeSpelling(type);
      const QString result = QString::fromUtf8(clang_getCString(typeSpelling));
      clang_disposeString(typeSpelling);
-     return result;
- }
- 
-@@ -157,9 +166,9 @@
+@@ -157,9 +174,9 @@
  }
  
  // Resolve elaborated types occurring with clang 16
@@ -885,8 +882,8 @@ new file mode 100644
  }
  
  Diagnostic::Diagnostic(const QString &m, const CXCursor &c, CXDiagnosticSeverity s)
---- a/sources/shiboken6/ApiExtractor/clangparser/clangutils.h
-+++ b/sources/shiboken6/ApiExtractor/clangparser/clangutils.h
+--- a/sources/shiboken6_generator/ApiExtractor/clangparser/clangutils.h
++++ b/sources/shiboken6_generator/ApiExtractor/clangparser/clangutils.h
 @@ -4,7 +4,8 @@
  #ifndef CLANGUTILS_H
  #define CLANGUTILS_H
@@ -914,11 +911,11 @@ new file mode 100644
  
  inline bool isCursorValid(const CXCursor &c)
  {
---- a/sources/shiboken6/ApiExtractor/messages.cpp
-+++ b/sources/shiboken6/ApiExtractor/messages.cpp
-@@ -1116,3 +1116,14 @@
-     result.append(u'\n');
-     return result;
+--- a/sources/shiboken6_generator/ApiExtractor/messages.cpp
++++ b/sources/shiboken6_generator/ApiExtractor/messages.cpp
+@@ -1168,3 +1168,14 @@
+     const QString why = "from: \""_L1 + oldFunction->classQualifiedSignature() + u'"';
+     return msgSynthesizedFunction(newFunction, why);
  }
 +
 +QString msgRejectedTypes(const QStringList &rejectedTypes)
@@ -931,17 +928,17 @@ new file mode 100644
 +    str << '\n';
 +    return result;
 +}
---- a/sources/shiboken6/ApiExtractor/messages.h
-+++ b/sources/shiboken6/ApiExtractor/messages.h
-@@ -288,4 +288,6 @@
- 
- QString msgCommandLineArguments(const QStringList &argv);
+--- a/sources/shiboken6_generator/ApiExtractor/messages.h
++++ b/sources/shiboken6_generator/ApiExtractor/messages.h
+@@ -297,4 +297,6 @@
+ QString msgSynthesizedFunction(const AbstractMetaFunctionCPtr &newFunction,
+                                const FunctionModelItem &oldFunction);
  
 +QString msgRejectedTypes(const QStringList &rejectedTypes);
 +
  #endif // MESSAGES_H
---- a/sources/shiboken6/ApiExtractor/parser/codemodel.cpp
-+++ b/sources/shiboken6/ApiExtractor/parser/codemodel.cpp
+--- a/sources/shiboken6_generator/ApiExtractor/parser/codemodel.cpp
++++ b/sources/shiboken6_generator/ApiExtractor/parser/codemodel.cpp
 @@ -345,9 +345,9 @@
      return m_templateParameters;
  }
@@ -954,7 +951,7 @@ new file mode 100644
  }
  
  bool _ClassModelItem::extendsClass(const QString &name) const
-@@ -1475,6 +1475,11 @@
+@@ -1547,6 +1547,11 @@
      m_accessPolicy = accessPolicy;
  }
  
@@ -966,8 +963,8 @@ new file mode 100644
  bool _MemberModelItem::isStatic() const
  {
      return m_isStatic;
---- a/sources/shiboken6/ApiExtractor/parser/codemodel.h
-+++ b/sources/shiboken6/ApiExtractor/parser/codemodel.h
+--- a/sources/shiboken6_generator/ApiExtractor/parser/codemodel.h
++++ b/sources/shiboken6_generator/ApiExtractor/parser/codemodel.h
 @@ -284,7 +284,7 @@
      void addBaseClass(const BaseClass &b) { m_baseClasses.append(b); }
  
@@ -977,7 +974,7 @@ new file mode 100644
  
      bool extendsClass(const QString &name) const;
  
-@@ -430,7 +430,7 @@
+@@ -432,7 +432,7 @@
      void setAccessPolicy(Access accessPolicy);
  
      TemplateParameterList templateParameters() const { return m_templateParameters; }
@@ -986,9 +983,9 @@ new file mode 100644
  
      TypeInfo type() const;
      void setType(const TypeInfo &type);
---- a/sources/shiboken6/ApiExtractor/parser/codemodel_enums.h
-+++ b/sources/shiboken6/ApiExtractor/parser/codemodel_enums.h
-@@ -58,13 +58,14 @@
+--- a/sources/shiboken6_generator/ApiExtractor/parser/codemodel_enums.h
++++ b/sources/shiboken6_generator/ApiExtractor/parser/codemodel_enums.h
+@@ -59,13 +59,14 @@
  Q_DECLARE_FLAGS(FunctionAttributes, FunctionAttribute)
  Q_DECLARE_OPERATORS_FOR_FLAGS(FunctionAttributes)
  
@@ -1004,8 +1001,8 @@ new file mode 100644
      Void
  };
  
---- a/sources/shiboken6/ApiExtractor/parser/typeinfo.cpp
-+++ b/sources/shiboken6/ApiExtractor/parser/typeinfo.cpp
+--- a/sources/shiboken6_generator/ApiExtractor/parser/typeinfo.cpp
++++ b/sources/shiboken6_generator/ApiExtractor/parser/typeinfo.cpp
 @@ -41,8 +41,7 @@
          struct {
              uint m_constant: 1;
@@ -1085,8 +1082,8 @@ new file mode 100644
          formatSequence(debug, d->m_arguments.begin(), d->m_arguments.end());
          debug << ')';
      }
---- a/sources/shiboken6/ApiExtractor/parser/typeinfo.h
-+++ b/sources/shiboken6/ApiExtractor/parser/typeinfo.h
+--- a/sources/shiboken6_generator/ApiExtractor/parser/typeinfo.h
++++ b/sources/shiboken6_generator/ApiExtractor/parser/typeinfo.h
 @@ -71,7 +71,6 @@
      void setIndirections(int indirections);
  
@@ -1095,11 +1092,11 @@ new file mode 100644
  
      const QStringList &arrayElements() const;
      void setArrayElements(const QStringList &arrayElements);
---- a/sources/shiboken6/cmake/ShibokenSetup.cmake
-+++ b/sources/shiboken6/cmake/ShibokenSetup.cmake
-@@ -83,8 +83,11 @@
-     shiboken_internal_set_python_site_packages()
- endif()
+--- a/sources/shiboken6_generator/cmake/ShibokenGeneratorSetup.cmake
++++ b/sources/shiboken6_generator/cmake/ShibokenGeneratorSetup.cmake
+@@ -36,8 +36,11 @@
+ 
+ shiboken_internal_set_python_site_packages()
  
 +string(REGEX REPLACE "\\.[0-9]+\\.[0-9]+$" "" LLVM_VERSION "${LLVM_PACKAGE_VERSION}")
 +
