@@ -8,7 +8,7 @@ pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}"
          "${MINGW_PACKAGE_PREFIX}-${_realname}-wmf")
 _qtver=6.11.0
 pkgver=${_qtver/-/}
-pkgrel=1
+pkgrel=2
 pkgdesc='Classes for audio, video, radio and camera functionality (mingw-w64)'
 arch=(any)
 mingw_arch=('mingw64' 'ucrt64' 'clang64' 'clangarm64')
@@ -27,6 +27,7 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-cc"
              "${MINGW_PACKAGE_PREFIX}-qt6-shadertools"
              "${MINGW_PACKAGE_PREFIX}-qt6-svg"
              "${MINGW_PACKAGE_PREFIX}-qt6-quick3d"
+             "${MINGW_PACKAGE_PREFIX}-cppwinrt"
              "${MINGW_PACKAGE_PREFIX}-ffmpeg"
              #"${MINGW_PACKAGE_PREFIX}-pulseaudio"
              "rsync")
@@ -44,8 +45,6 @@ prepare() {
 }
 
 build() {
-  mkdir -p build-${MSYSTEM} && cd build-${MSYSTEM}
-
   MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
   ${MINGW_PREFIX}/bin/cmake \
     --log-level=STATUS \
@@ -57,9 +56,10 @@ build() {
     -DFEATURE_spatialaudio_quick3d=ON \
     -DFEATURE_ffmpeg=ON \
     -DFEATURE_gstreamer=OFF \
-    ../${_pkgfn}
+    -S ${_pkgfn} \
+    -B build-${MSYSTEM}
 
-  ${MINGW_PREFIX}/bin/cmake --build .
+  ${MINGW_PREFIX}/bin/cmake --build build-${MSYSTEM}
 }
 
 package_qt6-multimedia() {

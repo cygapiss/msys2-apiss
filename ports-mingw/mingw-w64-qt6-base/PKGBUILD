@@ -1,13 +1,17 @@
 # Contributor: Mehdi Chinoune <mehdi.chinoune@hotmail.com>
 
+# Rebuilds after upgrade from 6.X to 6.Y:
+# pyqt6
+# pyside6 (needs to be rebuilt even for patch-only releases)
+# qt-creator
+
 _realname=qt6-base
 pkgbase=mingw-w64-${_realname}
 pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}"
          "${MINGW_PACKAGE_PREFIX}-${_realname}-debug")
-# Note: pyside6 needs to be rebuilt even for patch-only releases
 _qtver=6.11.0
 pkgver=${_qtver/-/}
-pkgrel=2
+pkgrel=3
 pkgdesc="A cross-platform application and UI framework (mingw-w64)"
 arch=(any)
 mingw_arch=('mingw64' 'ucrt64' 'clang64' 'clangarm64')
@@ -22,11 +26,7 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-cc"
              "${MINGW_PACKAGE_PREFIX}-cmake"
              "${MINGW_PACKAGE_PREFIX}-ninja"
              "${MINGW_PACKAGE_PREFIX}-pkgconf"
-             #"${MINGW_PACKAGE_PREFIX}-cppwinrt" breaks building qt6-multimedia ffmpeg plugin
-             # qtmultimedia-everywhere-src-6.10.0/src/plugins/multimedia/ffmpeg/qffmpegwindowcapture_uwp.cpp:35:10: fatal error: 'windows.graphics.directx.direct3d11.interop.h' file not found
-             # 35 | #include <windows.graphics.directx.direct3d11.interop.h>
-             #    |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-             # 1 error generated.
+             "${MINGW_PACKAGE_PREFIX}-cppwinrt"
              "${MINGW_PACKAGE_PREFIX}-dbus"
              "${MINGW_PACKAGE_PREFIX}-double-conversion"
              "${MINGW_PACKAGE_PREFIX}-freetype"
@@ -115,6 +115,8 @@ prepare() {
   local _ARCH_TUNE=
   if [[ ${CARCH} == x86_64 ]]; then
     _ARCH_TUNE="-march=nocona -msahf -mtune=generic"
+  elif [[ ${CARCH} == aarch64 ]]; then
+    _ARCH_TUNE="-march=armv8.1-a"
   fi
 
   BIGOBJ_FLAGS="-Wa,-mbig-obj"
@@ -167,7 +169,7 @@ build() {
     -DFEATURE_regularexpression=ON \
     -DFEATURE_cxx20=ON \
     -DFEATURE_windows_ioring=$([[ ${MSYSTEM} != MINGW64 ]] && echo "ON" || echo "OFF") \
-    -DFEATURE_cpp_winrt=OFF \
+    -DFEATURE_cpp_winrt=ON \
     -DFEATURE_force_debug_info=ON \
     -DFEATURE_separate_debug_info=ON \
     -S ${_pkgfn} \
