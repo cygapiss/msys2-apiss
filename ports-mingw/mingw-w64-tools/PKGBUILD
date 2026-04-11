@@ -4,9 +4,9 @@
 _realname=tools
 pkgbase="mingw-w64-${_realname}"
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=14.0.0.r9.gca6f2f838
+pkgver=14.0.0.r11.g01f73779b
 pkgrel=1
-_commit='ca6f2f8387347096df13f9b7a993ebb9cbcefe55'
+_commit='01f73779bff47496dfee1598ebc267b0a47b2fce'
 pkgdesc="MinGW-w64 tools (mingw-w64)"
 arch=('any')
 mingw_arch=('mingw32' 'mingw64' 'ucrt64' 'clang64' 'clangarm64')
@@ -24,7 +24,7 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-cc"
 depends=("${MINGW_PACKAGE_PREFIX}-cc-libs")
 options=('!emptydirs')
 source=("mingw-w64"::"git+https://git.code.sf.net/p/mingw-w64/mingw-w64#commit=$_commit")
-sha256sums=('aa89116ceba96909b8a2b805a2506285458974a10882ac8b4b0b8a0b2793b724')
+sha256sums=('58d5abaa69dcd532124beeab898afdbd3b19c2c3849bb9a364486035195fc0fe')
 _tools="gendef genidl genpeimg widl" # genstubdll
 
 pkgver() {
