@@ -4,8 +4,8 @@ source "$(dirname ${BASH_SOURCE[0]})"/../mingw-w64-PKGBUILD-common/kde-framework
 _realname=knotifyconfig
 pkgbase="mingw-w64-${_realname}"
 pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}")
-pkgver=6.24.0
-pkgrel=2
+pkgver=6.25.0
+pkgrel=1
 pkgdesc="Configuration dialog for desktop notifications (mingw-w64)"
 arch=('any')
 mingw_arch=('ucrt64' 'clang64' 'clangarm64')
@@ -32,7 +32,7 @@ makedepends=(
 )
 groups=("${MINGW_PACKAGE_PREFIX}-kf6")
 source=("https://download.kde.org/stable/frameworks/${pkgver%.*}/${_realname}-${pkgver}.tar.xz"{,.sig})
-sha256sums=('46ea907ebc6a538888fb32434ba8cde3e8ab4423df11ded693bcbe0b6e1d83b6'
+sha256sums=('8dc37406d8f13193216201752ece968cbd38da5a76780ad78575d11b47b440ea'
             'SKIP')
 validpgpkeys=(
   'E0A3EB202F8E57528E13E72FD7574483BB57B18D' # Jonathan Esk-Riddell <jr@jriddell.org>
