@@ -16,7 +16,7 @@ msys2_references=(
   'gentoo: dev-python/fido2'
   'purl: pkg:pypi/fido2'
 )
-license=('spdx:Apache-2.0')
+license=('spdx:BSD-2-Clause AND Apache-2.0')
 depends=("${MINGW_PACKAGE_PREFIX}-python"
          "${MINGW_PACKAGE_PREFIX}-python-cryptography"
          "${MINGW_PACKAGE_PREFIX}-libfido2")
