@@ -1,6 +1,10 @@
 # Maintainer: Maksim Bondarenkov <maksapple2306@gmail.com>
 
-_bootstrapping=no
+if [[ "$MSYS_BOOTSTRAP_RUST" == "enabled" ]]; then
+  _bootstrapping=yes
+else
+  _bootstrapping=no
+fi
 
 rust_dist_server=https://static.rust-lang.org/dist
 #rust_dist_server=https://dev-static.rust-lang.org/dist/2026-05-26
@@ -19,22 +23,43 @@ msys2_references=(
   'gentoo: dev-lang/rust'
 )
 license=('spdx:Apache-2.0 AND MIT')
-makedepends=('gcc'
-             'llvm'
-             'python'
-             'libgit2-devel'
-             'pcre2-devel'
-             'libssh2-devel'
-             'openssl-devel'
-             'pkgconf'
-             'libsqlite-devel'
-             'liblzma-devel'
-             'libzstd-devel'
-             'zlib-devel'
-             'libcurl-devel'
-             $([[ "$_bootstrapping" == "no" ]] && echo 'rust'))
-source=("${rust_dist_server}/${pkgname}c-${pkgver}-src.tar.xz"{,.asc}
-        "bootstrap.toml")
+makedepends=(
+  'gcc'
+  'llvm'
+  'python'
+  'libgit2-devel'
+  'pcre2-devel'
+  'libssh2-devel'
+  'openssl-devel'
+  'pkgconf'
+  'libsqlite-devel'
+  'liblzma-devel'
+  'libzstd-devel'
+  'zlib-devel'
+  'libcurl-devel'
+)
+
+if [ "${_bootstrapping}" = "yes" ]; then
+  makedepends+=(
+    mingw-w64-x86_64-python
+    mingw-w64-x86_64-llvm
+    mingw-w64-x86_64-clang
+  )
+else
+  makedepends+=(rust)
+fi
+
+currnent_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
+source "${currnent_script_dir}/../msys2-runtime/check-bootstrap.sh"
+
+source=(
+  "${rust_dist_server}/${pkgname}c-${pkgver}-src.tar.xz"{,.asc}
+  "bootstrap.toml"
+  "bootstrap-cross.toml"
+  "llvm-config-wrapper.c"
+  "wrapper.c"
+)
+
 noextract=(${pkgname}c-${pkgver}-src.tar.xz)
 sha256sums=('77a6ff3003a4ad0cb00697b043c879e3e1a15d945b1a1f63818903bfc3fa8b98'
             'SKIP'
@@ -48,7 +73,7 @@ prepare() {
   tar -xJf ${pkgname}c-${pkgver}-src.tar.xz
 }
 
-build() {
+build_native() {
   export RUST_BACKTRACE=1
   # force some system libraries
   export LIBSQLITE3_SYS_USE_PKG_CONFIG=1
@@ -67,6 +92,47 @@ build() {
   fi
 
   DESTDIR="$PWD/dest-rust" python x.py install --stage 2
+}
+
+build_cross() {
+  export RUST_BACKTRACE=1
+
+  pushd $srcdir
+  rm -rf bin
+  mkdir -p bin
+  gcc -o bin/llvm-config.exe $srcdir/llvm-config-wrapper.c
+  gcc -o bin/gcc.exe $srcdir/wrapper.c
+  for b in g++ ar ranlib x86_64-pc-cygwin-gcc curl-config; do
+    ln bin/gcc.exe bin/${b}.exe
+  done
+  popd
+
+  cd "${pkgname}c-${pkgver}-src"
+  # substitute the values in bootstrap.toml
+  export PKGREL="${pkgrel}"
+
+  MSYS2_ROOT="$(cygpath -m /)" WORKSPACE="$(cygpath -ma "$srcdir/bin")" envsubst < ../bootstrap-cross.toml | sed -e 's/gz/xz/' > bootstrap.toml
+  export PATH="$(cygpath -ua $srcdir/bin):/mingw64/bin:$PATH"
+  unset PKG_CONFIG_PATH
+  PKG_CONFIG_SYSROOT_DIR="$(cygpath -w /)" \
+  PKG_CONFIG="$(cygpath -w /usr/bin/pkgconf.exe)" \
+  LIBGIT2_NO_VENDOR=1 \
+  OPENSSL_DIR="$(cygpath -w /usr)" \
+  OPENSSL_LIB_DIR="$(cygpath -w /usr/lib)" \
+  OPENSSL_STATIC=0 \
+  LIBSQLITE3_SYS_USE_PKG_CONFIG=1 \
+  DESTDIR="$(cygpath -w "$PWD/dest-rust")" \
+  python x.py install
+}
+
+build() {
+  if [ "${_bootstrapping}" = "no" ]; then
+    echo "Building native"
+    build_native
+  else
+    echo "Building cross by x86_64-pc-windows-gnu"
+    build_cross
+  fi
 }
 
 check() {
