@@ -1,0 +1,80 @@
+# see src/bootstrap/defaults/
+profile = "dist"
+
+# see src/bootstrap/src/utils/change_tracker.rs
+change-id = 148671
+
+[llvm]
+link-shared = true
+
+[build]
+#cargo = "$MSYS2_ROOT/clang64/bin/cargo.exe"
+#rustc = "$MSYS2_ROOT/clang64/bin/rustc.exe"
+#rustfmt = "$MSYS2_ROOT/clang64/bin/rustfmt.exe"
+description = "Rev$PKGREL, Built by MSYS2 project"
+#cargo-clippy = "$MSYS2_ROOT/clang64/bin/cargo-clippy.exe"
+submodules = false
+build = "x86_64-pc-windows-gnu"
+host = ["x86_64-pc-cygwin"]
+target = ["x86_64-pc-cygwin"]
+python = "$MSYS2_ROOT/mingw64/bin/python.exe"
+locked-deps = true
+vendor = true
+tools = [
+  "cargo",
+  "clippy",
+  "rustdoc",
+  "rustfmt",
+  "rust-analyzer-proc-macro-srv",
+  "analysis"
+]
+build-dir = "cygwin-bootstrap-18"
+profiler = true
+
+# Generating docs fails with the wasm32-* targets
+docs = false
+
+[install]
+prefix = "/usr"
+sysconfdir = "/etc"
+
+[rust]
+#debug = true
+codegen-units-std = 1
+#debuginfo-level-std = 2
+channel = "stable"
+rpath = false
+frame-pointers = true
+llvm-bitcode-linker = false
+lld = false
+llvm-tools = false
+codegen-tests = false
+deny-warnings = false
+backtrace-on-ice = true
+# FIXME: Control Flow Guard works only on gnullvm targets, in other cases it's ignored
+# https://github.com/rust-lang/rust/pull/132965
+control-flow-guard = true
+lto = "thin"
+
+[dist]
+compression-formats = ["gz"]
+compression-profile = "fast"
+include-mingw-linker = false
+
+[target.x86_64-pc-windows-gnu]
+cc = "$MSYS2_ROOT/mingw64/bin/clang.exe"
+cxx = "$MSYS2_ROOT/mingw64/bin/clang++.exe"
+ar = "$MSYS2_ROOT/mingw64/bin/llvm-ar.exe"
+ranlib = "$MSYS2_ROOT/mingw64/bin/llvm-ranlib.exe"
+linker = "$MSYS2_ROOT/mingw64/bin/clang.exe"
+llvm-config = "$MSYS2_ROOT/mingw64/bin/llvm-config.exe"
+crt-static = true
+
+[target.x86_64-pc-cygwin]
+cc = "$WORKSPACE/gcc.exe"
+cxx = "$WORKSPACE/g++.exe"
+ar = "$WORKSPACE/ar.exe"
+ranlib = "$WORKSPACE/ranlib.exe"
+linker = "$WORKSPACE/x86_64-pc-cygwin-gcc.exe"
+llvm-config = "$WORKSPACE/llvm-config.exe"
+profiler = false
