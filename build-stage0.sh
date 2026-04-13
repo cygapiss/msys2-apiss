@@ -1,29 +1,28 @@
 # gcc is linkage to msys*
-export MSYS_BUILD_PKGSUMS=enabled
-export MSYS_BUILD_WITH_CLEAN=enabled
+# export MSYS_BUILD_PKGSUMS=enabled
+# export MSYS_CLEAN_TYPE=enabled
 export MSYS_BOOTSTRAP_STAGE=stage0
+source build-check-bootstrap.sh
 
-mkdir -p dist-init
-mkdir -p dist
-mkdir -p dist-final
+bulid_packages() {
+  # libtool and msys2-runtime are indpendent, they do not dpends on each other.
+  sh build-single.sh msys2-runtime
+  sh build-single.sh libtool
 
-# Init the msys2 system to the init state
-pkg_root_dir=$PWD \
-sh build-install/gcc-prepare.sh
+  # libiconv depends on msys2-runtime and libtool
+  sh build-single.sh libiconv
+  # gcc depends on libiconv
+  sh build-single.sh gcc
 
-sh build-single.sh cmake
-sh build-single.sh libtool
-sh build-single.sh meson
-sh build-single.sh scons
+  # gcc and binutils are independet, they do not depends on each other.
+  sh build-single.sh binutils
 
-sh build-single.sh msys2-runtime
-sh build-single.sh libiconv
-sh build-single.sh binutils
-sh build-single.sh gcc
+  sh build-single.sh cmake
+  sh build-single.sh meson
+  sh build-single.sh scons
+}
 
-# Init the msys2 system to the init state after all build
-pkg_root_dir=$PWD \
-sh build-install/gcc-prepare.sh
+bulid_packages
 
 do_build() {
 
