@@ -13,7 +13,6 @@
 
 BEGIN {
     print ".intel_syntax noprefix"
-    print ".text"
     print ""
     in_frame = 0
 }
@@ -26,7 +25,23 @@ BEGIN {
 
 # --- Skip MASM-only directives (matched before comment conversion) ---
 
-/^[[:space:]]*\.code/  { next }
+/^[[:space:]]*\.code/  { print ".text"; next }
+/^[[:space:]]*\.data/  { print ".data"; next }
+
+# --- Data definitions:  label db/dw/dd/dq value ---
+
+/^[A-Za-z_][A-Za-z_0-9]*[[:space:]]+(db|dw|dd|dq)[[:space:]]/ {
+    label = $1
+    size = $2
+    val = $3
+    if (size == "db") gas = ".byte"
+    else if (size == "dw") gas = ".short"
+    else if (size == "dd") gas = ".long"
+    else if (size == "dq") gas = ".quad"
+    data_sym[label] = 1
+    printf "%s:\n\t%s %s\n", label, gas, val
+    next
+}
 /^[[:space:]]*include[[:space:]]+ksamd64\.inc/ { next }
 /^[[:space:]]*end[[:space:]]*$/   { next }
 /^[[:space:]]*end[[:space:]]*;/   { next }
@@ -110,6 +125,16 @@ BEGIN {
     next
 }
 
-# --- Default: convert ; comments to // and pass through ---
+# --- Default: fix data-symbol addressing, convert comments, pass through ---
+# MASM x64 uses RIP-relative addressing implicitly for data symbols;
+# GAS Intel syntax requires the explicit [rip + sym] form.
 
-{ gsub(/;/, "//"); print }
+{
+    for (sym in data_sym) {
+        gsub("\\[" sym "\\]", "[rip + " sym "]")
+        gsub("\\[" sym " \\+", "[rip + " sym " +")
+        gsub("\\[" sym " \\-", "[rip + " sym " -")
+    }
+    gsub(/;/, "//")
+    print
+}

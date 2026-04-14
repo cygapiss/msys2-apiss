@@ -32,10 +32,11 @@ source=("https://github.com/AutoHotkey/AutoHotkey/archive/refs/tags/v${pkgver}.t
         0007-add-type-overloads-and-const-correctness-fixes-for-M.patch
         0008-remove-inline-from-out-of-line-function-definitions.patch
         0009-fix-non-const-lvalue-reference-binding-to-rvalues.patch
-        0010-fix-cross-initialization-errors-from-goto-past-decla.patch)
+        0010-fix-cross-initialization-errors-from-goto-past-decla.patch
+        0011-fix-DllCall-float-double-returns-with-GCC.patch)
 sha256sums=('715266412abb7c87c752cc5a960b0aee6d4e2a6cd8525cef0065cfc8e7448188'
             'b7cbf014f20db22a4e3cf16b2c94a6368e4f4f63db06407547732c3996329deb'
-            'eb2a6c800b0bf026e1011a5ae1470af36eb274aa2bd5fdfab046c598d7c23449'
+            '3eccb84dba6a6994053482b5c00f4683e581ebdd565c1fa62812eaf990004746'
             'a7c5d0ebe16295623882f734a62814e23aeee2f2ae9f2004e46c036a91bde67a'
             '859231aaf689bc70fd9a870839f1b8f24e8ceaf5fe5e41a5ba234b4fbac11a89'
             'e79ddc931c9bca2edd40d8b3d0fda06a752c9daf5d2b7a3cd454fd8a1db39ac4'
@@ -46,7 +47,8 @@ sha256sums=('715266412abb7c87c752cc5a960b0aee6d4e2a6cd8525cef0065cfc8e7448188'
             '80278ae38e5f674634e5be9e1c1c32690e253ba8107549095a1b07bf4e5e73cc'
             '25c6430fcf8ce33297560bb1e3f578a9c1e1522f9ff029f3a658f6e60c042df4'
             '5435831bed4e919379e4e42452eccdd1b5c1bbbdf84fb3f39c047250b736ac4b'
-            'adecb460fd81593f61bca911405fecf0110c159bbb99febd988b1e37d62b64be')
+            'adecb460fd81593f61bca911405fecf0110c159bbb99febd988b1e37d62b64be'
+            '35cfad84a7365afcff499e0fc8d240643214cf09a6114e578fb695b55df1170d')
 
 prepare() {
   cd "AutoHotkey-${pkgver}"
