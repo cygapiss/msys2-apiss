@@ -28,7 +28,7 @@ tools = [
   "rust-analyzer-proc-macro-srv",
   "analysis"
 ]
-build-dir = "cygwin-bootstrap-18"
+build-dir = "cygwin-bootstrap-23-1"
 profiler = true
 
 # Generating docs fails with the wasm32-* targets
