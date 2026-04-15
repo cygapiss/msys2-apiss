@@ -23,6 +23,7 @@ source=("https://github.com/AutoHotkey/AutoHotkey/archive/refs/tags/v${pkgver}.t
         CMakeLists.txt
         masm2gas.awk
         AutoHotkey.exe.manifest
+        test-basic.ahk
         0001-adapt-precompiled-header-and-config-for-MinGW.patch
         0002-replace-MSVC-structured-exception-handling-with-port.patch
         0003-skip-legacy-wspiapi.h-include-on-MinGW.patch
@@ -38,6 +39,7 @@ sha256sums=('715266412abb7c87c752cc5a960b0aee6d4e2a6cd8525cef0065cfc8e7448188'
             'b7cbf014f20db22a4e3cf16b2c94a6368e4f4f63db06407547732c3996329deb'
             '3eccb84dba6a6994053482b5c00f4683e581ebdd565c1fa62812eaf990004746'
             'a7c5d0ebe16295623882f734a62814e23aeee2f2ae9f2004e46c036a91bde67a'
+            'd917c016975d26c15c0eb7717db6580bb4ceffc69b8f705876d26f630e5b0ba1'
             '859231aaf689bc70fd9a870839f1b8f24e8ceaf5fe5e41a5ba234b4fbac11a89'
             'e79ddc931c9bca2edd40d8b3d0fda06a752c9daf5d2b7a3cd454fd8a1db39ac4'
             '3787275c7580e70e64074ccc208242da0f8f0671015520c9430d6a18c554f5ce'
@@ -89,6 +91,16 @@ build() {
       "${srcdir}/AutoHotkey-${pkgver}"
 
   ${MINGW_PREFIX}/bin/cmake.exe --build .
+}
+
+check() {
+  cd build-${MSYSTEM}
+  {
+    MSYS2_ARG_CONV_EXCL="/ErrorStdOut" \
+      ./bin/AutoHotkey64.exe /ErrorStdOut "${srcdir}/test-basic.ahk"
+    echo $? >exit.code
+  } | tee test.log
+  test 0 = "$(cat exit.code)" || return "$(cat exit.code)"
 }
 
 package() {
