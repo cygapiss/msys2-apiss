@@ -67,5 +67,5 @@ echo "Building the cargo by native"
 bash --login -c "MSYS_BUILD_PKGSUMS=enabled sh build-single.sh cargo-c"
 
 echo "Building the rest packages"
-bash --login -c "sh msys-stage2-list.sh >build-stage2.txt 2>&1"
+bash --login -c "sh build-stage2-list.sh >build-stage2.txt 2>&1"
 

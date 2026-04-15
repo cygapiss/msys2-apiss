@@ -68,6 +68,8 @@ const deps_remove_map = {
     "mingw-w64-cross-winpthreads",
     "mingw-w64-cross-windows-default-manifest",
   ],
+  // file need built before util-linux, but python depends on util-linux, break the cycle
+  "python": ["file"],
 };
 
 function calc_deps(deps_map, pkg_name) {
@@ -273,7 +275,7 @@ async function main() {
   const packages_will_build = await write_script(
     "",
     packages_base_devel,
-    "msys-stage1-list.sh",
+    "build-stage1-list.sh",
     new Set(packages_deferred_to_stage2),
   );
 
@@ -282,11 +284,13 @@ async function main() {
 
   await write_script(
     // texinfo need build twice as it's called perl in runtime for testing it self
+    // libxml2 and libxslt depends on each other, so build libxml2 twice,
+    // as libxml2 is already built before libxslt at stage1
     `sh build-single.sh texinfo
-MSYS_BUILD_WITH_CLEAN=enabled sh build-single.sh libxml2
+sh build-single.sh libxml2
 `,
     packages_other,
-    "msys-stage2-list.sh",
+    "build-stage2-list.sh",
     new Set([
       // :: cmake-bootstrap-4.2.1-1 and cmake-4.2.1-2 are in conflict. Remove cmake? [Y/n]
       "cmake-bootstrap",

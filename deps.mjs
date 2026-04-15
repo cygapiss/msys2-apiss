@@ -3,7 +3,11 @@ import * as fsSync from "fs";
 import * as path from "path";
 import { fileURLToPath } from "url";
 import process from "node:process";
-import { black_list, spawnProcessAsyncCapture } from "./utils.mjs";
+import {
+  black_list,
+  ci_tools_msys64_stage0,
+  spawnProcessAsyncCapture,
+} from "./utils.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -22,7 +26,7 @@ async function main() {
     const fullUrl = path.join(portsDir, pkg_name, "PKGBUILD");
     if (!fsSync.existsSync(fullUrl)) {
       console.log(`Invalid ${fullUrl}`);
-      continue
+      continue;
     }
     // if (pkg_name.startsWith(".")) continue;
     script += `pkgrel=\n`;
@@ -34,13 +38,13 @@ async function main() {
   }
   await fs.writeFile("pkg_info.sh", script);
   const pkg_info = await spawnProcessAsyncCapture(
-    `C:/CI-Tools/msys64/usr/bin/bash.exe`,
+    `${ci_tools_msys64_stage0}/msys64/usr/bin/bash.exe`,
     ["--login", "-c", "source pkg_info.sh"],
     {
       env: {
         CHERE_INVOKING: 1,
       },
-    }
+    },
   );
   console.log(`All path checked`);
   console.log(pkg_info.stdout);
@@ -52,14 +56,14 @@ async function main() {
   for (let pkg_name of packages.trim().split("\n")) {
     if (black_list.has(pkg_name)) continue;
     if (pkg_name == undefined) {
-      continue
+      continue;
     }
     if (need_exit) {
       break;
     }
     const deps = await spawnProcessAsyncCapture(
-      `E:/CI-Tools/msys64-stage1/msys64/usr/bin/pactree.exe`,
-      [pkg_name, "-u", "-d", "1"]
+      `${ci_tools_msys64_stage0}/msys64/usr/bin/pactree.exe`,
+      [pkg_name, "-u", "-d", "1"],
     );
     console.log(`Deps for ${pkg_name} is :[\n${deps.stdout}\n]`);
     deps_map[pkg_name] = deps.stdout.trim().split("\n").slice(1);
@@ -69,13 +73,13 @@ async function main() {
     JSON.stringify(
       {
         pkg_info: JSON.parse(
-          "[" + pkg_info.stdout.trim().split("\n").join(",") + "]"
+          "[" + pkg_info.stdout.trim().split("\n").join(",") + "]",
         ),
         deps_map: deps_map,
       },
       null,
-      2
-    )
+      2,
+    ),
   );
 }
 
