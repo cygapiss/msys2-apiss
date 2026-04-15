@@ -6,6 +6,9 @@ import {
   spawnProcessAsyncCapture,
   removeDirectory,
   archiveFull,
+  executePacmanInstall,
+  installMsys2ExtractScript,
+  getYYYYMMDD,
 } from "./utils.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -31,14 +34,14 @@ async function install_mingw(MINGW_PACKAGE_PREFIX) {
     `${MINGW_PACKAGE_PREFIX}-ruby`,
     `${MINGW_PACKAGE_PREFIX}-vala`,
     `${MINGW_PACKAGE_PREFIX}-meson`,
-    `${MINGW_PACKAGE_PREFIX}-openmp`,
+    // `${MINGW_PACKAGE_PREFIX}-openmp`,
 
     // depends
     // `${MINGW_PACKAGE_PREFIX}-babl`,
     `${MINGW_PACKAGE_PREFIX}-cairo`,
-    `${MINGW_PACKAGE_PREFIX}-exiv2`,
+    // `${MINGW_PACKAGE_PREFIX}-exiv2`,
     `${MINGW_PACKAGE_PREFIX}-ffmpeg`,
-    `${MINGW_PACKAGE_PREFIX}-gexiv2`,
+    // `${MINGW_PACKAGE_PREFIX}-gexiv2`,
     `${MINGW_PACKAGE_PREFIX}-gcc-libs`,
     `${MINGW_PACKAGE_PREFIX}-gdk-pixbuf2`,
     `${MINGW_PACKAGE_PREFIX}-gettext`,
@@ -159,28 +162,24 @@ async function install_mingw(MINGW_PACKAGE_PREFIX) {
     ),
   );
 
-  const ci_tools_root = "D:/CI-Tools/msys64-stage3";
-  const msys_root = path.join(ci_tools_root, "msys64");
+  const ci_tools_msys64_parent = "D:/CI-Tools/msys64-stage3";
+  const msys_root = path.join(ci_tools_msys64_parent, "msys64");
   const pkg_root = __dirname;
 
   const msys_txt_path = path.join(pkg_root, "install-mingw-for-stage3.txt");
   await fs.writeFile(msys_txt_path, packages.join("\n"), "utf-8");
 
-  await spawnProcessAsync(
-    `${msys_root}/usr/bin/bash.exe`,
-    [
-      "--login",
-      "-c",
-      `pacman -S --noconfirm --needed $(cat install-mingw-for-stage3.txt)`,
-    ],
-    {
-      cwd: pkg_root,
-      env: {
-        MSYS: "winsymlinks:native",
-        MSYSTEM: "MSYS",
-        CHERE_INVOKING: "1",
-      },
-    },
+  await executePacmanInstall(msys_root, `pacman -S --noconfirm --needed $(cat install-mingw-for-stage3.txt)`, pkg_root);
+  console.log("===stage3: Install mingw packages finished");
+  const msys2_base_filename = await archiveFull(
+    ci_tools_msys64_parent,
+    msys_root,
+    `msys2-mingw-x86_64-${getYYYYMMDD(new Date())}-full.tar`
+  );
+  await installMsys2ExtractScript(ci_tools_msys64_parent, msys2_base_filename, "extract-mingw.bat");
+
+  console.log(
+    `===stage3: Archive finished as: ${msys2_base_filename} for mingw64`,
   );
 }
 

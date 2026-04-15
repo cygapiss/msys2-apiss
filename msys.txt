@@ -6,6 +6,7 @@ apr-devel
 apr-util
 apr-util-devel
 asciidoc
+asciidoctor
 aspell
 aspell-de
 aspell-devel
@@ -17,6 +18,7 @@ autoconf2.13
 autoconf2.69
 autoconf2.71
 autoconf2.72
+autoconf2.73
 autogen
 automake-wrapper
 automake1.11
@@ -34,6 +36,7 @@ base-devel
 bash
 bash-completion
 bash-devel
+bash-preexec
 bc
 binutils
 bison
@@ -54,6 +57,7 @@ ccache
 cdecl
 cflow
 cgdb
+cjson
 clang
 clang-analyzer
 cloc
@@ -100,6 +104,7 @@ doxygen
 dtc
 ed
 editorconfig-vim
+efitools
 elinks
 emacs
 enscript
@@ -139,6 +144,8 @@ glib2-devel
 global
 gmp
 gmp-devel
+gnu-efi
+gnu-efi-devel
 gnulib-l10n
 gnupg
 gnutls
@@ -255,6 +262,7 @@ liblzma-devel
 liblzo2
 liblzo2-devel
 libmd
+libmicrohttpd
 libneon
 libneon-devel
 libnettle
@@ -316,6 +324,7 @@ libutil-linux
 libutil-linux-devel
 libuv
 libuv-devel
+libwebsockets
 libxcrypt
 libxcrypt-devel
 libxml2
@@ -466,6 +475,7 @@ perl-Authen-SASL
 perl-Benchmark-Timer
 perl-Capture-Tiny
 perl-Carp-Clan
+perl-Class-Inspector
 perl-Class-Method-Modifiers
 perl-Clone
 perl-Compress-Bzip2
@@ -491,6 +501,8 @@ perl-FFI-CheckLib
 perl-File-Copy-Recursive
 perl-File-Listing
 perl-File-Next
+perl-File-ShareDir
+perl-File-ShareDir-Install
 perl-File-Which
 perl-File-chdir
 perl-Font-TTF
@@ -563,7 +575,7 @@ perl-Test-Needs
 perl-Test-NoWarnings
 perl-Test-Pod
 perl-Test-Requires
-perl-Test-Requiresinternet
+perl-Test-RequiresInternet
 perl-Test-Script
 perl-Test-Warnings
 perl-Test-YAML

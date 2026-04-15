@@ -1,0 +1,3158 @@
+{
+  "ack": [
+    "perl-File-Next"
+  ],
+  "ansible": [
+    "python-setuptools",
+    "python-build",
+    "python-installer",
+    "python",
+    "ansible-core"
+  ],
+  "ansible-core": [
+    "tar",
+    "python-build",
+    "python-installer",
+    "python-setuptools",
+    "python",
+    "python-yaml",
+    "python-jinja",
+    "python-packaging",
+    "python-cryptography",
+    "python-resolvelib",
+    "msys2-runtime"
+  ],
+  "apr": [
+    "libxcrypt",
+    "util-linux"
+  ],
+  "apr-util": [
+    "apr",
+    "expat",
+    "sqlite",
+    "libxcrypt"
+  ],
+  "asciidoc": [
+    "python-setuptools",
+    "python-build",
+    "python-installer",
+    "python",
+    "libxslt",
+    "docbook-xsl"
+  ],
+  "asciidoctor": [
+    "ruby"
+  ],
+  "aspell": [
+    "gettext",
+    "libiconv",
+    "ncurses"
+  ],
+  "aspell-de": [
+    "aspell"
+  ],
+  "aspell-en": [
+    "aspell"
+  ],
+  "atool": [
+    "file",
+    "perl"
+  ],
+  "autoconf-archive": [],
+  "autoconf2.13": [
+    "make",
+    "gawk",
+    "m4",
+    "diffutils",
+    "bash",
+    "perl"
+  ],
+  "autoconf2.69": [
+    "make",
+    "gawk",
+    "m4",
+    "diffutils",
+    "bash",
+    "perl"
+  ],
+  "autoconf2.71": [
+    "make",
+    "gawk",
+    "m4",
+    "diffutils",
+    "bash",
+    "perl",
+    "sed"
+  ],
+  "autoconf2.72": [
+    "make",
+    "gawk",
+    "m4",
+    "diffutils",
+    "bash",
+    "perl",
+    "sed"
+  ],
+  "autoconf2.73": [
+    "make",
+    "gawk",
+    "m4",
+    "diffutils",
+    "bash",
+    "perl",
+    "sed"
+  ],
+  "autogen": [
+    "gmp",
+    "libxcrypt",
+    "libffi",
+    "gc",
+    "guile",
+    "libxml2",
+    "make",
+    "libtool",
+    "gperf"
+  ],
+  "automake1.11": [
+    "make",
+    "perl",
+    "bash"
+  ],
+  "automake1.12": [
+    "make",
+    "perl",
+    "bash"
+  ],
+  "automake1.13": [
+    "make",
+    "perl",
+    "bash"
+  ],
+  "automake1.14": [
+    "make",
+    "perl",
+    "bash"
+  ],
+  "automake1.15": [
+    "make",
+    "perl",
+    "bash"
+  ],
+  "automake1.16": [
+    "make",
+    "perl",
+    "bash"
+  ],
+  "automake1.17": [
+    "make",
+    "texinfo",
+    "bash",
+    "perl"
+  ],
+  "automake1.18": [
+    "make",
+    "texinfo",
+    "bash",
+    "perl"
+  ],
+  "autotools": [
+    "gettext",
+    "libtool",
+    "make",
+    "pkgconf"
+  ],
+  "autotools-wrappers": [
+    "bash",
+    "gawk",
+    "automake1.11",
+    "automake1.12",
+    "automake1.13",
+    "automake1.14",
+    "automake1.15",
+    "automake1.16",
+    "automake1.17",
+    "automake1.18",
+    "sed",
+    "autoconf2.73",
+    "autoconf2.72",
+    "autoconf2.71",
+    "autoconf2.69",
+    "autoconf2.13"
+  ],
+  "axel": [
+    "openssl",
+    "gettext"
+  ],
+  "base": [
+    "bash",
+    "bash-completion",
+    "libarchive",
+    "bzip2",
+    "coreutils",
+    "curl",
+    "dash",
+    "file",
+    "filesystem",
+    "findutils",
+    "gawk",
+    "getent",
+    "grep",
+    "gzip",
+    "inetutils",
+    "texinfo",
+    "less",
+    "mintty",
+    "msys2-keyring",
+    "msys2-launcher",
+    "msys2-runtime",
+    "nano",
+    "pacman",
+    "pacman-contrib",
+    "pacman-mirrors",
+    "rebase",
+    "sed",
+    "tar",
+    "time",
+    "tzcode",
+    "util-linux",
+    "wget",
+    "which",
+    "zstd"
+  ],
+  "base-devel": [
+    "base",
+    "binutils",
+    "bison",
+    "diffstat",
+    "diffutils",
+    "dos2unix",
+    "file",
+    "flex",
+    "gawk",
+    "gettext",
+    "grep",
+    "texinfo",
+    "make",
+    "pacman",
+    "patch",
+    "sed",
+    "tar",
+    "autotools-wrappers",
+    "autotools",
+    "cmake",
+    "gcc",
+    "git",
+    "gtk-doc",
+    "meson",
+    "ninja",
+    "gcc"
+  ],
+  "bash": [
+    "gettext",
+    "readline",
+    "ncurses"
+  ],
+  "bash-completion": [
+    "bash"
+  ],
+  "bash-preexec": [],
+  "bc": [
+    "ed",
+    "readline",
+    "ncurses"
+  ],
+  "binutils": [
+    "libiconv",
+    "gettext",
+    "zlib",
+    "zstd"
+  ],
+  "bison": [
+    "flex",
+    "gettext",
+    "libiconv",
+    "m4",
+    "bash"
+  ],
+  "bisoncpp": [
+    "icmake",
+    "libbobcat",
+    "yodl"
+  ],
+  "breezy": [
+    "python-setuptools",
+    "python-build",
+    "python-installer",
+    "python",
+    "python-setuptools-rust",
+    "python-setuptools-gettext",
+    "cython",
+    "python-configobj",
+    "python-fastimport",
+    "python-dulwich",
+    "python-patiencediff",
+    "python-merge3",
+    "python-fastbencode"
+  ],
+  "brotli": [],
+  "btyacc": [],
+  "busybox": [
+    "make",
+    "libxcrypt"
+  ],
+  "bzip2": [
+    "patch"
+  ],
+  "c-ares": [],
+  "ca-certificates": [
+    "asciidoc",
+    "python",
+    "libxslt",
+    "sed",
+    "grep",
+    "bash",
+    "openssl",
+    "findutils",
+    "coreutils",
+    "p11-kit"
+  ],
+  "cargo-c": [
+    "pkgconf",
+    "openssl",
+    "libgit2",
+    "libssh2",
+    "sqlite",
+    "curl",
+    "rust"
+  ],
+  "cargo-edit": [
+    "rust"
+  ],
+  "ccache": [
+    "pkgconf",
+    "zlib",
+    "zstd",
+    "xxhash",
+    "fmt",
+    "doctest",
+    "libblake3"
+  ],
+  "cdecl": [
+    "make",
+    "ncurses",
+    "readline",
+    "flex",
+    "bison"
+  ],
+  "cflow": [
+    "flex",
+    "gettext",
+    "libiconv"
+  ],
+  "cgdb": [
+    "help2man",
+    "readline",
+    "ncurses",
+    "gdb"
+  ],
+  "cjson": [],
+  "cloc": [
+    "perl",
+    "perl-Algorithm-Diff",
+    "perl-Regexp-Common",
+    "perl-Parallel-ForkManager"
+  ],
+  "cmake": [
+    "emacs",
+    "jsoncpp",
+    "libarchive",
+    "bzip2",
+    "curl",
+    "expat",
+    "xz",
+    "rhash",
+    "util-linux",
+    "libuv",
+    "zstd",
+    "ncurses",
+    "zlib",
+    "pkgconf",
+    "cppdap",
+    "vim"
+  ],
+  "cmake-bootstrap": [
+    "make"
+  ],
+  "cmatrix": [
+    "ncurses",
+    "make"
+  ],
+  "cocom": [
+    "gmp"
+  ],
+  "colordiff": [
+    "w3m",
+    "xmlto",
+    "docbook-xsl",
+    "diffutils",
+    "perl"
+  ],
+  "colormake": [
+    "make"
+  ],
+  "coreutils": [
+    "groff",
+    "gmp",
+    "libiconv",
+    "gettext",
+    "help2man"
+  ],
+  "cpio": [
+    "gettext"
+  ],
+  "cppdap": [
+    "jsoncpp"
+  ],
+  "crosstool-ng": [
+    "binutils",
+    "bison",
+    "flex",
+    "gettext",
+    "gperf",
+    "patch",
+    "ncurses",
+    "tar",
+    "texinfo",
+    "wget",
+    "xz",
+    "gzip",
+    "unzip",
+    "help2man"
+  ],
+  "cscope": [
+    "ncurses"
+  ],
+  "ctags": [
+    "libiconv",
+    "jansson",
+    "pcre2",
+    "libxml2",
+    "libyaml"
+  ],
+  "curl": [
+    "brotli",
+    "libidn2",
+    "nghttp3",
+    "ngtcp2",
+    "libunistring",
+    "nghttp2",
+    "libpsl",
+    "libssh2",
+    "openssl",
+    "zlib",
+    "zstd",
+    "ca-certificates"
+  ],
+  "cvs": [
+    "groff",
+    "heimdal",
+    "zlib",
+    "libxcrypt",
+    "openssl"
+  ],
+  "cygnative": [],
+  "cygrunsrv": [],
+  "cygutils": [
+    "gettext",
+    "libiconv",
+    "popt"
+  ],
+  "cyrus-sasl": [
+    "heimdal",
+    "openssl",
+    "sqlite",
+    "libxcrypt",
+    "serf"
+  ],
+  "cython": [
+    "python",
+    "python-setuptools",
+    "python-build",
+    "python-installer"
+  ],
+  "dash": [
+    "grep",
+    "sed",
+    "filesystem"
+  ],
+  "db": [
+    "bash"
+  ],
+  "dejagnu": [
+    "expect"
+  ],
+  "dialog": [
+    "ncurses",
+    "gettext"
+  ],
+  "diffstat": [],
+  "diffutils": [
+    "gettext",
+    "libiconv",
+    "bash"
+  ],
+  "docbook-dsssl": [
+    "sgml-common",
+    "perl"
+  ],
+  "docbook-mathml": [
+    "libxml2"
+  ],
+  "docbook-sgml": [
+    "sgml-common"
+  ],
+  "docbook-sgml31": [
+    "sgml-common"
+  ],
+  "docbook-xml": [
+    "libxml2"
+  ],
+  "docbook-xsl": [
+    "libxml2",
+    "libxslt",
+    "docbook-xml"
+  ],
+  "docbook-xsl-ns": [
+    "libxml2",
+    "libxslt"
+  ],
+  "doctest": [],
+  "docx2txt": [
+    "make",
+    "perl",
+    "unzip"
+  ],
+  "dos2unix": [
+    "perl",
+    "gettext",
+    "make"
+  ],
+  "dosfstools": [
+    "libiconv"
+  ],
+  "doxygen": [
+    "flex",
+    "python",
+    "sqlite",
+    "libiconv"
+  ],
+  "dtc": [
+    "python",
+    "swig",
+    "libyaml",
+    "python-setuptools-scm",
+    "pkgconf"
+  ],
+  "ed": [
+    "bash"
+  ],
+  "editorconfig-vim": [
+    "vim"
+  ],
+  "efitools": [
+    "make",
+    "help2man",
+    "openssl",
+    "util-linux",
+    "gnu-efi"
+  ],
+  "elinks": [
+    "gettext",
+    "bzip2",
+    "expat",
+    "libgcrypt",
+    "gnutls",
+    "libiconv",
+    "libidn",
+    "xz",
+    "libtre",
+    "zstd",
+    "perl",
+    "python",
+    "python-setuptools",
+    "zlib",
+    "xmlto",
+    "groff",
+    "doxygen"
+  ],
+  "emacs": [
+    "gawk",
+    "libiconv",
+    "libxml2",
+    "ncurses",
+    "gnutls",
+    "libunistring",
+    "zlib",
+    "glib2",
+    "nettle"
+  ],
+  "enscript": [
+    "gettext",
+    "libiconv",
+    "perl"
+  ],
+  "etc-update": [
+    "bash",
+    "diffutils"
+  ],
+  "expat": [],
+  "expect": [
+    "tcl"
+  ],
+  "fcode-utils": [
+    "make"
+  ],
+  "file": [
+    "zlib",
+    "bzip2",
+    "xz",
+    "zstd"
+  ],
+  "filesystem": [],
+  "findutils": [
+    "libiconv",
+    "gettext"
+  ],
+  "fish": [
+    "gettext",
+    "pcre2",
+    "pkgconf",
+    "rust",
+    "python-sphinx",
+    "man-db"
+  ],
+  "fisher": [
+    "fish",
+    "curl"
+  ],
+  "flex": [
+    "libiconv",
+    "gettext",
+    "m4",
+    "bash"
+  ],
+  "flexcpp": [
+    "icmake",
+    "yodl",
+    "libbobcat"
+  ],
+  "fmt": [],
+  "fzy": [
+    "make"
+  ],
+  "gawk": [
+    "gettext",
+    "mpfr",
+    "readline",
+    "bash"
+  ],
+  "gc": [],
+  "gcc": [
+    "binutils",
+    "isl",
+    "gmp",
+    "mpc",
+    "mpfr",
+    "zlib",
+    "zstd",
+    "windows-default-manifest",
+    "gperf",
+    "libiconv",
+    "gettext",
+    "msys2-runtime",
+    "msys2-w32api-headers",
+    "msys2-w32api-runtime"
+  ],
+  "gdb": [
+    "guile",
+    "expat",
+    "xz",
+    "readline",
+    "zstd",
+    "mpfr",
+    "ncurses",
+    "python",
+    "zlib",
+    "mpc",
+    "xxhash",
+    "libiconv"
+  ],
+  "gdbm": [
+    "readline",
+    "gettext",
+    "libiconv",
+    "ncurses"
+  ],
+  "gengetopt": [
+    "bison",
+    "flex",
+    "help2man"
+  ],
+  "genromfs": [],
+  "getent": [
+    "libargp"
+  ],
+  "gettext": [
+    "groff"
+  ],
+  "gi-docgen": [
+    "python-build",
+    "python-installer",
+    "python-setuptools",
+    "python",
+    "python-jinja",
+    "python-markdown",
+    "python-markupsafe",
+    "python-packaging",
+    "python-pygments"
+  ],
+  "git": [
+    "asciidoc",
+    "docbook-xml",
+    "docbook-xsl",
+    "less",
+    "expat",
+    "curl",
+    "libiconv",
+    "gettext",
+    "pcre2",
+    "python",
+    "rsync",
+    "rust",
+    "xmlto",
+    "nano",
+    "openssh",
+    "openssl",
+    "perl-Error",
+    "perl",
+    "perl-Authen-SASL",
+    "perl-libwww",
+    "perl-MIME-tools",
+    "perl-Net-SMTP-SSL",
+    "perl-TermReadKey"
+  ],
+  "git-crypt": [
+    "openssl",
+    "make",
+    "gnupg",
+    "zlib"
+  ],
+  "git-extras": [],
+  "git-filter-repo": [
+    "python"
+  ],
+  "git-flow": [
+    "util-linux",
+    "make"
+  ],
+  "glib2": [
+    "libffi",
+    "libiconv",
+    "gettext",
+    "pcre2",
+    "pkgconf",
+    "python",
+    "python-packaging",
+    "zlib",
+    "python-docutils"
+  ],
+  "global": [
+    "ncurses",
+    "gperf",
+    "libtool"
+  ],
+  "gmp": [],
+  "gnu-efi": [
+    "make"
+  ],
+  "gnu-netcat": [
+    "texinfo",
+    "gettext"
+  ],
+  "gnulib-l10n": [
+    "make",
+    "gettext"
+  ],
+  "gnupg": [
+    "gettext",
+    "libassuan",
+    "bzip2",
+    "curl",
+    "libgcrypt",
+    "gnutls",
+    "libgpg-error",
+    "libiconv",
+    "libksba",
+    "nettle",
+    "npth",
+    "p11-kit",
+    "readline",
+    "sqlite",
+    "libtasn1",
+    "libunistring",
+    "tar",
+    "zlib",
+    "pinentry"
+  ],
+  "gnutls": [
+    "gettext",
+    "libidn2",
+    "libiconv",
+    "gmp",
+    "nettle",
+    "p11-kit",
+    "libtasn1",
+    "libunistring",
+    "zlib"
+  ],
+  "gperf": [
+    "texinfo"
+  ],
+  "gpgme": [
+    "libassuan",
+    "libgpg-error",
+    "gnupg"
+  ],
+  "gradle": [],
+  "grep": [
+    "texinfo",
+    "gettext",
+    "libiconv",
+    "pcre",
+    "bash"
+  ],
+  "grml-zsh-config": [
+    "txt2tags",
+    "asciidoctor",
+    "zsh",
+    "coreutils",
+    "grep",
+    "sed",
+    "procps-ng"
+  ],
+  "groff": [],
+  "gtest": [
+    "python",
+    "bash"
+  ],
+  "gtk-doc": [
+    "pkgconf",
+    "glib2",
+    "itstool",
+    "yelp-tools",
+    "docbook-xsl",
+    "docbook-xml",
+    "python",
+    "python-pygments",
+    "python-lxml"
+  ],
+  "guile": [
+    "gettext",
+    "gmp",
+    "libxcrypt",
+    "libffi",
+    "gc",
+    "libiconv",
+    "readline",
+    "libunistring",
+    "pkgconf",
+    "gperf"
+  ],
+  "guile-mqtt": [
+    "guile",
+    "nyacc",
+    "mosquitto"
+  ],
+  "gyp": [
+    "python-setuptools",
+    "python-build",
+    "python-installer",
+    "python",
+    "python-six"
+  ],
+  "gzip": [
+    "bash",
+    "less"
+  ],
+  "heimdal": [
+    "db",
+    "libxcrypt",
+    "libedit",
+    "sqlite",
+    "openssl",
+    "perl-JSON",
+    "python"
+  ],
+  "help2man": [
+    "gettext"
+  ],
+  "hexcurse": [
+    "ncurses"
+  ],
+  "icmake": [],
+  "icu": [
+    "autoconf-archive"
+  ],
+  "idutils": [
+    "gettext"
+  ],
+  "inetutils": [
+    "gettext",
+    "readline",
+    "ncurses",
+    "tftp-hpa",
+    "help2man"
+  ],
+  "intltool": [
+    "perl",
+    "perl-XML-Parser"
+  ],
+  "iperf": [],
+  "iperf3": [
+    "openssl"
+  ],
+  "irssi": [
+    "gettext",
+    "glib2",
+    "openssl",
+    "perl",
+    "ncurses",
+    "elinks"
+  ],
+  "isl": [
+    "gmp"
+  ],
+  "itstool": [
+    "python",
+    "python-lxml"
+  ],
+  "jansson": [],
+  "joe": [
+    "make",
+    "ncurses"
+  ],
+  "jq": [
+    "oniguruma"
+  ],
+  "jsoncpp": [
+    "pkgconf"
+  ],
+  "just": [
+    "rust"
+  ],
+  "lcov": [
+    "perl",
+    "perl-JSON",
+    "perl-PerlIO-gzip"
+  ],
+  "less": [
+    "ncurses",
+    "pcre2",
+    "groff"
+  ],
+  "lftp": [
+    "gettext",
+    "expat",
+    "gnutls",
+    "libiconv",
+    "libidn2",
+    "readline",
+    "libunistring",
+    "zlib",
+    "ca-certificates",
+    "openssh"
+  ],
+  "libarchive": [
+    "bzip2",
+    "libiconv",
+    "expat",
+    "xz",
+    "lz4",
+    "openssl",
+    "zstd",
+    "zlib",
+    "nettle",
+    "libxml2"
+  ],
+  "libargp": [],
+  "libassuan": [
+    "libgpg-error"
+  ],
+  "libatomic_ops": [],
+  "libblake3": [],
+  "libbobcat": [
+    "icmake",
+    "yodl"
+  ],
+  "libbsd": [
+    "make",
+    "libmd"
+  ],
+  "libcbor": [],
+  "libedit": [
+    "ncurses",
+    "bash"
+  ],
+  "libevent": [
+    "openssl"
+  ],
+  "libffi": [],
+  "libfido2": [
+    "libcbor",
+    "openssl",
+    "zlib"
+  ],
+  "libgcrypt": [
+    "make",
+    "libgpg-error"
+  ],
+  "libgit2": [
+    "pkgconf",
+    "libssh2",
+    "libiconv",
+    "pcre2",
+    "zlib",
+    "openssl"
+  ],
+  "libgpg-error": [
+    "libiconv",
+    "gettext",
+    "bash"
+  ],
+  "libiconv": [
+    "gettext"
+  ],
+  "libidn": [
+    "texinfo",
+    "gettext",
+    "gperf"
+  ],
+  "libidn2": [
+    "texinfo",
+    "libunistring",
+    "gettext"
+  ],
+  "libinih": [
+    "pkgconf",
+    "python"
+  ],
+  "libksba": [
+    "libgpg-error"
+  ],
+  "libmd": [
+    "make"
+  ],
+  "libmicrohttpd": [
+    "gnutls"
+  ],
+  "libpcap": [
+    "bison",
+    "flex",
+    "openssl"
+  ],
+  "libpipeline": [
+    "openssl",
+    "zlib"
+  ],
+  "libpsl": [
+    "libxslt",
+    "python",
+    "libidn2",
+    "publicsuffix-list",
+    "libunistring",
+    "gettext"
+  ],
+  "libqrencode": [
+    "libiconv"
+  ],
+  "libssh": [
+    "python",
+    "openssl",
+    "zlib"
+  ],
+  "libssh2": [
+    "openssl",
+    "zlib",
+    "ca-certificates"
+  ],
+  "libtasn1": [
+    "patch",
+    "texinfo"
+  ],
+  "libtirpc": [
+    "patch",
+    "heimdal"
+  ],
+  "libtool": [
+    "help2man",
+    "m4",
+    "bash"
+  ],
+  "libtre": [
+    "gettext",
+    "libiconv"
+  ],
+  "libunistring": [
+    "libiconv"
+  ],
+  "libuv": [],
+  "libwebsockets": [
+    "openssl",
+    "zlib"
+  ],
+  "libxcrypt": [],
+  "libxml2": [
+    "readline",
+    "zlib",
+    "doxygen",
+    "libiconv",
+    "coreutils"
+  ],
+  "libxslt": [
+    "libxml2",
+    "libgcrypt"
+  ],
+  "libyaml": [],
+  "llvm": [
+    "pkgconf",
+    "python",
+    "zstd",
+    "zlib",
+    "libxml2",
+    "libedit"
+  ],
+  "lndir": [
+    "xorgproto"
+  ],
+  "localepurge": [],
+  "lua": [
+    "make"
+  ],
+  "luit": [
+    "libiconv",
+    "patch",
+    "zlib"
+  ],
+  "lynx": [
+    "openssl",
+    "libidn",
+    "ncurses",
+    "gettext"
+  ],
+  "lz4": [
+    "make"
+  ],
+  "lzip": [],
+  "lzo2": [
+    "patch"
+  ],
+  "lzop": [
+    "lzo2"
+  ],
+  "m4": [
+    "libiconv",
+    "bash"
+  ],
+  "make": [
+    "gettext",
+    "procps-ng",
+    "bash"
+  ],
+  "man-db": [
+    "gettext",
+    "gdbm",
+    "libpipeline",
+    "zlib",
+    "bash",
+    "groff",
+    "less"
+  ],
+  "man-pages-posix": [
+    "man-db"
+  ],
+  "man2html": [
+    "man-db",
+    "perl"
+  ],
+  "markdown": [
+    "perl"
+  ],
+  "maturin": [
+    "python-build",
+    "python-installer",
+    "python-setuptools-rust",
+    "openssl",
+    "pkgconf",
+    "python"
+  ],
+  "mc": [
+    "glib2",
+    "libssh2",
+    "ncurses"
+  ],
+  "mercurial": [
+    "python",
+    "python-setuptools",
+    "python-setuptools-scm",
+    "python-build",
+    "python-installer"
+  ],
+  "meson": [
+    "python-setuptools",
+    "python-build",
+    "python-installer",
+    "python",
+    "pkgconf"
+  ],
+  "mingw-w64-cross-binutils": [
+    "libiconv",
+    "zlib",
+    "zstd",
+    "gettext"
+  ],
+  "mingw-w64-cross-clang": [
+    "llvm",
+    "python"
+  ],
+  "mingw-w64-cross-clang-crt": [
+    "llvm"
+  ],
+  "mingw-w64-cross-clang-headers": [],
+  "mingw-w64-cross-compiler-rt": [
+    "llvm",
+    "mingw-w64-cross-clang-headers",
+    "python"
+  ],
+  "mingw-w64-cross-crt": [
+    "mingw-w64-cross-binutils",
+    "mingw-w64-cross-headers"
+  ],
+  "mingw-w64-cross-gcc": [
+    "lndir",
+    "gmp",
+    "mpc",
+    "zlib",
+    "isl",
+    "gperf",
+    "zstd",
+    "mingw-w64-cross-crt",
+    "mingw-w64-cross-headers",
+    "mingw-w64-cross-winpthreads",
+    "mingw-w64-cross-windows-default-manifest",
+    "mingw-w64-cross-binutils"
+  ],
+  "mingw-w64-cross-headers": [],
+  "mingw-w64-cross-mingwarm64-binutils": [
+    "libiconv",
+    "zlib",
+    "zstd",
+    "gettext",
+    "gmp",
+    "mpfr",
+    "mingw-w64-cross-binutils"
+  ],
+  "mingw-w64-cross-mingwarm64-crt": [
+    "mingw-w64-cross-mingwarm64-binutils",
+    "mingw-w64-cross-mingwarm64-headers"
+  ],
+  "mingw-w64-cross-mingwarm64-gcc": [
+    "lndir",
+    "gmp",
+    "mpc",
+    "zlib",
+    "isl",
+    "gperf",
+    "zstd",
+    "mingw-w64-cross-mingwarm64-crt",
+    "mingw-w64-cross-mingwarm64-headers",
+    "mingw-w64-cross-mingwarm64-winpthreads",
+    "mingw-w64-cross-mingwarm64-windows-default-manifest",
+    "mingw-w64-cross-mingwarm64-binutils"
+  ],
+  "mingw-w64-cross-mingwarm64-headers": [],
+  "mingw-w64-cross-mingwarm64-tools": [
+    "mingw-w64-cross-mingwarm64-gcc",
+    "mingw-w64-cross-mingwarm64-binutils"
+  ],
+  "mingw-w64-cross-mingwarm64-windows-default-manifest": [
+    "mingw-w64-cross-mingwarm64-binutils"
+  ],
+  "mingw-w64-cross-mingwarm64-winpthreads": [
+    "mingw-w64-cross-mingwarm64-binutils",
+    "mingw-w64-cross-mingwarm64-crt",
+    "mingw-w64-cross-mingwarm64-headers"
+  ],
+  "mingw-w64-cross-mingwarm64-winstorecompat": [
+    "mingw-w64-cross-mingwarm64-gcc",
+    "mingw-w64-cross-mingwarm64-binutils",
+    "mingw-w64-cross-mingwarm64-crt",
+    "mingw-w64-cross-mingwarm64-headers"
+  ],
+  "mingw-w64-cross-tools": [
+    "mingw-w64-cross-gcc",
+    "mingw-w64-cross-binutils"
+  ],
+  "mingw-w64-cross-windows-default-manifest": [
+    "mingw-w64-cross-binutils"
+  ],
+  "mingw-w64-cross-winpthreads": [
+    "mingw-w64-cross-binutils",
+    "mingw-w64-cross-crt",
+    "mingw-w64-cross-headers"
+  ],
+  "mingw-w64-cross-winstorecompat": [
+    "mingw-w64-cross-gcc",
+    "mingw-w64-cross-binutils",
+    "mingw-w64-cross-crt",
+    "mingw-w64-cross-headers"
+  ],
+  "mingw-w64-cross-zlib": [
+    "mingw-w64-cross-gcc",
+    "mingw-w64-cross-mingwarm64-gcc"
+  ],
+  "mintty": [
+    "bash"
+  ],
+  "mksh": [],
+  "mm-common": [],
+  "moreutils": [
+    "docbook-xml",
+    "make",
+    "docbook-xsl"
+  ],
+  "mosh": [
+    "protobuf",
+    "ncurses",
+    "zlib",
+    "openssl",
+    "bash-completion",
+    "perl",
+    "openssh"
+  ],
+  "mosquitto": [
+    "docbook-xsl",
+    "c-ares",
+    "openssl",
+    "cjson",
+    "libmicrohttpd",
+    "libwebsockets"
+  ],
+  "mpc": [
+    "gmp",
+    "mpfr"
+  ],
+  "mpdecimal": [],
+  "mpfr": [
+    "gmp",
+    "autoconf-archive"
+  ],
+  "msgpack-c": [
+    "zlib"
+  ],
+  "msys2-keyring": [],
+  "msys2-launcher": [
+    "mingw-w64-cross-gcc",
+    "mintty"
+  ],
+  "msys2-runtime": [
+    "cocom",
+    "perl",
+    "mingw-w64-cross-crt",
+    "mingw-w64-cross-gcc",
+    "mingw-w64-cross-zlib",
+    "zlib",
+    "gettext",
+    "libiconv",
+    "xmlto",
+    "docbook-xsl"
+  ],
+  "msys2-w32api-headers": [
+    "mingw-w64-cross-gcc"
+  ],
+  "msys2-w32api-runtime": [
+    "mingw-w64-cross-gcc",
+    "msys2-w32api-headers"
+  ],
+  "mutt": [
+    "docbook-xml",
+    "docbook-xsl",
+    "elinks",
+    "gdbm",
+    "gnutls",
+    "gpgme",
+    "libidn2",
+    "cyrus-sasl",
+    "sqlite",
+    "ncurses",
+    "zlib"
+  ],
+  "namcap": [
+    "python-setuptools",
+    "python-build",
+    "python-installer",
+    "python",
+    "python-pyalpm",
+    "binutils"
+  ],
+  "nano": [
+    "ncurses",
+    "libiconv",
+    "gettext",
+    "file",
+    "bash"
+  ],
+  "nano-syntax-highlighting": [
+    "nano"
+  ],
+  "nasm": [
+    "perl-Font-TTF",
+    "perl-Sort-Versions"
+  ],
+  "nawk": [
+    "make",
+    "bison"
+  ],
+  "ncdu": [
+    "ncurses"
+  ],
+  "ncurses": [],
+  "neofetch": [
+    "bash"
+  ],
+  "neomutt": [
+    "gpgme",
+    "cyrus-sasl",
+    "gdbm",
+    "ncurses",
+    "libidn2",
+    "libiconv",
+    "openssl",
+    "gettext",
+    "heimdal",
+    "libxslt",
+    "docbook-xsl",
+    "pkgconf"
+  ],
+  "neon": [
+    "expat",
+    "openssl",
+    "gettext",
+    "ca-certificates"
+  ],
+  "nettle": [
+    "gmp"
+  ],
+  "nghttp2": [
+    "jansson",
+    "libevent",
+    "openssl",
+    "c-ares",
+    "zlib",
+    "make"
+  ],
+  "nghttp3": [],
+  "ngtcp2": [
+    "openssl"
+  ],
+  "ninja": [
+    "re2c",
+    "python",
+    "vim"
+  ],
+  "nnn": [
+    "readline",
+    "ncurses",
+    "pkgconf",
+    "bash"
+  ],
+  "npth": [],
+  "nsinstall": [],
+  "nyacc": [
+    "guile"
+  ],
+  "oniguruma": [],
+  "openbsd-netcat": [
+    "make",
+    "pkgconf",
+    "libbsd"
+  ],
+  "opensp": [
+    "xmlto",
+    "docbook-xsl",
+    "gettext",
+    "sgml-common",
+    "perl"
+  ],
+  "openssh": [
+    "heimdal",
+    "libedit",
+    "libxcrypt",
+    "libfido2",
+    "openssl",
+    "groff"
+  ],
+  "openssl": [
+    "tar",
+    "perl",
+    "diffutils",
+    "nasm"
+  ],
+  "p11-kit": [
+    "bash-completion",
+    "gettext",
+    "libiconv",
+    "libtasn1",
+    "libffi",
+    "pkgconf"
+  ],
+  "p7zip": [
+    "nasm",
+    "make",
+    "bash"
+  ],
+  "pacman": [
+    "asciidoc",
+    "doxygen",
+    "gettext",
+    "heimdal",
+    "libarchive",
+    "curl",
+    "gpgme",
+    "sqlite",
+    "libunistring",
+    "bash",
+    "gnupg",
+    "pacman-mirrors",
+    "msys2-keyring",
+    "which",
+    "bzip2",
+    "xz",
+    "zstd"
+  ],
+  "pacman-contrib": [
+    "asciidoc",
+    "libarchive",
+    "curl",
+    "gpgme",
+    "perl",
+    "pacman",
+    "bash"
+  ],
+  "pacman-mirrors": [],
+  "pactoys": [
+    "pacman",
+    "wget"
+  ],
+  "pacutils": [
+    "libarchive",
+    "curl",
+    "gpgme",
+    "perl",
+    "make",
+    "pkgconf",
+    "libiconv",
+    "openssl",
+    "pacman"
+  ],
+  "parallel": [],
+  "pass": [
+    "libqrencode",
+    "bash",
+    "gnupg",
+    "tree"
+  ],
+  "patch": [
+    "ed"
+  ],
+  "patchutils": [
+    "pcre2",
+    "xmlto",
+    "docbook-xsl"
+  ],
+  "pax": [],
+  "pcre": [
+    "readline",
+    "bzip2",
+    "zlib"
+  ],
+  "pcre2": [
+    "readline",
+    "bzip2",
+    "zlib"
+  ],
+  "perl": [
+    "db",
+    "gdbm",
+    "libxcrypt",
+    "make",
+    "groff",
+    "libbsd",
+    "coreutils",
+    "bash"
+  ],
+  "perl-Algorithm-Diff": [
+    "perl"
+  ],
+  "perl-Alien-Build": [
+    "perl-Test2-Suite",
+    "perl",
+    "perl-Capture-Tiny",
+    "perl-FFI-CheckLib",
+    "perl-File-chdir",
+    "perl-File-Which",
+    "perl-Path-Tiny"
+  ],
+  "perl-alien-build-plugin-download-gitlab": [
+    "perl-Test2-Suite",
+    "perl-Alien-Build",
+    "perl-Path-Tiny",
+    "perl-URI"
+  ],
+  "perl-Alien-Libxml2": [
+    "perl-HTML-Parser",
+    "perl-Sort-Versions",
+    "perl-Test2-Suite",
+    "perl-URI",
+    "libxml2",
+    "perl-alien-build-plugin-download-gitlab",
+    "pkgconf",
+    "perl-Alien-Build"
+  ],
+  "perl-Archive-Zip": [
+    "perl"
+  ],
+  "perl-Authen-SASL": [
+    "perl"
+  ],
+  "perl-Benchmark-Timer": [
+    "perl"
+  ],
+  "perl-Capture-Tiny": [
+    "perl"
+  ],
+  "perl-Carp-Clan": [
+    "perl"
+  ],
+  "perl-Class-Inspector": [
+    "perl",
+    "make"
+  ],
+  "perl-Class-Method-Modifiers": [
+    "perl-Test-Fatal",
+    "perl-Test-Requires",
+    "perl-Test-Needs",
+    "perl"
+  ],
+  "perl-Clone": [
+    "perl",
+    "make"
+  ],
+  "perl-common-sense": [
+    "perl"
+  ],
+  "perl-Compress-Bzip2": [
+    "perl",
+    "bzip2",
+    "make"
+  ],
+  "perl-Convert-BinHex": [
+    "perl"
+  ],
+  "perl-Data-Munge": [
+    "perl"
+  ],
+  "perl-Data-OptList": [
+    "perl-ExtUtils-MakeMaker",
+    "perl-Params-Util",
+    "perl",
+    "perl-Sub-Install"
+  ],
+  "perl-Date-Calc": [
+    "perl"
+  ],
+  "perl-DBI": [
+    "perl"
+  ],
+  "perl-Devel-GlobalDestruction": [
+    "perl",
+    "perl-Sub-Exporter",
+    "perl-Sub-Exporter-Progressive"
+  ],
+  "perl-Digest-HMAC": [
+    "perl"
+  ],
+  "perl-Encode-compat": [
+    "perl"
+  ],
+  "perl-Encode-Locale": [
+    "perl"
+  ],
+  "perl-Error": [
+    "perl"
+  ],
+  "perl-Exporter-Lite": [
+    "perl"
+  ],
+  "perl-Exporter-Tiny": [
+    "perl"
+  ],
+  "perl-ExtUtils-Config": [
+    "perl"
+  ],
+  "perl-ExtUtils-Depends": [
+    "perl"
+  ],
+  "perl-ExtUtils-Helpers": [
+    "perl"
+  ],
+  "perl-ExtUtils-InstallPaths": [
+    "perl",
+    "perl-ExtUtils-Config"
+  ],
+  "perl-ExtUtils-MakeMaker": [
+    "perl"
+  ],
+  "perl-ExtUtils-PkgConfig": [
+    "perl"
+  ],
+  "perl-FFI-CheckLib": [
+    "perl"
+  ],
+  "perl-File-chdir": [
+    "perl"
+  ],
+  "perl-File-Copy-Recursive": [
+    "perl"
+  ],
+  "perl-File-Listing": [
+    "perl",
+    "perl-HTTP-Date"
+  ],
+  "perl-File-Next": [
+    "perl"
+  ],
+  "perl-File-ShareDir": [
+    "perl",
+    "make",
+    "perl-Class-Inspector"
+  ],
+  "perl-File-ShareDir-Install": [
+    "perl",
+    "make"
+  ],
+  "perl-File-Which": [
+    "perl",
+    "perl-Test-Script"
+  ],
+  "perl-Font-TTF": [
+    "perl-IO-String"
+  ],
+  "perl-Getopt-ArgvFile": [
+    "perl"
+  ],
+  "perl-Getopt-Tabular": [
+    "perl"
+  ],
+  "perl-HTML-Parser": [
+    "perl",
+    "make",
+    "perl-HTML-Tagset",
+    "perl-HTTP-Message",
+    "perl-URI"
+  ],
+  "perl-HTML-Tagset": [
+    "perl"
+  ],
+  "perl-http-cookiejar": [
+    "perl-HTTP-Date"
+  ],
+  "perl-HTTP-Cookies": [
+    "perl",
+    "perl-HTTP-Date",
+    "perl-HTTP-Message"
+  ],
+  "perl-HTTP-Daemon": [
+    "perl-Module-Build-Tiny",
+    "perl",
+    "perl-HTTP-Date",
+    "perl-HTTP-Message",
+    "perl-LWP-MediaTypes"
+  ],
+  "perl-HTTP-Date": [
+    "perl"
+  ],
+  "perl-HTTP-Message": [
+    "perl-Try-Tiny",
+    "perl",
+    "perl-Clone",
+    "perl-Encode-Locale",
+    "perl-IO-HTML",
+    "perl-HTTP-Date",
+    "perl-LWP-MediaTypes",
+    "perl-URI"
+  ],
+  "perl-HTTP-Negotiate": [
+    "perl",
+    "perl-HTTP-Message"
+  ],
+  "perl-Import-Into": [
+    "perl-Module-Runtime",
+    "perl"
+  ],
+  "perl-Importer": [
+    "perl"
+  ],
+  "perl-inc-latest": [
+    "perl"
+  ],
+  "perl-IO-HTML": [
+    "perl"
+  ],
+  "perl-IO-Socket-INET6": [
+    "perl-Socket6"
+  ],
+  "perl-IO-Socket-SSL": [
+    "perl-Net-SSLeay",
+    "perl",
+    "perl-URI"
+  ],
+  "perl-IO-String": [
+    "make",
+    "perl"
+  ],
+  "perl-IO-Stringy": [
+    "perl"
+  ],
+  "perl-IPC-Run3": [
+    "perl"
+  ],
+  "perl-JSON": [
+    "perl"
+  ],
+  "perl-libwww": [
+    "perl",
+    "perl-Encode-Locale",
+    "perl-File-Listing",
+    "perl-HTML-Parser",
+    "perl-HTTP-Cookies",
+    "perl-HTTP-Daemon",
+    "perl-http-cookiejar",
+    "perl-HTTP-Date",
+    "perl-HTTP-Negotiate",
+    "perl-LWP-MediaTypes",
+    "perl-Net-HTTP",
+    "perl-URI",
+    "perl-WWW-RobotRules",
+    "perl-HTTP-Message",
+    "perl-Try-Tiny"
+  ],
+  "perl-List-MoreUtils": [
+    "perl",
+    "perl-Exporter-Tiny",
+    "perl-List-MoreUtils-XS"
+  ],
+  "perl-List-MoreUtils-XS": [
+    "perl",
+    "make"
+  ],
+  "perl-Locale-Gettext": [
+    "perl",
+    "make",
+    "gettext"
+  ],
+  "perl-LWP-MediaTypes": [
+    "perl"
+  ],
+  "perl-LWP-Protocol-https": [
+    "perl",
+    "perl-IO-Socket-SSL",
+    "perl-Mozilla-CA",
+    "perl-Net-HTTP",
+    "perl-libwww"
+  ],
+  "perl-MailTools": [
+    "perl-TimeDate"
+  ],
+  "perl-Math-Int64": [
+    "perl",
+    "make"
+  ],
+  "perl-MIME-Charset": [
+    "perl"
+  ],
+  "perl-MIME-tools": [
+    "perl-MailTools",
+    "perl-IO-Stringy",
+    "perl-Convert-BinHex"
+  ],
+  "perl-Module-Build": [
+    "perl",
+    "perl-inc-latest"
+  ],
+  "perl-Module-Build-Tiny": [
+    "perl",
+    "perl-ExtUtils-Config",
+    "perl-ExtUtils-Helpers",
+    "perl-ExtUtils-InstallPaths"
+  ],
+  "perl-Module-Pluggable": [
+    "perl"
+  ],
+  "perl-Module-Runtime": [
+    "perl",
+    "perl-Module-Build"
+  ],
+  "perl-Moo": [
+    "perl-Test-Fatal",
+    "perl-Class-Method-Modifiers",
+    "perl-Devel-GlobalDestruction",
+    "perl-Import-Into",
+    "perl-Module-Runtime",
+    "perl-Role-Tiny",
+    "perl-Sub-Quote"
+  ],
+  "perl-Mozilla-CA": [
+    "perl"
+  ],
+  "perl-Net-DNS": [
+    "make",
+    "perl-Digest-HMAC",
+    "perl-Net-IP",
+    "perl"
+  ],
+  "perl-Net-HTTP": [
+    "perl"
+  ],
+  "perl-Net-IP": [
+    "perl"
+  ],
+  "perl-Net-SMTP-SSL": [
+    "perl-IO-Socket-SSL"
+  ],
+  "perl-Net-SSLeay": [
+    "openssl",
+    "perl",
+    "make"
+  ],
+  "perl-PadWalker": [
+    "libxcrypt",
+    "perl-ExtUtils-MakeMaker",
+    "perl"
+  ],
+  "perl-Parallel-ForkManager": [
+    "perl-ExtUtils-MakeMaker",
+    "perl",
+    "perl-Moo"
+  ],
+  "perl-Params-Util": [
+    "perl",
+    "make"
+  ],
+  "perl-Path-Class": [
+    "perl"
+  ],
+  "perl-Path-Tiny": [
+    "perl"
+  ],
+  "perl-PerlIO-gzip": [
+    "perl",
+    "zlib",
+    "make"
+  ],
+  "perl-Pod-Parser": [
+    "perl"
+  ],
+  "perl-Probe-Perl": [
+    "perl"
+  ],
+  "perl-Regexp-Common": [
+    "perl"
+  ],
+  "perl-Return-MultiLevel": [
+    "perl-Data-Munge"
+  ],
+  "perl-Role-Tiny": [
+    "perl"
+  ],
+  "perl-Scope-Guard": [
+    "perl"
+  ],
+  "perl-sgmls": [
+    "perl"
+  ],
+  "perl-Socket6": [
+    "perl",
+    "make"
+  ],
+  "perl-Sort-Versions": [
+    "perl"
+  ],
+  "perl-Spiffy": [
+    "perl"
+  ],
+  "perl-Sub-Exporter": [
+    "perl",
+    "perl-Data-OptList",
+    "perl-Params-Util",
+    "perl-Sub-Install"
+  ],
+  "perl-Sub-Exporter-Progressive": [
+    "perl"
+  ],
+  "perl-Sub-Info": [
+    "perl-Importer"
+  ],
+  "perl-Sub-Install": [
+    "perl"
+  ],
+  "perl-Sub-Quote": [
+    "perl-Test-Fatal",
+    "perl"
+  ],
+  "perl-TAP-Harness-Archive": [
+    "perl-Module-Build",
+    "perl-YAML-Tiny",
+    "perl"
+  ],
+  "perl-Term-Table": [],
+  "perl-TermReadKey": [
+    "make",
+    "perl"
+  ],
+  "perl-Test-Base": [
+    "perl",
+    "perl-Spiffy",
+    "perl-Text-Diff"
+  ],
+  "perl-Test-Deep": [
+    "perl",
+    "perl-Test-NoWarnings"
+  ],
+  "perl-Test-Exit": [
+    "perl-Return-MultiLevel"
+  ],
+  "perl-Test-Fatal": [
+    "perl",
+    "perl-Try-Tiny"
+  ],
+  "perl-Test-Needs": [
+    "perl"
+  ],
+  "perl-Test-NoWarnings": [
+    "perl"
+  ],
+  "perl-Test-Pod": [
+    "perl",
+    "perl-Module-Build"
+  ],
+  "perl-Test-Requires": [
+    "perl"
+  ],
+  "perl-Test-Requiresinternet": [
+    "perl"
+  ],
+  "perl-Test-Script": [
+    "perl",
+    "perl-IPC-Run3",
+    "perl-Probe-Perl"
+  ],
+  "perl-Test-Warnings": [
+    "perl"
+  ],
+  "perl-Test-YAML": [
+    "perl",
+    "perl-Test-Base"
+  ],
+  "perl-Test2-Suite": [
+    "perl-Module-Pluggable",
+    "perl-Importer",
+    "perl-Scope-Guard",
+    "perl-Sub-Info",
+    "perl-Term-Table",
+    "perl"
+  ],
+  "perl-Text-CharWidth": [
+    "perl",
+    "libxcrypt",
+    "make"
+  ],
+  "perl-Text-Diff": [
+    "perl-ExtUtils-MakeMaker",
+    "perl",
+    "perl-Algorithm-Diff"
+  ],
+  "perl-Text-WrapI18N": [
+    "perl",
+    "perl-Text-CharWidth"
+  ],
+  "perl-TimeDate": [
+    "perl"
+  ],
+  "perl-Try-Tiny": [
+    "perl"
+  ],
+  "perl-Unicode-LineBreak": [
+    "perl",
+    "make",
+    "perl-MIME-Charset"
+  ],
+  "perl-URI": [
+    "perl"
+  ],
+  "perl-WWW-RobotRules": [
+    "perl",
+    "perl-URI"
+  ],
+  "perl-XML-LibXML": [
+    "perl",
+    "libxml2",
+    "perl-Path-Tiny",
+    "make",
+    "perl-Alien-Libxml2",
+    "perl-XML-SAX",
+    "perl-XML-NamespaceSupport"
+  ],
+  "perl-XML-NamespaceSupport": [
+    "perl"
+  ],
+  "perl-XML-Parser": [
+    "expat",
+    "perl",
+    "perl-File-ShareDir-Install",
+    "make",
+    "perl-File-ShareDir"
+  ],
+  "perl-XML-SAX": [
+    "perl",
+    "perl-XML-SAX-Base",
+    "perl-XML-NamespaceSupport"
+  ],
+  "perl-XML-SAX-Base": [
+    "perl"
+  ],
+  "perl-XML-Simple": [
+    "perl-XML-Parser",
+    "perl"
+  ],
+  "perl-YAML-Syck": [
+    "perl",
+    "make"
+  ],
+  "perl-YAML-Tiny": [
+    "perl"
+  ],
+  "pinentry": [
+    "ncurses",
+    "libassuan",
+    "libgpg-error"
+  ],
+  "pkgconf": [],
+  "pkgfile": [
+    "pcre",
+    "libarchive",
+    "curl",
+    "llvm",
+    "pacman"
+  ],
+  "po4a": [
+    "perl-Module-Build",
+    "perl",
+    "gettext",
+    "perl-YAML-Tiny",
+    "perl-Text-WrapI18N",
+    "perl-Locale-Gettext",
+    "perl-TermReadKey",
+    "perl-sgmls",
+    "perl-Unicode-LineBreak",
+    "perl-Pod-Parser"
+  ],
+  "popt": [
+    "gettext",
+    "libiconv"
+  ],
+  "procps-ng": [
+    "ncurses",
+    "gettext"
+  ],
+  "protobuf": [
+    "zlib"
+  ],
+  "psmisc": [
+    "ncurses",
+    "libiconv",
+    "gettext"
+  ],
+  "publicsuffix-list": [],
+  "pv": [
+    "gettext"
+  ],
+  "pwgen": [],
+  "python": [
+    "bzip2",
+    "libxcrypt",
+    "expat",
+    "gdbm",
+    "util-linux",
+    "mpdecimal",
+    "sqlite",
+    "libffi",
+    "ncurses",
+    "readline",
+    "xz",
+    "openssl",
+    "zlib",
+    "autoconf-archive",
+    "binutils"
+  ],
+  "python-appdirs": [
+    "python-setuptools",
+    "python-build",
+    "python-installer",
+    "python"
+  ],
+  "python-attrs": [
+    "python-hatchling",
+    "python-hatch-vcs",
+    "python-hatch-fancy-pypi-readme",
+    "python-build",
+    "python-installer",
+    "python"
+  ],
+  "python-babel": [
+    "python-build",
+    "python-installer",
+    "python-setuptools",
+    "python"
+  ],
+  "python-beaker": [
+    "python-setuptools",
+    "python-build",
+    "python-installer",
+    "python"
+  ],
+  "python-brotli": [
+    "python",
+    "python-setuptools",
+    "python-build",
+    "python-installer"
+  ],
+  "python-build": [
+    "python-flit-core",
+    "python-installer",
+    "python-packaging",
+    "python-pyproject-hooks"
+  ],
+  "python-calver": [
+    "python-build",
+    "python-installer",
+    "python-setuptools",
+    "python"
+  ],
+  "python-certifi": [
+    "python-setuptools",
+    "python-build",
+    "python-installer",
+    "python"
+  ],
+  "python-cffi": [
+    "python-build",
+    "python-installer",
+    "python-setuptools",
+    "libffi",
+    "python-pycparser"
+  ],
+  "python-charset-normalizer": [
+    "python-build",
+    "python-installer",
+    "python-setuptools",
+    "python"
+  ],
+  "python-colorama": [
+    "python-build",
+    "python-hatchling",
+    "python-installer",
+    "python"
+  ],
+  "python-configobj": [
+    "python-build",
+    "python-installer",
+    "python-setuptools",
+    "python"
+  ],
+  "python-cryptography": [
+    "python-build",
+    "python-installer",
+    "maturin",
+    "python-setuptools",
+    "rust",
+    "openssl",
+    "pkgconf",
+    "python",
+    "python-cffi"
+  ],
+  "python-docutils": [
+    "python-build",
+    "python-flit-core",
+    "python-installer",
+    "python"
+  ],
+  "python-dulwich": [
+    "python-build",
+    "python-installer",
+    "python-setuptools",
+    "python-setuptools-rust",
+    "python",
+    "rust",
+    "python-urllib3"
+  ],
+  "python-editables": [
+    "python-build",
+    "python-installer",
+    "python-flit-core",
+    "python"
+  ],
+  "python-fastbencode": [
+    "python-build",
+    "python-installer",
+    "python-setuptools",
+    "python-setuptools-rust",
+    "python"
+  ],
+  "python-fastimport": [
+    "python-setuptools",
+    "python-build",
+    "python-installer",
+    "python"
+  ],
+  "python-flit-core": [
+    "python"
+  ],
+  "python-hatch-fancy-pypi-readme": [
+    "python-build",
+    "python-installer",
+    "python",
+    "python-hatchling"
+  ],
+  "python-hatch-vcs": [
+    "python-build",
+    "python-installer",
+    "python-hatchling",
+    "python-setuptools-scm"
+  ],
+  "python-hatchling": [
+    "python-build",
+    "python-installer",
+    "python-setuptools",
+    "python",
+    "python-packaging",
+    "python-pathspec",
+    "python-pluggy",
+    "python-editables",
+    "python-trove-classifiers"
+  ],
+  "python-idna": [
+    "python-build",
+    "python-flit-core",
+    "python-installer",
+    "python"
+  ],
+  "python-imagesize": [
+    "python-build",
+    "python-installer",
+    "python-setuptools",
+    "python"
+  ],
+  "python-iniconfig": [
+    "python-build",
+    "python-installer",
+    "python-hatchling",
+    "python-hatch-vcs",
+    "python"
+  ],
+  "python-installer": [
+    "python-flit-core",
+    "python"
+  ],
+  "python-jinja": [
+    "python-flit-core",
+    "python-build",
+    "python-installer",
+    "python-markupsafe"
+  ],
+  "python-lxml": [
+    "cython",
+    "libxslt",
+    "libxml2",
+    "pkgconf",
+    "python-setuptools",
+    "python-build",
+    "python-installer",
+    "python"
+  ],
+  "python-mako": [
+    "python-build",
+    "python-installer",
+    "python-setuptools",
+    "python-markupsafe",
+    "python-beaker"
+  ],
+  "python-mallard-ducktype": [
+    "python-setuptools",
+    "python-build",
+    "python-installer",
+    "python"
+  ],
+  "python-markdown": [
+    "python-build",
+    "python-installer",
+    "python-setuptools",
+    "python"
+  ],
+  "python-markupsafe": [
+    "python-setuptools",
+    "python-build",
+    "python-installer",
+    "python"
+  ],
+  "python-merge3": [
+    "python-build",
+    "python-installer",
+    "python-setuptools",
+    "python"
+  ],
+  "python-more-itertools": [
+    "python-build",
+    "python-installer",
+    "python-flit-core",
+    "python"
+  ],
+  "python-pacdb": [
+    "python-poetry-core",
+    "python-build",
+    "python-installer",
+    "python",
+    "python-zstandard"
+  ],
+  "python-packaging": [
+    "python-installer",
+    "python-flit-core",
+    "python"
+  ],
+  "python-pathspec": [
+    "python-build",
+    "python-flit-core",
+    "python-installer",
+    "python"
+  ],
+  "python-patiencediff": [
+    "python",
+    "python-setuptools",
+    "python-setuptools-rust",
+    "python-build",
+    "python-installer"
+  ],
+  "python-pip": [
+    "python-build",
+    "python-flit-core",
+    "python-installer",
+    "python-setuptools",
+    "python"
+  ],
+  "python-pkgconfig": [
+    "python-poetry-core",
+    "python-build",
+    "python-installer",
+    "python",
+    "pkgconf"
+  ],
+  "python-pluggy": [
+    "python-setuptools",
+    "python-setuptools-scm",
+    "python-build",
+    "python-installer",
+    "python"
+  ],
+  "python-poetry-core": [
+    "python-build",
+    "python-installer",
+    "python"
+  ],
+  "python-py3c": [
+    "make",
+    "python-setuptools",
+    "python-build",
+    "python-installer",
+    "python"
+  ],
+  "python-pyalpm": [
+    "gettext",
+    "heimdal",
+    "libarchive",
+    "curl",
+    "gpgme",
+    "python-setuptools",
+    "python-installer",
+    "python-build",
+    "pacman",
+    "python-pkgconfig",
+    "python"
+  ],
+  "python-pycparser": [
+    "python-build",
+    "python-installer",
+    "python-setuptools",
+    "python"
+  ],
+  "python-pygments": [
+    "python-hatchling",
+    "python-build",
+    "python-installer",
+    "python"
+  ],
+  "python-pyparsing": [
+    "python-flit-core",
+    "python-installer",
+    "python"
+  ],
+  "python-pyproject-hooks": [
+    "python-installer",
+    "python-flit-core",
+    "python"
+  ],
+  "python-pytest": [
+    "python-build",
+    "python-installer",
+    "python-setuptools",
+    "python-setuptools-scm",
+    "python",
+    "python-attrs",
+    "python-pluggy",
+    "python-packaging",
+    "python-iniconfig",
+    "python-pygments"
+  ],
+  "python-requests": [
+    "python-build",
+    "python-installer",
+    "python-setuptools",
+    "python",
+    "python-certifi",
+    "python-charset-normalizer",
+    "python-idna",
+    "python-urllib3"
+  ],
+  "python-resolvelib": [
+    "python-build",
+    "python-installer",
+    "python-setuptools",
+    "python"
+  ],
+  "python-roman-numerals": [
+    "python-build",
+    "python-flit-core",
+    "python-installer",
+    "python"
+  ],
+  "python-semantic-version": [
+    "python-setuptools",
+    "python-build",
+    "python-installer",
+    "python"
+  ],
+  "python-setuptools": [
+    "python"
+  ],
+  "python-setuptools-gettext": [
+    "python-build",
+    "python-installer",
+    "python",
+    "python-setuptools"
+  ],
+  "python-setuptools-rust": [
+    "python-build",
+    "python-installer",
+    "python-setuptools-scm",
+    "rust",
+    "python-setuptools",
+    "python-semantic-version"
+  ],
+  "python-setuptools-scm": [
+    "python-build",
+    "python-installer",
+    "python",
+    "python-setuptools",
+    "python-packaging",
+    "python-typing_extensions"
+  ],
+  "python-six": [
+    "python-setuptools",
+    "python-build",
+    "python-installer",
+    "python"
+  ],
+  "python-smartypants": [
+    "python-setuptools",
+    "python-build",
+    "python-installer",
+    "python"
+  ],
+  "python-snowballstemmer": [
+    "python-build",
+    "python-installer",
+    "python-setuptools",
+    "python"
+  ],
+  "python-sphinx": [
+    "python-build",
+    "python-flit-core",
+    "python-installer",
+    "python-babel",
+    "python-colorama",
+    "python-docutils",
+    "python-imagesize",
+    "python-jinja",
+    "python-packaging",
+    "python-pygments",
+    "python-requests",
+    "python-roman-numerals",
+    "python-snowballstemmer",
+    "python-sphinx-alabaster-theme",
+    "python-sphinxcontrib-applehelp",
+    "python-sphinxcontrib-devhelp",
+    "python-sphinxcontrib-htmlhelp",
+    "python-sphinxcontrib-jsmath",
+    "python-sphinxcontrib-qthelp",
+    "python-sphinxcontrib-serializinghtml"
+  ],
+  "python-sphinx-alabaster-theme": [
+    "python-build",
+    "python-flit-core",
+    "python-installer",
+    "python"
+  ],
+  "python-sphinxcontrib-applehelp": [
+    "python-build",
+    "python-flit-core",
+    "python-installer",
+    "python"
+  ],
+  "python-sphinxcontrib-devhelp": [
+    "python-build",
+    "python-flit-core",
+    "python-installer",
+    "python"
+  ],
+  "python-sphinxcontrib-htmlhelp": [
+    "python-build",
+    "python-flit-core",
+    "python-installer",
+    "python"
+  ],
+  "python-sphinxcontrib-jsmath": [
+    "python-build",
+    "python-flit-core",
+    "python-installer",
+    "python-setuptools",
+    "python"
+  ],
+  "python-sphinxcontrib-qthelp": [
+    "python-build",
+    "python-flit-core",
+    "python-installer",
+    "python"
+  ],
+  "python-sphinxcontrib-serializinghtml": [
+    "python-build",
+    "python-flit-core",
+    "python-installer",
+    "python"
+  ],
+  "python-trove-classifiers": [
+    "python-build",
+    "python-installer",
+    "python-setuptools",
+    "python-calver",
+    "python"
+  ],
+  "python-typing_extensions": [
+    "python-build",
+    "python-flit-core",
+    "python-installer",
+    "python"
+  ],
+  "python-typogrify": [
+    "python-hatchling",
+    "python-build",
+    "python-installer",
+    "python",
+    "python-smartypants"
+  ],
+  "python-urllib3": [
+    "python-hatchling",
+    "python-hatch-vcs",
+    "python-build",
+    "python-installer",
+    "python"
+  ],
+  "python-wcwidth": [
+    "python-hatchling",
+    "python-build",
+    "python-installer",
+    "python"
+  ],
+  "python-yaml": [
+    "python-build",
+    "python-installer",
+    "cython",
+    "python-setuptools",
+    "libyaml",
+    "python"
+  ],
+  "python-zstandard": [
+    "python",
+    "python-setuptools",
+    "python-build",
+    "python-installer"
+  ],
+  "quilt": [
+    "bash",
+    "bzip2",
+    "diffstat",
+    "diffutils",
+    "findutils",
+    "gawk",
+    "gettext",
+    "gzip",
+    "patch",
+    "perl"
+  ],
+  "rcs": [
+    "groff",
+    "ed"
+  ],
+  "re2c": [
+    "python"
+  ],
+  "readline": [
+    "ncurses"
+  ],
+  "rebase": [
+    "coreutils",
+    "grep",
+    "gzip",
+    "sed",
+    "dash"
+  ],
+  "reflex": [],
+  "remake": [
+    "gettext",
+    "wget",
+    "readline",
+    "guile"
+  ],
+  "rhash": [
+    "gettext",
+    "openssl",
+    "libiconv"
+  ],
+  "rlwrap": [
+    "readline"
+  ],
+  "rpcsvc-proto": [
+    "gettext",
+    "libiconv"
+  ],
+  "rsync": [
+    "libiconv",
+    "lz4",
+    "xxhash",
+    "zstd",
+    "openssl",
+    "popt",
+    "perl"
+  ],
+  "ruby": [
+    "openssl",
+    "libffi",
+    "doxygen",
+    "libxcrypt",
+    "gmp",
+    "libyaml",
+    "gdbm",
+    "libiconv",
+    "readline",
+    "zlib"
+  ],
+  "rust": [
+    "llvm",
+    "python",
+    "libgit2",
+    "pcre2",
+    "libssh2",
+    "openssl",
+    "pkgconf",
+    "sqlite",
+    "xz",
+    "zstd",
+    "zlib",
+    "curl"
+  ],
+  "scons": [
+    "python-build",
+    "python-installer",
+    "python-setuptools",
+    "python"
+  ],
+  "screenfetch": [
+    "bash"
+  ],
+  "sed": [
+    "gettext",
+    "bash"
+  ],
+  "serf": [
+    "scons",
+    "apr-util",
+    "heimdal",
+    "zlib",
+    "openssl",
+    "libiconv"
+  ],
+  "setconf": [
+    "python"
+  ],
+  "sgml-common": [
+    "bash"
+  ],
+  "sharutils": [
+    "gettext",
+    "perl",
+    "texinfo"
+  ],
+  "shellspec": [
+    "bash"
+  ],
+  "shutdown": [
+    "make"
+  ],
+  "socat": [
+    "readline",
+    "openssl",
+    "tar"
+  ],
+  "sqlite": [
+    "readline",
+    "tcl",
+    "zlib"
+  ],
+  "squashfs-tools": [
+    "make",
+    "lz4",
+    "lzo2",
+    "xz",
+    "zlib",
+    "zstd",
+    "help2man"
+  ],
+  "ssh-pageant": [],
+  "sshpass": [
+    "openssh"
+  ],
+  "stow": [
+    "perl"
+  ],
+  "subversion": [
+    "perl",
+    "python",
+    "python-py3c",
+    "python-setuptools",
+    "ruby",
+    "swig",
+    "gmp",
+    "lz4",
+    "cyrus-sasl",
+    "serf",
+    "sqlite",
+    "apr",
+    "apr-util",
+    "file",
+    "bzip2",
+    "expat",
+    "libiconv",
+    "gettext",
+    "xz",
+    "openssl",
+    "util-linux",
+    "libxcrypt",
+    "zstd",
+    "zlib"
+  ],
+  "swig": [
+    "zlib",
+    "pcre2"
+  ],
+  "tar": [
+    "libiconv",
+    "gettext",
+    "bash"
+  ],
+  "task": [
+    "gnutls",
+    "util-linux",
+    "nettle"
+  ],
+  "tcl": [
+    "zlib"
+  ],
+  "tcsh": [
+    "libxcrypt",
+    "libiconv",
+    "ncurses"
+  ],
+  "texinfo": [
+    "ncurses",
+    "libxcrypt",
+    "gettext",
+    "findutils",
+    "gzip",
+    "perl",
+    "help2man",
+    "bash",
+    "gawk"
+  ],
+  "tftp-hpa": [
+    "readline"
+  ],
+  "tig": [
+    "asciidoc",
+    "xmlto",
+    "readline",
+    "ncurses",
+    "libiconv"
+  ],
+  "time": [],
+  "tio": [
+    "pkgconf",
+    "python",
+    "libinih",
+    "glib2",
+    "lua"
+  ],
+  "tmate": [
+    "libevent",
+    "ncurses",
+    "openssl",
+    "libssh",
+    "zlib",
+    "msgpack-c"
+  ],
+  "tmux": [
+    "ncurses",
+    "libevent"
+  ],
+  "tree": [
+    "make"
+  ],
+  "txt2html": [
+    "perl-Module-Build",
+    "perl",
+    "perl-Getopt-ArgvFile"
+  ],
+  "txt2tags": [
+    "python-setuptools",
+    "python-build",
+    "python-installer",
+    "python"
+  ],
+  "tzcode": [
+    "make",
+    "coreutils",
+    "gawk",
+    "sed"
+  ],
+  "u-boot-tools": [
+    "make",
+    "openssl",
+    "gnutls",
+    "util-linux",
+    "dtc"
+  ],
+  "ucl": [],
+  "unrar": [
+    "make"
+  ],
+  "unzip": [
+    "bzip2",
+    "libiconv",
+    "make",
+    "bash"
+  ],
+  "upx": [
+    "ucl",
+    "zlib"
+  ],
+  "util-linux": [
+    "file",
+    "gettext",
+    "libiconv",
+    "readline",
+    "sqlite",
+    "libxcrypt",
+    "ncurses",
+    "zlib",
+    "coreutils"
+  ],
+  "uutils-coreutils": [
+    "rust",
+    "pkgconf",
+    "oniguruma"
+  ],
+  "uv": [
+    "rust",
+    "maturin",
+    "python-installer",
+    "xz",
+    "zstd",
+    "pkgconf",
+    "python"
+  ],
+  "vifm": [
+    "ncurses",
+    "groff"
+  ],
+  "vim": [
+    "gawk",
+    "perl",
+    "python",
+    "ruby",
+    "ncurses",
+    "libiconv",
+    "gettext",
+    "libxcrypt"
+  ],
+  "vimpager": [
+    "vim",
+    "sharutils"
+  ],
+  "w3m": [
+    "gc",
+    "libiconv",
+    "gettext",
+    "openssl",
+    "zlib",
+    "ncurses"
+  ],
+  "wcd": [
+    "perl",
+    "gettext",
+    "libunistring",
+    "ncurses",
+    "make"
+  ],
+  "wget": [
+    "autoconf-archive",
+    "gettext",
+    "libidn2",
+    "util-linux",
+    "libpsl",
+    "gnutls",
+    "pcre2",
+    "zlib",
+    "python",
+    "libunistring",
+    "libiconv"
+  ],
+  "which": [
+    "bash"
+  ],
+  "whois": [
+    "perl",
+    "libxcrypt",
+    "libidn2",
+    "libiconv",
+    "libunistring",
+    "make"
+  ],
+  "windows-default-manifest": [],
+  "winpty": [
+    "tar",
+    "xz",
+    "mingw-w64-cross-gcc"
+  ],
+  "xdelta3": [
+    "xz"
+  ],
+  "xmlto": [
+    "docbook-xsl",
+    "libxslt",
+    "perl-YAML-Syck",
+    "perl-Test-Pod"
+  ],
+  "xorg-util-macros": [],
+  "xorgproto": [],
+  "xorriso": [
+    "bzip2",
+    "readline",
+    "zlib",
+    "libiconv"
+  ],
+  "xxhash": [],
+  "xz": [
+    "libiconv",
+    "gettext",
+    "po4a"
+  ],
+  "yasm": [
+    "xmlto"
+  ],
+  "yelp-tools": [
+    "intltool",
+    "yelp-xsl",
+    "python-lxml",
+    "itstool",
+    "docbook-xsl",
+    "python-mallard-ducktype"
+  ],
+  "yelp-xsl": [
+    "itstool",
+    "libxslt"
+  ],
+  "yodl": [
+    "icmake",
+    "bash"
+  ],
+  "zip": [
+    "make",
+    "bzip2"
+  ],
+  "zlib": [
+    "make"
+  ],
+  "znc": [
+    "cyrus-sasl",
+    "gettext",
+    "icu",
+    "perl",
+    "python",
+    "swig",
+    "openssl"
+  ],
+  "zsh": [
+    "ncurses",
+    "pcre2",
+    "libiconv",
+    "gdbm",
+    "groff"
+  ],
+  "zstd": []
+}
