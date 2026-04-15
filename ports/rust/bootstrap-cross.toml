@@ -27,7 +27,7 @@ tools = [
   "rust-analyzer-proc-macro-srv",
   "analysis"
 ]
-build-dir = "cygwin-bootstrap-24"
+build-dir = "cygwin-bootstrap-24-1"
 profiler = true
 
 # Do not generate docs for cygwin
