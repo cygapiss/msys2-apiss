@@ -1,10 +1,13 @@
+import * as fs from "fs/promises";
 import * as path from "path";
 import { fileURLToPath } from "url";
 import {
-  spawnProcessAsync,
   spawnProcessAsyncCapture,
-  removeDirectory,
   archiveFull,
+  ci_tools_msys64_stage2,
+  installMsys2BasePackages,
+  installMsys2ExtractScript,
+  executePacmanInstall,
 } from "./utils.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -12,83 +15,42 @@ const __dirname = path.dirname(__filename);
 
 process.on("SIGINT", function () {
   console.log("Caught interrupt signal");
+  process.exit(-1);
 });
 
 async function main() {
-  const ci_tools_root = "D:/CI-Tools/msys64-stage2";
-  const msys_root = path.join(ci_tools_root, "msys64");
+  const msys_root = path.join(ci_tools_msys64_stage2, "msys64");
   const pkg_root = __dirname;
-  await removeDirectory(msys_root);
-  await spawnProcessAsync(
-    `tar`,
-    ["xf", path.join(ci_tools_root, "msys2-base-x86_64-20251213.tar.zst")],
-    {
-      cwd: ci_tools_root,
-    },
+  const has_msys64 = await installMsys2BasePackages(
+    ci_tools_msys64_stage2,
+    msys_root,
+    true,
   );
-  console.log("Extract base finished\n");
-  await spawnProcessAsync(
-    `${msys_root}/usr/bin/bash.exe`,
-    [
-      "--login",
-      "-c",
-      `echo "Init msys with $MSYSTEM finished"; rm -rf /var/lib/pacman/db.lck; pacman -Syu --noconfirm`,
-    ],
-    {
-      env: {
-        MSYSTEM: "MSYS",
-      },
-    },
-  );
-  const ci_tools_root_cygwin = (
-    await spawnProcessAsyncCapture(`${msys_root}/usr/bin/cygpath.exe`, [
-      ci_tools_root,
-    ])
-  ).stdout.trim();
-  await spawnProcessAsync(
-    `${msys_root}/usr/bin/bash.exe`,
-    [
-      "--login",
-      "-c",
-      [
-        `mkdir -p /var/cache/pacman/pkg`,
-        `rm -rf /var/cache/pacman/pkg`,
-        `cd /var/cache/pacman/`,
-        `ln -s -T /d/CI-Tools/var-cache/pacman/pkg pkg`,
-        `cat /etc/pacman.conf | grep ^SigLevel`,
-        `cd ${ci_tools_root_cygwin}/`,
-        `pacman -Syu --noconfirm`,
-      ].join("; "),
-    ],
-    {
-      env: {
-        MSYS: "winsymlinks:native",
-        MSYSTEM: "MSYS",
-        CHERE_INVOKING: "1",
-      },
-    },
-  );
-  for (let i = 0; i < 2; i += 1) {
-    await spawnProcessAsync(
-      `${msys_root}/usr/bin/bash.exe`,
-      [
-        "--login",
-        "-c",
-        "pacman -U --noconfirm --overwrite \\* `ls | tr '\n' ' '`",
-      ],
-      {
-        cwd: path.join(pkg_root, "dist"),
-        env: {
-          MSYS: "winsymlinks:native",
-          MSYSTEM: "MSYS",
-          CHERE_INVOKING: "1",
-        },
-      },
+
+  const install_commands = [
+    "pacman -U --noconfirm --overwrite \\* `ls | tr '\n' ' '`",
+    "pacman -U --noconfirm --overwrite \\* `ls | tr '\n' ' '`",
+    "pacman -S --needed --noconfirm --overwrite \\* mingw-w64-x86_64-python mingw-w64-x86_64-llvm mingw-w64-x86_64-clang",
+  ];
+  for (let i = 0; i < install_commands.length; i += 1) {
+    console.log(`===Execute: "${install_commands[i]}"`);
+    // reset the pacman cache folder
+    await executePacmanInstall(
+      msys_root,
+      install_commands[i],
+      path.join(pkg_root, "dist", "stage1"),
     );
   }
   console.log("===Switch to cygwin finished");
-  await archiveFull(ci_tools_root, msys_root, ci_tools_root_cygwin);
-  console.log("===Archive stage2 finished");
+  const msys2_base_filename = await archiveFull(
+    ci_tools_msys64_stage2,
+    msys_root,
+  );
+  console.log(
+    `===stage2: Archive finished as: ${msys2_base_filename} with has_msys64:${has_msys64}`,
+  );
+  await installMsys2ExtractScript(ci_tools_msys64_stage2, msys2_base_filename);
+  console.log(`===stage2: Install extract script finished`);
 }
 
 main();

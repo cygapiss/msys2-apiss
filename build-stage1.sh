@@ -11,7 +11,7 @@ fi
 pushd build-install
 sh perl-create-syms-for-pkg.sh
 popd
-sh msys-stage1-list.sh
+sh build-stage1-list.sh
 
 do_other() {
     ./build-stage1.sh >build-stage1.txt 2>&1
