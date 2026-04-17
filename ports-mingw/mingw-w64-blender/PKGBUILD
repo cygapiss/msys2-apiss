@@ -1,21 +1,21 @@
 # Maintainer: Alexey Pavlov <alexpux@gmail.com>
 # To build with Qt-Creator:
 # 1. Launch Qt-Creator with the env (set from cmd.exe):
-# set "MINGW_PREFIX=C:/msys64/mingw64"
+# set "MINGW_PREFIX=C:/msys64/ucrt64"
 # set "ACLOCAL_PATH=%MINGW_PREFIX%/share/aclocal:/usr/share/aclocal"
 # set "PKG_CONFIG_PATH=%MINGW_PREFIX%/lib/pkgconfig"
 # set "PATH=%MINGW_PREFIX%/bin;%PATH%"
 # 2. Specify the following as the CMake arguments:
-# -DMINGW_LIBS=%MINGW_PREFIX% -DCMAKE_BUILD_TYPE=Debug -DWITH_SYSTEM_GLEW=ON -DWITH_SYSTEM_OPENJPEG=ON -DWITH_INSTALL_PORTABLE=OFF -DWITH_OPENCOLLADA=ON -DWITH_GAMEENGINE=ON -DWITH_RAYOPTIMIZATION=ON -DWITH_JACK=OFF -DWITH_PLAYER=ON -DWITH_CODEC_FFMPEG=ON -DWITH_CODEC_SNDFILE=ON -DWITH_CYCLES=ON -DWITH_CYCLES_CUDA_BINARIES=OFF -DWITH_CYCLES_OSL=ON -DWITH_FFTW3=ON -DWITH_MOD_OCEANSIM=ON -DPYTHON_VERSION=3.7 -DPYTHON_LIBPATH=%MINGW_PREFIX%/lib -DPYTHON_LIBRARY="python3.6m" -DPYTHON_INCLUDE_DIRS=/msys64/mingw64/include/python3.6m -DWITH_PYTHON_INSTALL=OFF -DWITH_PYTHON_INSTALL_NUMPY=OFF -DPYTHON_NUMPY_PATH=%MINGW_PREFIX%/lib/python3.6/site-packages -DCYCLES_OSL=%MINGW_PREFIX% -DWITH_IMAGE_REDCODE=ON -DWITH_OPENMP=ON -DWITH_LLVM=ON -DLLVM_STATIC=ON
+# -DMINGW_LIBS=%MINGW_PREFIX% -DCMAKE_BUILD_TYPE=Debug -DWITH_SYSTEM_GLEW=ON -DWITH_SYSTEM_OPENJPEG=ON -DWITH_INSTALL_PORTABLE=OFF -DWITH_OPENCOLLADA=ON -DWITH_GAMEENGINE=ON -DWITH_RAYOPTIMIZATION=ON -DWITH_JACK=OFF -DWITH_PLAYER=ON -DWITH_CODEC_FFMPEG=ON -DWITH_CODEC_SNDFILE=ON -DWITH_CYCLES=ON -DWITH_CYCLES_CUDA_BINARIES=OFF -DWITH_CYCLES_OSL=ON -DWITH_FFTW3=ON -DWITH_MOD_OCEANSIM=ON -DPYTHON_VERSION=3.7 -DPYTHON_LIBPATH=%MINGW_PREFIX%/lib -DPYTHON_LIBRARY="python3.14m" -DPYTHON_INCLUDE_DIRS=/msys64/ucrt64/include/python3.14m -DWITH_PYTHON_INSTALL=OFF -DWITH_PYTHON_INSTALL_NUMPY=OFF -DPYTHON_NUMPY_PATH=%MINGW_PREFIX%/lib/python3.14/site-packages -DCYCLES_OSL=%MINGW_PREFIX% -DWITH_IMAGE_REDCODE=ON -DWITH_OPENMP=ON -DWITH_LLVM=ON -DLLVM_STATIC=ON
 
 _realname=blender
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
 pkgver=5.0.0
-pkgrel=5
+pkgrel=6
 pkgdesc="A fully integrated 3D graphics creation suite (mingw-w64)"
 arch=('any')
-mingw_arch=('mingw64' 'ucrt64' 'clang64' 'clangarm64')
+mingw_arch=('ucrt64' 'clang64' 'clangarm64')
 url="https://www.blender.org"
 msys2_repository_url="https://projects.blender.org/blender/blender"
 msys2_references=(
@@ -80,6 +80,7 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-cc"
              "${MINGW_PACKAGE_PREFIX}-ninja"
              "${MINGW_PACKAGE_PREFIX}-boost"
              "${MINGW_PACKAGE_PREFIX}-eigen3"
+             "${MINGW_PACKAGE_PREFIX}-fmt"
              "${MINGW_PACKAGE_PREFIX}-vulkan-headers"
              "${MINGW_PACKAGE_PREFIX}-wintab-sdk"
              $([[ "$CARCH" == "aarch64" ]] && echo "${MINGW_PACKAGE_PREFIX}-sse2neon"))
@@ -96,7 +97,6 @@ source=(https://download.blender.org/source/${_realname}-${pkgver}.tar.xz
         0008-mingw-use-X11-like-path-layout.patch
         0009-include-missing-headers.patch
         0010-conflict-near-far-macroses.patch
-        0011-no-TIME_UTC-on-msvcrt.patch
         0013-force-draco.patch
         0014-fix-find-numpy-2.patch
         0015-mingw-python-like-msvc.patch
@@ -125,7 +125,6 @@ sha256sums=('120b45227b1dba2ecec116c6f924f3e7efabebac762e030552fdf70baff1b5b4'
             'dfbfe0ee07fe2a88641966cc067740d5b66628134d547f742c561868ebb9c36b'
             '11c0f8e70144413c009d4b0b221ec95ee3ae9250e361a93d8f87402da48b776b'
             '9e2541912f106171be109aaf11c5406d9ddd62b6d930628aaa0982ceb8216a66'
-            '84fdb7b1c4f408aff199172cbb09460ac60443156bc78fc3eaf3ba90e6fb500e'
             'e9e26a1c9b540fbdd7f63e83c0bbdf71c08a0e68f7ceb57fcb322113a97c9a62'
             'ae2270a6db620a93655255a6a5400b1857b5a5d29e2999cd7649b54f63c0d5fc'
             'fd2230e71f8deb6a3252c5ea439803bdb6abb5124d0cc2bc64dc856de7bd00cf'
@@ -168,7 +167,6 @@ prepare() {
     0008-mingw-use-X11-like-path-layout.patch \
     0009-include-missing-headers.patch \
     0010-conflict-near-far-macroses.patch \
-    0011-no-TIME_UTC-on-msvcrt.patch \
     0013-force-draco.patch \
     0014-fix-find-numpy-2.patch \
     0015-mingw-python-like-msvc.patch \
@@ -207,12 +205,10 @@ build() {
 
   CXXFLAGS+=" -w"
   CFLAGS+=" -w"
-  if [[ ${MINGW_PACKAGE_PREFIX} == *-clang-* ]]; then
+  if [[ ${CC} == clang ]]; then
     CXXFLAGS+=" -Wno-c++11-narrowing"
     CFLAGS+=" -Wno-unreachable-code-generic-assoc"
-  fi
-
-  if [[ $MINGW_PACKAGE_PREFIX != *-clang-* ]]; then
+  else
     CFLAGS+=" -Wno-incompatible-pointer-types"
   fi
 
@@ -271,8 +267,8 @@ package() {
   # Manually install draco bindings
   #_pyver=$(${MINGW_PREFIX}/bin/python -c "import sys;sys.stdout.write('.'.join(map(str, sys.version_info[:2])))")
   #mkdir -p "${pkgdir}${MINGW_PREFIX}/lib/python${_pyver}"/
-  #mv "${pkgdir}"${MINGW_PREFIX}/share/blender/4*/python/lib/* "${pkgdir}"${MINGW_PREFIX}/lib/
-  #rm -r "${pkgdir}"${MINGW_PREFIX}/share/blender/4*/python
+  #mv "${pkgdir}"${MINGW_PREFIX}/share/blender/5*/python/lib/* "${pkgdir}"${MINGW_PREFIX}/lib/
+  #rm -r "${pkgdir}"${MINGW_PREFIX}/share/blender/5*/python
 
   ${MINGW_PREFIX}/bin/python -m compileall -o 0 -o 1 -q "${pkgdir}${MINGW_PREFIX}/share/blender/${pkgver%.*}"
   ${MINGW_PREFIX}/bin/python -m compileall -o 0 -o 1 -q \
