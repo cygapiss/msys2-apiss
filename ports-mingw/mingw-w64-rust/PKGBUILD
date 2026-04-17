@@ -21,7 +21,7 @@ pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}"
            "${MINGW_PACKAGE_PREFIX}-rust-wasm" \
            "${MINGW_PACKAGE_PREFIX}-rust-emscripten"))
 pkgver=1.95.0
-pkgrel=1
+pkgrel=2
 pkgdesc="Systems programming language focused on safety, speed and concurrency (mingw-w64)"
 arch=('any')
 mingw_arch=('mingw64' 'ucrt64' 'clang64' 'clangarm64')
@@ -70,7 +70,7 @@ source=("${rust_dist_server}/${_realname}c-${pkgver}-src.tar.xz"{,.asc}
 noextract=(${_realname}c-${pkgver}-src.tar.xz)
 sha256sums=('62b67230754da642a264ca0cb9fc08820c54e2ed7b3baba0289876d4cdb48c08'
             'SKIP'
-            '5a4ed96346342152b4c02406f981d5c3f0a2052b5b53d8283fc485534b5d66de'
+            '3a6f3b19e5e42e2372b6a231e2fc46d1a8342fd1f8d3bdaf165e508fe229c30c'
             'a76bb1118bcbb14affd6627fdfeccbf491c2d480a3aa0ec5db6c5938e6758c93'
             'db5d0dbeaaab5bd22c71ef35d1978960dd7e79cc153e5eeb72a5f635255991de'
             '56882f1a0f1404c10c7726d6cc37444f2b343e72b969badfcb43760f80db0f32'
@@ -132,7 +132,7 @@ build() {
   export INSTALL_PREFIX="${MINGW_PREFIX}"
   export PKGREL="${pkgrel}"
   # use our compiler-rt for host target
-  export COMPILER_RT_PATH="$(clang -print-resource-dir)/lib/windows/libclang_rt.builtins-${CARCH}.a"
+  #export COMPILER_RT_PATH="$(clang -print-resource-dir)/lib/windows/libclang_rt.builtins-${CARCH}.a"
   envsubst < ../bootstrap.toml > bootstrap.toml
   envsubst < ../bootstrap-wasm.toml > bootstrap-wasm.toml
 
