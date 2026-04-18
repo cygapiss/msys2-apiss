@@ -1,27 +1,46 @@
 # Maintainer: Martell Malone <martellmalone@gmail.com>
 
 pkgname="fcode-utils"
-pkgver=1.0.3
+pkgver=1.0.3.rbe18834
 pkgrel=1
 pkgdesc="The OpenBIOS FCODE suite"
 arch=('i686' 'x86_64')
 url="https://www.openbios.org/"
-msys2_repository_url="https://github.com/openbios/fcode-utils"
+msys2_repository_url="https://github.com/mcayland/fcode-utils"
 license=('spdx:GPL-2.0-or-later')
-makedepends=('make' 'gcc')
-source=("${pkgname}-${pkgver}.tar.gz"::"https://github.com/openbios/fcode-utils/archive/v${pkgver}.tar.gz")
-sha256sums=('9a37771b0547f7b5110069f1653aacca60335daae1dba2a7a9edc99a54227a0b')
+makedepends=('make' 'gcc' 'git')
+_commit="be18834c6c0cf422fbb8be19a98b68ae7760504c"
+
+_patches=(
+)
+
+source=("${pkgname}"::"git+https://github.com/mcayland/fcode-utils.git#commit=${_commit}"
+        ${_patches[@]})
+sha256sums=('SKIP')
+
+pkgver() {
+  cd ${srcdir}/${pkgname}
+  printf "1.0.3.r%s" $(git rev-parse --short HEAD)
+}
+
+prepare() {
+  cd ${srcdir}/${pkgname}
+  for patch in "${_patches[@]}"; do
+    msg2 "Patching with ${patch}"
+    patch -Nbp1 -i "${srcdir}/${patch}"
+  done
+}
 
 build() {
-  cd ${srcdir}/${pkgname}-${pkgver}
+  cd ${srcdir}/${pkgname}
   make -j1
 }
 
 package() {
-  cd ${srcdir}/${pkgname}-${pkgver}
+  cd ${srcdir}/${pkgname}
   mkdir -p ${pkgdir}/usr/bin
 
-  cp -rf ${srcdir}/${pkgname}-${pkgver}/toke/toke.exe ${pkgdir}/usr/bin/
-  cp -rf ${srcdir}/${pkgname}-${pkgver}/detok/detok.exe ${pkgdir}/usr/bin/
-  cp -rf ${srcdir}/${pkgname}-${pkgver}/romheaders/romheaders.exe ${pkgdir}/usr/bin/
+  cp -rf ${srcdir}/${pkgname}/toke/toke.exe ${pkgdir}/usr/bin/
+  cp -rf ${srcdir}/${pkgname}/detok/detok.exe ${pkgdir}/usr/bin/
+  cp -rf ${srcdir}/${pkgname}/romheaders/romheaders.exe ${pkgdir}/usr/bin/
 }
