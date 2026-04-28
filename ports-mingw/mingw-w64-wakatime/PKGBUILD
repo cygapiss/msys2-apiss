@@ -3,7 +3,7 @@
 _realname=wakatime
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=2.7.0
+pkgver=2.9.0
 pkgrel=1
 pkgdesc="Command line interface used by all WakaTime text editor plugins (mingw-w64)"
 arch=('any')
@@ -19,7 +19,7 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-go"
              "${MINGW_PACKAGE_PREFIX}-cc"
              'git')
 source=("git+${url}.git#tag=v${pkgver}")
-sha256sums=('a64ee076b45a988f7f11372bbc9b83fac51e3be1936d268a09e456a821e61e99')
+sha256sums=('1a36ed9047f9d303a07d3557f1b1a02775eafa3e6715b7020e9eac01e2833879')
 
 build() {
   # provide date but make it reproducible
