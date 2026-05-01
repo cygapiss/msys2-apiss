@@ -4,7 +4,7 @@
 _realname=starship
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=1.25.0
+pkgver=1.25.1
 pkgrel=1
 pkgdesc="The cross-shell prompt for astronauts (mingw-w64)"
 arch=('any')
@@ -21,7 +21,7 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-rust")
 optdepends=("${MINGW_PACKAGE_PREFIX}-ttf-font-nerd: Nerd Font Symbols preset")
 options=('!strip')
 source=("${msys2_repository_url}/archive/v${pkgver}/${_realname}-${pkgver}.tar.gz")
-sha256sums=('e77f3c23683eb544f6dae7171e3c80676aefc66329225bdcd58e40846bb6445f')
+sha256sums=('521306b14066ee7e332d998ef5b5b6455fdc6085c52e86b6316a7cdc37bae1d8')
 noextract=("${_realname}-${pkgver}.tar.gz")
 
 prepare() {
