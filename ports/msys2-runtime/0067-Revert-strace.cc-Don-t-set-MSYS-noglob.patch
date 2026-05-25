@@ -1,0 +1,55 @@
+From 8feff6e57fd5449c9570d1ec722a67647b3859f7 Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Fri, 16 Jan 2026 10:43:48 +0800
+Subject: [PATCH 67/80] Revert "strace.cc: Don't set MSYS=noglob"
+
+This reverts commit 97de8bae327ca9f3f241d4e5273e773f578e18db.
+---
+ winsup/utils/mingw/strace.cc | 21 +--------------------
+ 1 file changed, 1 insertion(+), 20 deletions(-)
+
+diff --git a/winsup/utils/mingw/strace.cc b/winsup/utils/mingw/strace.cc
+index a6b2e5d54..2b5d7ca2b 100644
+--- a/winsup/utils/mingw/strace.cc
++++ b/winsup/utils/mingw/strace.cc
+@@ -356,28 +356,10 @@ create_child (char **argv)
+     printf ("create_child: %s\n", one_line.buf);
+ 
+   SetConsoleCtrlHandler (NULL, 0);
+-/* Commit message for this code was:
+-"* strace.cc (create_child): Set CYGWIN=noglob when starting new process so that
+-
+-  Cygwin will leave already-parsed the command line alonw."
+-
+-  I can see no reason for it and it badly breaks the ability to use
+-  strace.exe to investigate calling a Cygwin program from a Windows
+-  program, for example:
+-  strace mingw32-make.exe
+-  .. where mingw32-make.exe finds sh.exe and uses it as the shell.
+-  The reason it badly breaks this use-case is because dcrt0.cc depends
+-  on globbing to happen to parse commandlines from Windows programs;
+-  irrespective of whether they contain any glob patterns or not.
+-  
+-  See quoted () comment:
+-  "This must have been run from a Windows shell, so preserve
+-     quotes for globify to play with later."
+-
+   const char *cygwin_env = getenv ("MSYS");
+   const char *space;
+ 
+-  if (cygwin_env && strlen (cygwin_env) <= 256) // sanity check
++  if (cygwin_env && strlen (cygwin_env) <= 256) /* sanity check */
+     space = " ";
+   else
+     space = cygwin_env = "";
+@@ -385,7 +367,6 @@ create_child (char **argv)
+ 				  + strlen (space) + strlen (cygwin_env));
+   sprintf (newenv, "MSYS=noglob%s%s", space, cygwin_env);
+   _putenv (newenv);
+-*/
+   ret = CreateProcess (0, one_line.buf,	/* command line */
+ 		       NULL,	/* Security */
+ 		       NULL,	/* thread */
+-- 
+2.52.0.windows.1
+

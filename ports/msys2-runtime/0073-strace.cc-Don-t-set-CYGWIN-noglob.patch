@@ -1,0 +1,51 @@
+From 3435fd497dccd8038734e5a222edf0ff7e626fdb Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Fri, 16 Jan 2026 10:46:30 +0800
+Subject: [PATCH 73/80] strace.cc: Don't set CYGWIN=noglob
+
+Commit message for this code was:
+
+* strace.cc (create_child): Set CYGWIN=noglob when starting new process so that
+
+  Cygwin will leave already-parsed the command line alonw."
+
+I can see no reason for it and it badly breaks the ability to use
+strace.exe to investigate calling a Cygwin program from a Windows
+program, for example:
+strace mingw32-make.exe
+.. where mingw32-make.exe finds sh.exe and uses it as the shell.
+The reason it badly breaks this use-case is because dcrt0.cc depends
+on globbing to happen to parse commandlines from Windows programs;
+irrespective of whether they contain any glob patterns or not.
+
+See quoted () comment:
+"This must have been run from a Windows shell, so preserve
+ quotes for globify to play with later."
+---
+ winsup/utils/mingw/strace.cc | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/winsup/utils/mingw/strace.cc b/winsup/utils/mingw/strace.cc
+index 4f294372e..c239937be 100644
+--- a/winsup/utils/mingw/strace.cc
++++ b/winsup/utils/mingw/strace.cc
+@@ -357,6 +357,7 @@ create_child (char **argv)
+ 
+   SetConsoleCtrlHandler (NULL, 0);
+ 
++#if 0
+   const char *cygwin_env = getenv ("CYGWIN");
+   const char *space;
+ 
+@@ -368,6 +369,8 @@ create_child (char **argv)
+ 				  + strlen (space) + strlen (cygwin_env));
+   sprintf (newenv, "CYGWIN=noglob%s%s", space, cygwin_env);
+   _putenv (newenv);
++#endif
++
+   ret = CreateProcess (0, one_line.buf,	/* command line */
+ 		       NULL,	/* Security */
+ 		       NULL,	/* thread */
+-- 
+2.52.0.windows.1
+

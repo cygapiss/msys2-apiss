@@ -1,0 +1,29 @@
+From 8277ddb9beac471ffb510a3bdd41cc354b434d3d Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Tue, 26 May 2026 01:04:28 +0800
+Subject: [PATCH 76/80] hook_or_detect_cygwin now use msys-2.0.dll instead of
+ cygwin1.dll
+
+---
+ winsup/cygwin/hookapi.cc | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/winsup/cygwin/hookapi.cc b/winsup/cygwin/hookapi.cc
+index ee2edbafe..9f31a716c 100644
+--- a/winsup/cygwin/hookapi.cc
++++ b/winsup/cygwin/hookapi.cc
+@@ -379,7 +379,11 @@ hook_or_detect_cygwin (const char *name, const void *fn, WORD& subsys, HANDLE h)
+   for (PIMAGE_IMPORT_DESCRIPTOR pd = pdfirst; pd->FirstThunk; pd++)
+     {
+       if (!ascii_strcasematch (rva (PSTR, map ?: (char *) hm, pd->Name - delta),
++#ifdef __MSYS__
++			       "msys-2.0.dll"))
++#else
+ 			       "cygwin1.dll"))
++#endif
+ 	continue;
+       if (!fn)
+ 	{
+-- 
+2.52.0.windows.1
+
