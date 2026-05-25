@@ -1,0 +1,30 @@
+From 78feec595e085efabe3f128a57ab8e6b81e7b1ec Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Tue, 26 May 2026 01:07:47 +0800
+Subject: [PATCH 77/80] Revert "hook_or_detect_cygwin now use msys-2.0.dll
+ instead of cygwin1.dll"
+
+This reverts commit 8277ddb9beac471ffb510a3bdd41cc354b434d3d.
+---
+ winsup/cygwin/hookapi.cc | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/winsup/cygwin/hookapi.cc b/winsup/cygwin/hookapi.cc
+index 9f31a716c..ee2edbafe 100644
+--- a/winsup/cygwin/hookapi.cc
++++ b/winsup/cygwin/hookapi.cc
+@@ -379,11 +379,7 @@ hook_or_detect_cygwin (const char *name, const void *fn, WORD& subsys, HANDLE h)
+   for (PIMAGE_IMPORT_DESCRIPTOR pd = pdfirst; pd->FirstThunk; pd++)
+     {
+       if (!ascii_strcasematch (rva (PSTR, map ?: (char *) hm, pd->Name - delta),
+-#ifdef __MSYS__
+-			       "msys-2.0.dll"))
+-#else
+ 			       "cygwin1.dll"))
+-#endif
+ 	continue;
+       if (!fn)
+ 	{
+-- 
+2.52.0.windows.1
+

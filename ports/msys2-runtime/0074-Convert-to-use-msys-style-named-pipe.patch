@@ -1,0 +1,351 @@
+From 98aad3291066e427cbac5210464a70f80a29fd18 Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Fri, 16 Jan 2026 10:51:12 +0800
+Subject: [PATCH 74/80] Convert to use msys'style named pipe
+
+This is split from "Rename dll from cygwin to msys"
+---
+ winsup/cygserver/transport_pipes.h            |  4 +++
+ winsup/cygwin/cygwin.sc.in                    |  4 +++
+ winsup/cygwin/dtable.cc                       |  6 +++++
+ winsup/cygwin/fhandler/pipe.cc                |  4 +++
+ winsup/cygwin/fhandler/pty.cc                 | 26 +++++++++++++++++++
+ winsup/cygwin/include/cygwin/version.h        |  4 +++
+ .../cygwin/local_includes/cygserver_setpwd.h  |  4 +++
+ winsup/cygwin/scripts/mkvers.sh               |  6 ++---
+ winsup/cygwin/sec/auth.cc                     |  8 +++---
+ winsup/cygwin/syscalls.cc                     |  4 +--
+ winsup/cygwin/syslog.cc                       |  4 +++
+ winsup/utils/mingw/cygcheck.cc                | 10 +++----
+ 12 files changed, 70 insertions(+), 14 deletions(-)
+
+diff --git a/winsup/cygserver/transport_pipes.h b/winsup/cygserver/transport_pipes.h
+index e101623d2..66272bc86 100644
+--- a/winsup/cygserver/transport_pipes.h
++++ b/winsup/cygserver/transport_pipes.h
+@@ -11,7 +11,11 @@ details. */
+ #ifndef _TRANSPORT_PIPES_H
+ #define _TRANSPORT_PIPES_H
+ 
++#ifdef __MSYS__
++#define PIPE_NAME_PREFIX	L"\\\\.\\pipe\\msys-"
++#else
+ #define PIPE_NAME_PREFIX	L"\\\\.\\pipe\\cygwin-"
++#endif
+ #define PIPE_NAME_SUFFIX	L"-lpc"
+ 
+ /* Named pipes based transport, for security on NT */
+diff --git a/winsup/cygwin/cygwin.sc.in b/winsup/cygwin/cygwin.sc.in
+index 69526f5d8..4dc5daed8 100644
+--- a/winsup/cygwin/cygwin.sc.in
++++ b/winsup/cygwin/cygwin.sc.in
+@@ -1,6 +1,10 @@
+ #ifdef __x86_64__
+ OUTPUT_FORMAT(pei-x86-64)
++# ifdef __MSYS__
++SEARCH_DIR("/usr/x86_64-pc-msys/lib/w32api"); SEARCH_DIR("=/usr/lib/w32api");
++# else
+ SEARCH_DIR("/usr/x86_64-pc-cygwin/lib/w32api"); SEARCH_DIR("=/usr/lib/w32api");
++# endif
+ #else
+ #error unimplemented for this target
+ #endif
+diff --git a/winsup/cygwin/dtable.cc b/winsup/cygwin/dtable.cc
+index 7303f7eac..6ccc19a71 100644
+--- a/winsup/cygwin/dtable.cc
++++ b/winsup/cygwin/dtable.cc
+@@ -997,9 +997,15 @@ handle_to_fn (HANDLE h, char *posix_fn)
+       if (wcsncasecmp (w32, DEV_NAMED_PIPE, DEV_NAMED_PIPE_LEN) == 0)
+ 	{
+ 	  w32 += DEV_NAMED_PIPE_LEN;
++#ifdef __MSYS__
++	  if (wcsncmp (w32, L"msys-", WCLEN (L"msys-")) != 0)
++	    return false;
++	  w32 += WCLEN (L"msys-");
++#else
+ 	  if (wcsncmp (w32, L"cygwin-", WCLEN (L"cygwin-")) != 0)
+ 	    return false;
+ 	  w32 += WCLEN (L"cygwin-");
++#endif
+ 	  /* Check for installation key and trailing dash. */
+ 	  w32len = cygheap->installation_key.Length / sizeof (WCHAR);
+ 	  if (w32len
+diff --git a/winsup/cygwin/fhandler/pipe.cc b/winsup/cygwin/fhandler/pipe.cc
+index 2ff5dfa2f..11ef78c73 100644
+--- a/winsup/cygwin/fhandler/pipe.cc
++++ b/winsup/cygwin/fhandler/pipe.cc
+@@ -798,7 +798,11 @@ fhandler_pipe::close (int flag)
+   return ret;
+ }
+ 
++#ifdef __MSYS__
++#define PIPE_INTRO "\\\\.\\pipe\\msys-"
++#else
+ #define PIPE_INTRO "\\\\.\\pipe\\cygwin-"
++#endif
+ 
+ /* Create a pipe, and return handles to the read and write ends,
+    just like CreatePipe, but ensure that the write end permits
+diff --git a/winsup/cygwin/fhandler/pty.cc b/winsup/cygwin/fhandler/pty.cc
+index cae047a08..6f6164a85 100644
+--- a/winsup/cygwin/fhandler/pty.cc
++++ b/winsup/cygwin/fhandler/pty.cc
+@@ -895,7 +895,11 @@ fhandler_pty_slave::open (int flags, mode_t)
+       pipe_reply repl;
+       DWORD len;
+ 
++#ifdef __MSYS__
++      __small_sprintf (buf, "\\\\.\\pipe\\msys-%S-pty%d-master-ctl",
++#else
+       __small_sprintf (buf, "\\\\.\\pipe\\cygwin-%S-pty%d-master-ctl",
++#endif
+ 		       &cygheap->installation_key, get_minor ());
+       termios_printf ("dup handles via master control pipe %s", buf);
+       if (!CallNamedPipe (buf, &req, sizeof req, &repl, sizeof repl,
+@@ -1159,7 +1163,11 @@ fhandler_pty_slave::reset_switch_to_nat_pipe (void)
+ 		    {
+ 		      char pipe[MAX_PATH];
+ 		      __small_sprintf (pipe,
++#ifdef __MSYS__
++			       "\\\\.\\pipe\\msys-%S-pty%d-master-ctl",
++#else
+ 			       "\\\\.\\pipe\\cygwin-%S-pty%d-master-ctl",
++#endif
+ 			       &cygheap->installation_key, get_minor ());
+ 		      pipe_request req = { GET_HANDLES, GetCurrentProcessId () };
+ 		      pipe_reply repl;
+@@ -1635,9 +1643,15 @@ fhandler_pty_slave::tcflush (int queue)
+   if (queue == TCIFLUSH || queue == TCIOFLUSH)
+     {
+       char pipe[MAX_PATH];
++#ifdef __MSYS__
++      __small_sprintf (pipe,
++		       "\\\\.\\pipe\\msys-%S-pty%d-master-ctl",
++		       &cygheap->installation_key, get_minor ());
++#else
+       __small_sprintf (pipe,
+ 		       "\\\\.\\pipe\\cygwin-%S-pty%d-master-ctl",
+ 		       &cygheap->installation_key, get_minor ());
++#endif
+       pipe_request req = { FLUSH_INPUT, GetCurrentProcessId () };
+       pipe_reply repl;
+       DWORD n;
+@@ -2077,7 +2091,11 @@ fhandler_pty_master::close (int flag)
+ 	  pipe_reply repl;
+ 	  DWORD len;
+ 
++#ifdef __MSYS__
++	  __small_sprintf (buf, "\\\\.\\pipe\\msys-%S-pty%d-master-ctl",
++#else
+ 	  __small_sprintf (buf, "\\\\.\\pipe\\cygwin-%S-pty%d-master-ctl",
++#endif
+ 			   &cygheap->installation_key, get_minor ());
+ 	  acquire_output_mutex (mutex_timeout);
+ 	  if (master_ctl)
+@@ -3200,7 +3218,11 @@ fhandler_pty_master::setup ()
+ 
+   /* Create master control pipe which allows the master to duplicate
+      the pty pipe handles to processes which deserve it. */
++#ifdef __MSYS__
++  __small_sprintf (buf, "\\\\.\\pipe\\msys-%S-pty%d-master-ctl",
++#else
+   __small_sprintf (buf, "\\\\.\\pipe\\cygwin-%S-pty%d-master-ctl",
++#endif
+ 		   &cygheap->installation_key, unit);
+   master_ctl = CreateNamedPipe (buf, PIPE_ACCESS_DUPLEX
+ 				     | FILE_FLAG_FIRST_PIPE_INSTANCE,
+@@ -4079,7 +4101,11 @@ fhandler_pty_slave::transfer_input (tty::xfer_dir dir, HANDLE from, tty *ttyp,
+     {
+       char pipe[MAX_PATH];
+       __small_sprintf (pipe,
++#ifdef __MSYS__
++		       "\\\\.\\pipe\\msys-%S-pty%d-master-ctl",
++#else
+ 		       "\\\\.\\pipe\\cygwin-%S-pty%d-master-ctl",
++#endif
+ 		       &cygheap->installation_key, ttyp->get_minor ());
+       pipe_request req = { GET_HANDLES, GetCurrentProcessId () };
+       pipe_reply repl;
+diff --git a/winsup/cygwin/include/cygwin/version.h b/winsup/cygwin/include/cygwin/version.h
+index e61fd3913..77b10dc30 100644
+--- a/winsup/cygwin/include/cygwin/version.h
++++ b/winsup/cygwin/include/cygwin/version.h
+@@ -526,7 +526,11 @@ details. */
+ 
+ /* Identifiers used in the Win32 registry. */
+ 
++#ifdef __MSYS__
++#define CYGWIN_INFO_CYGWIN_REGISTRY_NAME "MSYS"
++#else
+ #define CYGWIN_INFO_CYGWIN_REGISTRY_NAME "Cygwin"
++#endif
+ #define CYGWIN_INFO_INSTALLATIONS_NAME   "Installations"
+ 
+ /* The default cygdrive prefix. */
+diff --git a/winsup/cygwin/local_includes/cygserver_setpwd.h b/winsup/cygwin/local_includes/cygserver_setpwd.h
+index fc1576b05..b2975111c 100644
+--- a/winsup/cygwin/local_includes/cygserver_setpwd.h
++++ b/winsup/cygwin/local_includes/cygserver_setpwd.h
+@@ -12,7 +12,11 @@ details. */
+ #include <sys/types.h>
+ #include "cygserver.h"
+ 
++#ifdef __MSYS__
++#define CYGWIN_LSA_KEY_PREFIX	L"L$MSYS_"
++#else
+ #define CYGWIN_LSA_KEY_PREFIX	L"L$CYGWIN_"
++#endif
+ 
+ #ifndef __INSIDE_CYGWIN__
+ class transport_layer_base;
+diff --git a/winsup/cygwin/scripts/mkvers.sh b/winsup/cygwin/scripts/mkvers.sh
+index 2fba21431..34d8d6dce 100755
+--- a/winsup/cygwin/scripts/mkvers.sh
++++ b/winsup/cygwin/scripts/mkvers.sh
+@@ -127,7 +127,7 @@ dir=$(echo $dir | sed -e 's%/include/cygwin.*$%%' -e 's%include/cygwin.*$%.%')
+ ) | while read var; do
+     read val
+ cat <<EOF
+-  "%%% Cygwin $var: $val\n"
++  "%%% MSYS $var: $val\n"
+ EOF
+ done | tee /tmp/mkvers.$$ 1>&9
+ 
+@@ -139,9 +139,9 @@ trap "rm -f /tmp/mkvers.$$" 0 1 2 15
+ #
+ cat <<EOF 1>&9
+ #ifdef DEBUGGING
+-  "%%% Cygwin shared id: " CYGWIN_VERSION_DLL_IDENTIFIER "S" shared_data_version "-$builddate\n"
++  "%%% MSYS shared id: " CYGWIN_VERSION_DLL_IDENTIFIER "S" shared_data_version "-$builddate\n"
+ #else
+-  "%%% Cygwin shared id: " CYGWIN_VERSION_DLL_IDENTIFIER "S" shared_data_version "\n"
++  "%%% MSYS shared id: " CYGWIN_VERSION_DLL_IDENTIFIER "S" shared_data_version "\n"
+ #endif
+   "END_CYGWIN_VERSION_INFO\n\0";
+ cygwin_version_info cygwin_version =
+diff --git a/winsup/cygwin/sec/auth.cc b/winsup/cygwin/sec/auth.cc
+index f9906a55c..2361ae5ff 100644
+--- a/winsup/cygwin/sec/auth.cc
++++ b/winsup/cygwin/sec/auth.cc
+@@ -462,7 +462,7 @@ verify_token (HANDLE token, cygsid &usersid, user_groups &groups, bool *pintern)
+       if (!NT_SUCCESS (status))
+ 	debug_printf ("NtQueryInformationToken(), %y", status);
+       else
+-	*pintern = intern = !memcmp (ts.SourceName, "Cygwin.1", 8);
++	*pintern = intern = !memcmp (ts.SourceName, "MSYS.2", 6);
+     }
+   /* Verify usersid */
+   cygsid tok_usersid (NO_SID);
+@@ -747,7 +747,7 @@ s4uauth (bool logon, PCWSTR domain, PCWSTR user, NTSTATUS &ret_status)
+     {
+       /* Register as logon process. */
+       debug_printf ("Impersonation requested");
+-      RtlInitAnsiString (&name, "Cygwin");
++      RtlInitAnsiString (&name, "MSYS");
+       status = LsaRegisterLogonProcess (&name, &lsa_hdl, &sec_mode);
+     }
+   else
+@@ -786,11 +786,11 @@ s4uauth (bool logon, PCWSTR domain, PCWSTR user, NTSTATUS &ret_status)
+     }
+ 
+   /* Create origin. */
+-  stpcpy (origin.buf, "Cygwin");
++  stpcpy (origin.buf, "MSYS");
+   RtlInitAnsiString (&origin.str, origin.buf);
+ 
+   /* Create token source. */
+-  memcpy (ts.SourceName, "Cygwin.1", 8);
++  memcpy (ts.SourceName, "MSYS.2", 6);
+   ts.SourceIdentifier.HighPart = 0;
+   ts.SourceIdentifier.LowPart = kerberos_auth ? 0x0105 : 0x0106;
+ 
+diff --git a/winsup/cygwin/syscalls.cc b/winsup/cygwin/syscalls.cc
+index 94eba9bdc..6a935aac6 100644
+--- a/winsup/cygwin/syscalls.cc
++++ b/winsup/cygwin/syscalls.cc
+@@ -339,7 +339,7 @@ try_to_bin (path_conv &pc, HANDLE &fh, ACCESS_MASK access, ULONG flags)
+     }
+   else
+     {
+-      /* Create unique filename.  Start with a dot, followed by "cyg"
++      /* Create unique filename.  Start with a dot, followed by "msys"
+ 	 transposed to the Unicode private use area in the U+f700 area
+ 	 on file systems supporting Unicode (except Samba), followed by
+ 	 the inode number in hex, followed by a path hash in hex.  The
+@@ -347,7 +347,7 @@ try_to_bin (path_conv &pc, HANDLE &fh, ACCESS_MASK access, ULONG flags)
+       RtlAppendUnicodeToString (&recycler,
+ 				(pc.fs_flags () & FILE_UNICODE_ON_DISK
+ 				 && !pc.fs_is_samba ())
+-				? L".\xf763\xf779\xf767" : L".cyg");
++				? L".\xf76d\xf773\xf779\xf773" : L".msys");
+       pfii = (PFILE_INTERNAL_INFORMATION) infobuf;
+       status = NtQueryInformationFile (fh, &io, pfii, sizeof *pfii,
+ 				       FileInternalInformation);
+diff --git a/winsup/cygwin/syslog.cc b/winsup/cygwin/syslog.cc
+index 6a295501f..431f9d239 100644
+--- a/winsup/cygwin/syslog.cc
++++ b/winsup/cygwin/syslog.cc
+@@ -26,7 +26,11 @@ details. */
+ #include "cygtls.h"
+ #include "tls_pbuf.h"
+ 
++#ifdef __MSYS__
++#define CYGWIN_LOG_NAME L"MSYS"
++#else
+ #define CYGWIN_LOG_NAME L"Cygwin"
++#endif
+ 
+ static struct
+ {
+diff --git a/winsup/utils/mingw/cygcheck.cc b/winsup/utils/mingw/cygcheck.cc
+index f2f1dc307..629934e59 100644
+--- a/winsup/utils/mingw/cygcheck.cc
++++ b/winsup/utils/mingw/cygcheck.cc
+@@ -553,7 +553,7 @@ struct ImpDirectory
+ 
+ static bool track_down (const char *file, const char *suffix, int lvl);
+ 
+-#define CYGPREFIX (sizeof ("%%% Cygwin ") - 1)
++#define CYGPREFIX (sizeof ("%%% Msys ") - 1)
+ static void
+ cygwin_info (HANDLE h)
+ {
+@@ -585,7 +585,7 @@ cygwin_info (HANDLE h)
+   while (buf < bufend)
+     if ((buf = (char *) memchr (buf, '%', bufend - buf)) == NULL)
+       break;
+-    else if (strncmp ("%%% Cygwin ", buf, CYGPREFIX) != 0)
++    else if (strncmp ("%%% Msys ", buf, CYGPREFIX) != 0)
+       buf++;
+     else
+       {
+@@ -1026,7 +1026,7 @@ scan_registry (RegInfo * prev, HKEY hKey, char *name, int cygwin, bool wow64)
+ 
+   char *cp;
+   for (cp = name; *cp; cp++)
+-    if (strncasecmp (cp, "Cygwin", 6) == 0)
++    if (strncasecmp (cp, "Msys", 4) == 0)
+       cygwin = 1;
+ 
+   DWORD num_subkeys, max_subkey_len, num_values;
+@@ -1308,7 +1308,7 @@ handle_reg_installation (handle_reg_t what)
+     printf ("Cygwin installations found in the registry:\n");
+   for (int i = 0; i < 2; ++i)
+     if (RegOpenKeyEx (i ? HKEY_CURRENT_USER : HKEY_LOCAL_MACHINE,
+-		      "SOFTWARE\\Cygwin\\Installations", 0,
++		      "SOFTWARE\\Msys\\Installations", 0,
+ 		      what == DELETE_KEY ? KEY_READ | KEY_WRITE : KEY_READ,
+ 		      &key)
+ 	== ERROR_SUCCESS)
+@@ -1782,7 +1782,7 @@ dump_sysinfo ()
+   if (registry)
+     {
+       if (givehelp)
+-	printf ("Scanning registry for keys with 'Cygwin' in them...\n");
++	printf ("Scanning registry for keys with 'Msys' in them...\n");
+       scan_registry (0, HKEY_CURRENT_USER,
+ 		     (char *) "HKEY_CURRENT_USER", 0, false);
+       scan_registry (0, HKEY_LOCAL_MACHINE,
+-- 
+2.52.0.windows.1
+
