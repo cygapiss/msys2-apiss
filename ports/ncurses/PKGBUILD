@@ -35,8 +35,7 @@ prepare() {
 
 build() {
   cd ${srcdir}/${pkgbase}-${pkgver}
-  msg2 "Configuring ${pkgname} with ${CHOST}"
-  local CHOST="${CHOST/-cygwin/-msys}"
+
   ./configure \
     --build=${CHOST} \
     --with-install-prefix=/usr \
