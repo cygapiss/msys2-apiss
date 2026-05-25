@@ -50,7 +50,7 @@ prepare() {
     patch -p0 -i $srcdir/readline${_basever//./}-$(printf "%03d" $p)
   done
   patch -p2 -i ${srcdir}/readline-7.0.3-3.src.patch
-  patch -p1 -i ${srcdir}/readline-6.3-msys2.patch
+  # patch -p1 -i ${srcdir}/readline-6.3-msys2.patch
   patch -p1 -i ${srcdir}/readline-6.3-paste-utf8.patch
   patch -p1 -i ${srcdir}/readline-7.0.3-3.clipboard.patch
 }
