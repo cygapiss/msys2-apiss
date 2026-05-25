@@ -1,0 +1,188 @@
+From f2c8ed4d9a23ed5bdd9e2b76bac13d0cc487e17b Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Fri, 16 Jan 2026 11:31:10 +0800
+Subject: [PATCH 70/80] Revert "Add functionality for changing OS name via
+ MSYSTEM environment variables."
+
+This reverts commit b91f7928d2292a402d3fdfe9a3983780a387dc28.
+---
+ winsup/cygserver/cygserver-config   |  4 ++--
+ winsup/cygwin/environ.cc            | 34 +++--------------------------
+ winsup/cygwin/include/sys/utsname.h |  2 +-
+ winsup/cygwin/uname.cc              | 17 ++-------------
+ 4 files changed, 8 insertions(+), 49 deletions(-)
+
+diff --git a/winsup/cygserver/cygserver-config b/winsup/cygserver/cygserver-config
+index 1f0603f68..abda18644 100755
+--- a/winsup/cygserver/cygserver-config
++++ b/winsup/cygserver/cygserver-config
+@@ -86,7 +86,7 @@ done
+ 
+ # Check if running on NT
+ _sys="`uname`"
+-_nt=`expr "${_sys}" : "MSYS_NT"`
++_nt=`expr "${_sys}" : "CYGWIN_NT"`
+ 
+ # Check for running cygserver processes first.
+ if ps -e | grep -v grep | grep -q ${service_name}
+@@ -178,7 +178,7 @@ then
+     echo "Do you want to install cygserver as service?"
+     if request "(Say \"no\" if it's already installed as service)"
+     then
+-      if ! cygrunsrv -I ${service_name} -d "MSYS cygserver" -p /usr/sbin/cygserver
++      if ! cygrunsrv -I ${service_name} -d "CYGWIN cygserver" -p /usr/sbin/cygserver
+       then
+         echo
+ 	echo "Installation of cygserver as service failed.  Please check the"
+diff --git a/winsup/cygwin/environ.cc b/winsup/cygwin/environ.cc
+index 4e049211e..e9aa0c9f0 100644
+--- a/winsup/cygwin/environ.cc
++++ b/winsup/cygwin/environ.cc
+@@ -201,11 +201,7 @@ parse_options (const char *inbuf)
+       if (export_settings)
+ 	{
+ 	  debug_printf ("%s", newbuf + 1);
+-#ifdef __MSYS__
+-	  setenv ("MSYS", newbuf + 1, 1);
+-#else
+ 	  setenv ("CYGWIN", newbuf + 1, 1);
+-#endif
+ 	}
+       return;
+     }
+@@ -678,7 +674,7 @@ _addenv (const char *name, const char *value, int overwrite)
+   win_env *spenv;
+   if ((spenv = getwinenv (envhere)))
+     spenv->add_cache (value);
+-  if (strcmp (name, "MSYS") == 0)
++  if (strcmp (name, "CYGWIN") == 0)
+     parse_options (value);
+ 
+   return 0;
+@@ -781,9 +777,6 @@ static struct renv {
+ } renv_arr[] = {
+ 	{ NL("COMMONPROGRAMFILES=") },		// 0
+ 	{ NL("COMSPEC=") },
+-#ifdef __MSYS__
+-	{ NL("MSYSTEM=") },			// 2
+-#endif /* __MSYS__ */
+ 	{ NL("PATH=") },			// 2
+ 	{ NL("PROGRAMFILES=") },
+ 	{ NL("SYSTEMDRIVE=") },			// 4
+@@ -795,21 +788,10 @@ static struct renv {
+ #define RENV_SIZE (sizeof (renv_arr) / sizeof (renv_arr[0]))
+ 
+ /* Set of first characters of the above list of variables. */
+-static const char idx_arr[] =
+-#ifdef __MSYS__
+-	"CMPSTW";
+-#else
+-	"CPSTW";
+-#endif
++static const char idx_arr[] = "CPSTW";
+ /* Index into renv_arr at which the variables with this specific character
+    starts. */
+-static const int start_at[] = {
+-#ifdef __MSYS__
+-				0, 2, 3, 5, 7, 9
+-#else
+-				0, 2, 4, 6, 8
+-#endif
+-								};
++static const int start_at[] = { 0, 2, 4, 6, 8 };
+ 
+ /* Turn environment variable part of a=b string into uppercase - for some
+    environment variables only. */
+@@ -877,11 +859,7 @@ environ_init (char **envp, int envc)
+       dumper_init ();
+       if (envp_passed_in)
+ 	{
+-#ifdef __MSYS__
+-	  p = getenv ("MSYS");
+-#else
+ 	  p = getenv ("CYGWIN");
+-#endif
+ 	  if (p)
+ 	    parse_options (p);
+ 	}
+@@ -937,13 +915,8 @@ win32env_to_cygenv (PWCHAR rawenv, bool posify)
+ 		}
+ 	      sawTERM = 1;
+ 	    }
+-#ifdef __MSYS__
+-      else if (*newp == 'M' && strncmp (newp, "MSYS=", 5) == 0)
+-        parse_options (newp + 5);
+-#else
+       else if (*newp == 'C' && strncmp (newp, "CYGWIN=", 7) == 0)
+         parse_options (newp + 7);
+-#endif
+       if (*eq && posify)
+         posify_maybe (envp + i, *++eq ? eq : --eq, tmpbuf);
+       debug_printf ("%p: %s", envp[i], envp[i]);
+@@ -1018,7 +991,6 @@ static NO_COPY spenv spenvs[] =
+   {NL ("HOMEPATH="), false, false, &cygheap_user::env_homepath},
+   {NL ("LOGONSERVER="), false, false, &cygheap_user::env_logsrv},
+   {NL ("PATH="), false, true, NULL},
+-  {NL ("MSYSTEM="), true, true, NULL},
+   {NL ("SYSTEMDRIVE="), false, true, NULL},
+   {NL ("SYSTEMROOT="), true, true, &cygheap_user::env_systemroot},
+   {NL ("USERDOMAIN="), false, false, &cygheap_user::env_domain},
+diff --git a/winsup/cygwin/include/sys/utsname.h b/winsup/cygwin/include/sys/utsname.h
+index 730cb731a..d6b3be96f 100644
+--- a/winsup/cygwin/include/sys/utsname.h
++++ b/winsup/cygwin/include/sys/utsname.h
+@@ -17,7 +17,7 @@ extern "C" {
+ 
+ struct utsname
+ {
+-  char sysname[_UTSNAME_LENGTH + 1];
++  char sysname[_UTSNAME_LENGTH];
+   char nodename[_UTSNAME_LENGTH];
+   char release[_UTSNAME_LENGTH];
+   char version[_UTSNAME_LENGTH];
+diff --git a/winsup/cygwin/uname.cc b/winsup/cygwin/uname.cc
+index b0b939a30..069690e5f 100644
+--- a/winsup/cygwin/uname.cc
++++ b/winsup/cygwin/uname.cc
+@@ -37,12 +37,7 @@ uname_x (struct utsname *name)
+ 
+       memset (name, 0, sizeof (*name));
+       /* sysname */
+-      char* msystem = getenv("MSYSTEM");
+-      const char* msystem_sysname = "MSYS";
+-      if (msystem != NULL && *msystem && strcmp(msystem, "MSYS") != 0)
+-        msystem_sysname = (strstr(msystem, "32") != NULL) ? "MINGW32" : "MINGW64";;
+-      n = __small_sprintf (name->sysname, "%s_%s-%u",
+-			   msystem_sysname,
++      n = __small_sprintf (name->sysname, "CYGWIN_%s-%u",
+ 			   wincap.osname (), wincap.build_number ());
+       if (wincap.host_machine () != wincap.cygwin_machine ())
+ 	{
+@@ -110,7 +105,7 @@ uname_x (struct utsname *name)
+ /* Old entrypoint for applications up to API 334 */
+ struct old_utsname
+ {
+-  char sysname[21];
++  char sysname[20];
+   char nodename[20];
+   char release[20];
+   char version[20];
+@@ -124,15 +119,7 @@ uname (struct utsname *in_name)
+   __try
+     {
+       memset (name, 0, sizeof (*name));
+-#ifdef __MSYS__
+-      char* msystem = getenv("MSYSTEM");
+-      const char* msystem_sysname = "MSYS";
+-      if (msystem != NULL && *msystem && strcmp(msystem, "MSYS") != 0)
+-        msystem_sysname = (strstr(msystem, "32") != NULL) ? "MINGW32" : "MINGW64";
+-      __small_sprintf (name->sysname, "%s_%s", msystem_sysname, wincap.osname ());
+-#else
+       __small_sprintf (name->sysname, "CYGWIN_%s", wincap.osname ());
+-#endif
+ 
+       /* Computer name */
+       cygwin_gethostname (name->nodename, sizeof (name->nodename) - 1);
+-- 
+2.52.0.windows.1
+

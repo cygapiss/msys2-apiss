@@ -1,0 +1,113 @@
+From af943165bd3e06682241ec365595749f740e5af8 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?=D0=90=D0=BB=D0=B5=D0=BA=D1=81=D0=B5=D0=B8=CC=86=20=D0=9F?=
+ =?UTF-8?q?=D0=B0=D0=B2=D0=BB=D0=BE=D0=B2?= <alexey.pawlow@gmail.com>
+Date: Mon, 15 Apr 2019 02:29:01 +0800
+Subject: [PATCH 72/80] Add support for MSYS environment variable instead of
+ CYGWIN
+
+Changes of winsup/cygwin/environ.cc is split from "Add functionality for changing OS name via MSYSTEM environment variables."
+Changes of winsup/cygwin/exceptions.cc, winsup/utils/mingw/cygcheck.cc is split from "Rename dll from cygwin to msys"
+
+known_env_vars is sorted, update it
+---
+ winsup/cygwin/environ.cc       | 15 ++++++++++++++-
+ winsup/cygwin/exceptions.cc    |  4 ++--
+ winsup/utils/mingw/cygcheck.cc |  3 +--
+ 3 files changed, 17 insertions(+), 5 deletions(-)
+
+diff --git a/winsup/cygwin/environ.cc b/winsup/cygwin/environ.cc
+index 6233ab76a..4e049211e 100644
+--- a/winsup/cygwin/environ.cc
++++ b/winsup/cygwin/environ.cc
+@@ -201,7 +201,11 @@ parse_options (const char *inbuf)
+       if (export_settings)
+ 	{
+ 	  debug_printf ("%s", newbuf + 1);
++#ifdef __MSYS__
++	  setenv ("MSYS", newbuf + 1, 1);
++#else
+ 	  setenv ("CYGWIN", newbuf + 1, 1);
++#endif
+ 	}
+       return;
+     }
+@@ -674,7 +678,7 @@ _addenv (const char *name, const char *value, int overwrite)
+   win_env *spenv;
+   if ((spenv = getwinenv (envhere)))
+     spenv->add_cache (value);
+-  if (strcmp (name, "CYGWIN") == 0)
++  if (strcmp (name, "MSYS") == 0)
+     parse_options (value);
+ 
+   return 0;
+@@ -873,7 +877,11 @@ environ_init (char **envp, int envc)
+       dumper_init ();
+       if (envp_passed_in)
+ 	{
++#ifdef __MSYS__
++	  p = getenv ("MSYS");
++#else
+ 	  p = getenv ("CYGWIN");
++#endif
+ 	  if (p)
+ 	    parse_options (p);
+ 	}
+@@ -929,8 +937,13 @@ win32env_to_cygenv (PWCHAR rawenv, bool posify)
+ 		}
+ 	      sawTERM = 1;
+ 	    }
++#ifdef __MSYS__
++      else if (*newp == 'M' && strncmp (newp, "MSYS=", 5) == 0)
++        parse_options (newp + 5);
++#else
+       else if (*newp == 'C' && strncmp (newp, "CYGWIN=", 7) == 0)
+         parse_options (newp + 7);
++#endif
+       if (*eq && posify)
+         posify_maybe (envp + i, *++eq ? eq : --eq, tmpbuf);
+       debug_printf ("%p: %s", envp[i], envp[i]);
+diff --git a/winsup/cygwin/exceptions.cc b/winsup/cygwin/exceptions.cc
+index 3a3b4b4b3..ca86b3643 100644
+--- a/winsup/cygwin/exceptions.cc
++++ b/winsup/cygwin/exceptions.cc
+@@ -529,14 +529,14 @@ int exec_prepared_command (PWCHAR command)
+   PWCHAR rawenv = GetEnvironmentStringsW () ;
+   for (PWCHAR p = rawenv; *p != L'\0'; p = wcschr (p, L'\0') + 1)
+     {
+-      if (wcsncmp (p, L"CYGWIN=", wcslen (L"CYGWIN=")) == 0)
++      if (wcsncmp (p, L"MSYS=", wcslen (L"MSYS=")) == 0)
+ 	{
+ 	  PWCHAR q = wcsstr (p, L"error_start") ;
+ 	  /* replace 'error_start=...' with '_rror_start=...' */
+ 	  if (q)
+ 	    {
+ 	      *q = L'_' ;
+-	      SetEnvironmentVariableW (L"CYGWIN", p + wcslen (L"CYGWIN=")) ;
++	      SetEnvironmentVariableW (L"MSYS", p + wcslen (L"MSYS=")) ;
+ 	    }
+ 	  break;
+ 	}
+diff --git a/winsup/utils/mingw/cygcheck.cc b/winsup/utils/mingw/cygcheck.cc
+index 934816939..f2f1dc307 100644
+--- a/winsup/utils/mingw/cygcheck.cc
++++ b/winsup/utils/mingw/cygcheck.cc
+@@ -95,8 +95,6 @@ static const char *known_env_vars[] = {
+   "c_include_path",
+   "compiler_path",
+   "cxx_include_path",
+-  "cygwin",
+-  "cygwin32",
+   "dejagnu",
+   "expect",
+   "gcc_default_options",
+@@ -108,6 +106,7 @@ static const char *known_env_vars[] = {
+   "lpath",
+   "make_mode",
+   "makeflags",
++  "msys",
+   "path",
+   "pwd",
+   "strace",
+-- 
+2.52.0.windows.1
+
