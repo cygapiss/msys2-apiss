@@ -128,6 +128,7 @@ async function install_mingw(MINGW_PACKAGE_PREFIX) {
     `${MINGW_PACKAGE_PREFIX}-libjpeg-turbo`,
     `${MINGW_PACKAGE_PREFIX}-libnfs`,
     `${MINGW_PACKAGE_PREFIX}-libpng`,
+    `${MINGW_PACKAGE_PREFIX}-libslirp`,
     `${MINGW_PACKAGE_PREFIX}-libssh`,
     `${MINGW_PACKAGE_PREFIX}-libtasn1`,
     `${MINGW_PACKAGE_PREFIX}-libusb`,
