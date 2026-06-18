@@ -16,6 +16,9 @@ export const black_list = new Set([
   "msys2-runtime-3.5-devel",
   "parallel", // parallel: /usr/bin/parallel exists in filesystem /usr/bin/parallel.exe is owned by moreutils 0.70-1
   "gnu-netcat", // gnu-netcat-0.7.1-3 and openbsd-netcat-1.234_1-1 are in conflict. Remove openbsd-netcat? [Y/n] "
+  // uutils cp -a breaks Cygwin bootstrap (xattr spam, EEXIST on dir merge).
+  // Use GNU coreutils during stage0; uutils-coreutils is built at stage2.
+  "uutils-coreutils",
 ]);
 
 export const ci_tools_base = process.env.CI_TOOLS_ROOT || "D:/CI-Tools";
@@ -23,6 +26,15 @@ export const ci_tools_base = process.env.CI_TOOLS_ROOT || "D:/CI-Tools";
 export const ci_tools_msys64_stage0 = `${ci_tools_base}/msys64-stage0`;
 export const ci_tools_msys64_stage2 = `${ci_tools_base}/msys64-stage2`;
 export const ci_tools_msys64_stage3 = `${ci_tools_base}/msys64-stage3`;
+
+// Detach /var/cache/pacman/pkg without wiping msys64-caches when pkg is a symlink.
+export const bash_detach_pacman_pkg_cache = `
+if [ -L /var/cache/pacman/pkg ]; then
+  unlink /var/cache/pacman/pkg
+else
+  rm -rf /var/cache/pacman/pkg
+fi
+`.trim();
 
 export function spawnProcessAsyncCapture(command, args = [], options = {}) {
   return new Promise((resolve, reject) => {
@@ -108,10 +120,11 @@ export async function linkPacmanCache(msys_root) {
         "export CI_TOOLS_DIR_POSIX=`cygpath -p $CI_TOOLS_DIR_WIN`",
         "echo CI_TOOLS_DIR_POSIX:$CI_TOOLS_DIR_POSIX",
         "rm -rf /var/lib/pacman/db.lck",
-        "unlink /var/cache/pacman/pkg 2>/dev/null || true",
+        bash_detach_pacman_pkg_cache,
         "mkdir -p /var/cache/pacman/pkg",
+        "mkdir -p $CI_TOOLS_DIR_POSIX/msys64-caches/msys64/var/cache/pacman/pkg",
         "touch /var/cache/pacman/pkg/gitignore",
-        "cp -af /var/cache/pacman/pkg/* $CI_TOOLS_DIR_POSIX/msys64-caches/msys64/var/cache/pacman/pkg",
+        "cp -af /var/cache/pacman/pkg/* $CI_TOOLS_DIR_POSIX/msys64-caches/msys64/var/cache/pacman/pkg 2>/dev/null || true",
         "rm -rf /var/cache/pacman/pkg",
         "pushd /var/cache/pacman/",
         "ln -s -T $CI_TOOLS_DIR_POSIX/msys64-caches/msys64/var/cache/pacman/pkg pkg",
@@ -161,8 +174,9 @@ export async function archiveFull(
       "-c",
       [
         `rm -f ${target_msys_tar_path_cygwin}`,
-        `rm -rf /var/cache/pacman/pkg`,
+        bash_detach_pacman_pkg_cache,
         `mkdir -p /var/cache/pacman/pkg`,
+        `touch /var/cache/pacman/pkg/gitignore`,
       ].join("; "),
     ],
     {
