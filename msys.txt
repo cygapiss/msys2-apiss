@@ -753,7 +753,6 @@ unrar
 unzip
 upx
 util-linux
-uutils-coreutils
 vifm
 vim
 vimpager

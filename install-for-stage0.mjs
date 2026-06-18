@@ -32,7 +32,7 @@ async function main() {
     msys_root,
   );
   console.log(
-    `===stage2: Archive finished as: ${msys2_base_filename} with has_msys64:${has_msys64}`,
+    `===stage0: Archive finished as: ${msys2_base_filename} with has_msys64:${has_msys64}`,
   );
   await installMsys2ExtractScript(ci_tools_msys64_stage0, msys2_base_filename);
   console.log(`===stage0: Install extract script finished`);
