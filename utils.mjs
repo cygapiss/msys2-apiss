@@ -27,14 +27,21 @@ export const ci_tools_msys64_stage0 = `${ci_tools_base}/msys64-stage0`;
 export const ci_tools_msys64_stage2 = `${ci_tools_base}/msys64-stage2`;
 export const ci_tools_msys64_stage3 = `${ci_tools_base}/msys64-stage3`;
 
-// Detach /var/cache/pacman/pkg without wiping msys64-caches when pkg is a symlink.
-export const bash_detach_pacman_pkg_cache = `
-if [ -L /var/cache/pacman/pkg ]; then
-  unlink /var/cache/pacman/pkg
-else
-  rm -rf /var/cache/pacman/pkg
+// Remove /var/cache/pacman/pkg without following a symlink into msys64-caches.
+export const bash_unlink_pacman_pkg = `
+PKG=/var/cache/pacman/pkg
+if [ -L "$PKG" ] || [ -h "$PKG" ]; then
+  unlink "$PKG"
+elif [ -n "$(readlink "$PKG" 2>/dev/null)" ]; then
+  unlink "$PKG"
+elif [ -d "$PKG" ]; then
+  rm -rf "$PKG"
+elif [ -e "$PKG" ]; then
+  rm -f "$PKG"
 fi
 `.trim();
+
+export const bash_detach_pacman_pkg_cache = bash_unlink_pacman_pkg;
 
 export const msys64_pacman_pkg_cache_subdir =
   "msys64-caches/msys64/var/cache/pacman/pkg";
@@ -44,23 +51,22 @@ export const bash_merge_pacman_pkg_to_shared = `
 export CI_TOOLS_DIR_WIN=\`cygpath -w /\`/../..
 export CI_TOOLS_DIR_POSIX=\`cygpath -p $CI_TOOLS_DIR_WIN\`
 SHARED=$CI_TOOLS_DIR_POSIX/${msys64_pacman_pkg_cache_subdir}
-echo CI_TOOLS_DIR_POSIX:$CI_TOOLS_DIR_POSIX
+PKG=/var/cache/pacman/pkg
+echo CI_TOOLS_DIR_POSIX:$CI_TOOLS_DIR_POSIX SHARED:$SHARED
 rm -rf /var/lib/pacman/db.lck
 mkdir -p "$SHARED"
-if [ -L /var/cache/pacman/pkg ]; then
-  unlink /var/cache/pacman/pkg
-elif [ -d /var/cache/pacman/pkg ]; then
-  cp -af /var/cache/pacman/pkg/* "$SHARED/" 2>/dev/null || true
-  rm -rf /var/cache/pacman/pkg
+if [ -d "$PKG" ] && [ -z "$(readlink "$PKG" 2>/dev/null)" ]; then
+  cp -af "$PKG"/* "$SHARED/" 2>/dev/null || true
 fi
+${bash_unlink_pacman_pkg}
 `.trim();
 
-// Sync DB and upgrade all core group packages before full -Syu.
+// MSYS2 has no pacman "core" group; these are the core system upgrade packages.
 export const bash_bootstrap_core_upgrade = [
   `echo "Init msys with $MSYSTEM finished"`,
   `rm -rf /var/lib/pacman/db.lck`,
   `pacman -Sy --noconfirm`,
-  `pacman -S --noconfirm --needed $(pacman -Ssq core)`,
+  `pacman -S --noconfirm --needed bash filesystem mintty msys2-runtime pacman pacman-mirrors`,
 ].join("; ");
 
 export function spawnProcessAsyncCapture(command, args = [], options = {}) {
@@ -160,6 +166,9 @@ touch /var/cache/pacman/pkg/gitignore`
     : `ln -sfnT "$SHARED" /var/cache/pacman/pkg`;
   const script = `${bash_merge_pacman_pkg_to_shared}
 ${tail}`.trim();
+  console.log(
+    `===linkPacmanCache bootstrap=${bootstrap} at ${msys_root}`,
+  );
   await runMsysBash(msys_root, script);
 }
 
@@ -228,6 +237,14 @@ export async function archiveFull(
 
 async function clear_msys64(msys_root) {
   console.log(`Remove existing ${msys_root}`);
+  if (!(await fsExistsAsync(msys_root))) {
+    return;
+  }
+  // Merge pkg/ into msys64-caches, then unlink pkg. Node fs.rm follows symlinks
+  // and would wipe the shared cache if pkg/ still points there.
+  console.log(`===Merge pacman cache before removing ${msys_root}`);
+  await linkPacmanCache(msys_root);
+  await runMsysBash(msys_root, bash_detach_pacman_pkg_cache);
   try {
     await fs.rm(msys_root, { recursive: true, force: true });
   } catch (e) {
