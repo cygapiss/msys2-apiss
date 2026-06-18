@@ -36,6 +36,33 @@ else
 fi
 `.trim();
 
+export const msys64_pacman_pkg_cache_subdir =
+  "msys64-caches/msys64/var/cache/pacman/pkg";
+
+// Copy tree-local .pkg.tar.* into msys64-caches (never deletes SHARED).
+export const bash_merge_pacman_pkg_to_shared = `
+export CI_TOOLS_DIR_WIN=\`cygpath -w /\`/../..
+export CI_TOOLS_DIR_POSIX=\`cygpath -p $CI_TOOLS_DIR_WIN\`
+SHARED=$CI_TOOLS_DIR_POSIX/${msys64_pacman_pkg_cache_subdir}
+echo CI_TOOLS_DIR_POSIX:$CI_TOOLS_DIR_POSIX
+rm -rf /var/lib/pacman/db.lck
+mkdir -p "$SHARED"
+if [ -L /var/cache/pacman/pkg ]; then
+  unlink /var/cache/pacman/pkg
+elif [ -d /var/cache/pacman/pkg ]; then
+  cp -af /var/cache/pacman/pkg/* "$SHARED/" 2>/dev/null || true
+  rm -rf /var/cache/pacman/pkg
+fi
+`.trim();
+
+// Sync DB and upgrade all core group packages before full -Syu.
+export const bash_bootstrap_core_upgrade = [
+  `echo "Init msys with $MSYSTEM finished"`,
+  `rm -rf /var/lib/pacman/db.lck`,
+  `pacman -Sy --noconfirm`,
+  `pacman -S --noconfirm --needed $(pacman -Ssq core)`,
+].join("; ");
+
 export function spawnProcessAsyncCapture(command, args = [], options = {}) {
   return new Promise((resolve, reject) => {
     // Collect stdout and stderr data
@@ -109,29 +136,10 @@ export function getYYYYMMDD(date) {
   return year + month + day;
 }
 
-export async function linkPacmanCache(msys_root) {
+async function runMsysBash(msys_root, script) {
   await spawnProcessAsync(
     `${msys_root}/usr/bin/bash.exe`,
-    [
-      "--login",
-      "-c",
-      [
-        "export CI_TOOLS_DIR_WIN=`cygpath -w /`/../..",
-        "export CI_TOOLS_DIR_POSIX=`cygpath -p $CI_TOOLS_DIR_WIN`",
-        "echo CI_TOOLS_DIR_POSIX:$CI_TOOLS_DIR_POSIX",
-        "rm -rf /var/lib/pacman/db.lck",
-        bash_detach_pacman_pkg_cache,
-        "mkdir -p /var/cache/pacman/pkg",
-        "mkdir -p $CI_TOOLS_DIR_POSIX/msys64-caches/msys64/var/cache/pacman/pkg",
-        "touch /var/cache/pacman/pkg/gitignore",
-        "cp -af /var/cache/pacman/pkg/* $CI_TOOLS_DIR_POSIX/msys64-caches/msys64/var/cache/pacman/pkg 2>/dev/null || true",
-        "rm -rf /var/cache/pacman/pkg",
-        "pushd /var/cache/pacman/",
-        "ln -s -T $CI_TOOLS_DIR_POSIX/msys64-caches/msys64/var/cache/pacman/pkg pkg",
-        "popd",
-        `cat /etc/pacman.conf | grep ^SigLevel`,
-      ].join("; "),
-    ],
+    ["--login", "-c", script],
     {
       env: {
         MSYS: "winsymlinks:native",
@@ -140,6 +148,19 @@ export async function linkPacmanCache(msys_root) {
       },
     },
   );
+}
+
+// Merge tree-local pkg/ into msys64-caches. With bootstrap true, leave an empty
+// local pkg/ for the next pacman run (core self-upgrade). Otherwise symlink pkg/
+// to the shared cache so pacman reads and writes there.
+export async function linkPacmanCache(msys_root, bootstrap = false) {
+  const tail = bootstrap
+    ? `mkdir -p /var/cache/pacman/pkg
+touch /var/cache/pacman/pkg/gitignore`
+    : `ln -sfnT "$SHARED" /var/cache/pacman/pkg`;
+  const script = `${bash_merge_pacman_pkg_to_shared}
+${tail}`.trim();
+  await runMsysBash(msys_root, script);
 }
 
 export async function archiveFull(
@@ -200,6 +221,7 @@ export async function archiveFull(
     },
   );
 
+  // Restore shared-cache symlink after packing an empty local pkg/ into the tar.
   await linkPacmanCache(msys_root);
   return msys2_base_filename;
 }
@@ -214,10 +236,21 @@ async function clear_msys64(msys_root) {
   }
 }
 
-export async function executePacmanInstall(msys_root, install_command, cwd) {
+// Run pacman with linkPacmanCache before and after install.
+//
+// Before: merge any tree-local pkg/ into msys64-caches. bootstrap leaves an
+// empty local pkg/ so the first core -Syu can upgrade pacman safely; otherwise
+// pkg/ is symlinked to the shared cache.
+//
+// After: merge new downloads into msys64-caches and symlink pkg/ there.
+export async function executePacmanInstall(
+  msys_root,
+  install_command,
+  cwd,
+  bootstrap = false,
+) {
   console.log(`===Execute: "${install_command}" at ${msys_root} at ${cwd}`);
-  // reset the pacman cache folder
-  await linkPacmanCache(msys_root);
+  await linkPacmanCache(msys_root, bootstrap);
   await spawnProcessAsync(
     `${msys_root}/usr/bin/bash.exe`,
     ["--login", "-c", install_command],
@@ -230,6 +263,7 @@ export async function executePacmanInstall(msys_root, install_command, cwd) {
       },
     },
   );
+  await linkPacmanCache(msys_root);
 }
 
 export async function fsExistsAsync(p) {
@@ -264,24 +298,21 @@ export async function installMsys2BasePackages(
       },
     );
     console.log("===Extract base finished\n");
-    await spawnProcessAsync(
-      `${msys_root}/usr/bin/bash.exe`,
-      [
-        "--login",
-        "-c",
-        `echo "Init msys with $MSYSTEM finished"; rm -rf /var/lib/pacman/db.lck; pacman -Syu --noconfirm`,
-      ],
-      {
-        env: {
-          MSYSTEM: "MSYS",
-        },
-      },
-    );
   }
 
-  console.log(`===Init env finished then upgrade base packages at ${msys_root}`);
+  // Bootstrap: upgrade core (pacman, msys2-runtime, bash, ...) with a local
+  // pkg/ cache, then full -Syu upgrades the rest of the base system.
+  console.log(`===Bootstrap core upgrade at ${msys_root}`);
+  await executePacmanInstall(
+    msys_root,
+    bash_bootstrap_core_upgrade,
+    msys_root,
+    true,
+  );
+
+  console.log(`===Bootstrap core upgrade finished at ${msys_root}`);
   await executePacmanInstall(msys_root, `pacman -Syu --noconfirm`, msys_root);
-  console.log("===Upgrade base packages finished");
+  console.log("===Full pacman -Syu finished");
   return has_msys64;
 }
 
@@ -325,11 +356,11 @@ export async function installMsys2AllPackages(
     `pacman -S --noconfirm --needed $(cat msys.txt)`,
   ];
 
-  await spawnProcessAsync(`${msys_root}/usr/bin/bash.exe`, [
-    "--login",
-    "-c",
+  await executePacmanInstall(
+    msys_root,
     `cd ${pkg_root_cygwin}/; ${bash_commands_for_install_all.join("; ")}`,
-  ]);
+    pkg_root_cygwin,
+  );
 
   console.log(
     `===Installing all packages finished at ${ci_tools_msys64_parent}`,
