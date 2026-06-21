@@ -1,7 +1,7 @@
 # gcc is linkage to msys*
 # export MSYS_BUILD_PKGSUMS=enabled
 # export MSYS_CLEAN_TYPE=enabled
-export MSYS_BOOTSTRAP_STAGE=stage0
+export MSYS_BOOTSTRAP_STAGE=stage1-core
 source build-check-bootstrap.sh
 
 bulid_packages() {
@@ -29,9 +29,9 @@ do_build() {
 
   sh ./build-stage0.sh >build-stage0.txt 2>&1
 
-  MSYS_BOOTSTRAP_STAGE=stage0 makepkg --cleanbuild --syncdeps --force --noconfirm --nocheck --skippgpcheck >../../gcc.txt
+  MSYS_BOOTSTRAP_STAGE=stage1-core makepkg --cleanbuild --syncdeps --force --noconfirm --nocheck --skippgpcheck >../../gcc.txt
 
-  export MSYS_BOOTSTRAP_STAGE=stage0
+  export MSYS_BOOTSTRAP_STAGE=stage1-core
   export pkg_root_dir=$PWD
   export MSYS_IN_PKGBUILD=enabled
   sh ${pkg_root_dir}/build-install/gcc-prepare.sh

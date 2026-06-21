@@ -13,19 +13,7 @@ source "${currnent_script_dir}/ports/msys2-runtime/check-bootstrap.sh"
 
 export pkg_root_dir=$currnent_script_dir
 
-if [[ "$MSYS_BOOTSTRAP_STAGE" == "stage_origin" ]]; then
-  DIST_TARGET_DIR_NAME=origin
-elif [[ "$MSYS_BOOTSTRAP_STAGE" == "stage_origin_hook" ]]; then
-  DIST_TARGET_DIR_NAME=init
-elif [[ "$MSYS_BOOTSTRAP_STAGE" == "stage0" ]]; then
-  DIST_TARGET_DIR_NAME=init
-elif [[ "$MSYS_BOOTSTRAP_STAGE" == "stage1" ]]; then
-  DIST_TARGET_DIR_NAME=stage1
-elif [[ "$MSYS_BOOTSTRAP_STAGE" == "stage2" ]]; then
-  DIST_TARGET_DIR_NAME=stage2
-elif [[ "$MSYS_BOOTSTRAP_STAGE" == "stage3" ]]; then
-  DIST_TARGET_DIR_NAME=final
-else
+if [[ -z "$MSYS_BOOTSTRAP_STAGE" ]]; then
   echo "Unknown MSYS_BOOTSTRAP_STAGE: $MSYS_BOOTSTRAP_STAGE"
   exit -1
 fi
@@ -37,10 +25,7 @@ do_build() {
   pkgver=`sh -c "$pkgver_command_str"`
   pkgrel_command_str="export MSYS_BOOTSTRAP_STAGE=$stage_name;source $pkg_current_dir/PKGBUILD; echo \$pkgrel"
   pkgrel=`sh -c "$pkgrel_command_str"`
-  package_cache_dir="$pkg_root_dir/build-cache/$stage_name/$new_dir-$pkgver-$pkgrel"
-  if [ -n "$MSYS_BOOTSTRAP_PACKAGE_NAME_SUFFIX" ]; then
-    package_cache_dir="${package_cache_dir}-${MSYS_BOOTSTRAP_PACKAGE_NAME_SUFFIX}"
-  fi
+  package_cache_dir="$pkg_root_dir/build-cache/$MSYS_BOOTSTRAP_STAGE/$new_dir-$pkgver-$pkgrel"
   package_cache_dir_win=`cygpath -w $package_cache_dir`
 
   mkdir -p $package_cache_dir
@@ -53,7 +38,7 @@ do_build() {
   if [[ -n "$MSYS_CLEAN_TYPE" ]]; then
     # MSYS_CLEAN_TYPE is enabled or only, do clean existing packages first
     if [ -n "$current_packages" ]; then
-      echo "There are existing packages, do clean first for ('${new_dir}', '$DIST_TARGET_DIR_NAME'): '$current_packages'"
+      echo "There are existing packages, do clean first for ('${new_dir}', '$MSYS_BOOTSTRAP_STAGE'): '$current_packages'"
       rm -rf $package_cache_dir
       mkdir -p $package_cache_dir
       current_packages=""
@@ -127,10 +112,10 @@ do_build() {
 
   echo "Copy packages for stage:'$stage_name'"
   pushd $package_cache_dir
-  mkdir -p $pkg_root_dir/dist/$DIST_TARGET_DIR_NAME
+  mkdir -p $pkg_root_dir/dist/$MSYS_BOOTSTRAP_STAGE
   if [ -z "$MSYS_BOOTSTRAP_DISABLE_COPY_PACKAGES" ]; then
-    echo "Copying packages:'$current_packages' to '$pkg_root_dir/dist/$DIST_TARGET_DIR_NAME/'"
-    cp -af $current_packages $pkg_root_dir/dist/$DIST_TARGET_DIR_NAME/
+    echo "Copying packages:'$current_packages' to '$pkg_root_dir/dist/$MSYS_BOOTSTRAP_STAGE/'"
+    cp -af $current_packages $pkg_root_dir/dist/$MSYS_BOOTSTRAP_STAGE/
   fi
   popd
 

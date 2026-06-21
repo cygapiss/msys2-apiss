@@ -51,7 +51,7 @@ const packages_deferred_to_stage2 = [
 
 // Remove deps that prevent bootstrap
 const deps_remove_map = {
-  // libiconv already be built at stage0
+  // libiconv already be built at stage1-core
   libiconv: ["gettext"],
   libxslt: ["libxml2"],
   perl: ["groff", "libxcrypt"],

@@ -7,7 +7,7 @@ sh build-single.sh msys2-runtime
 
 export MSYS_BUILD_PKGSUMS=disabled
 # export MSYS_CLEAN_TYPE=enabled
-export MSYS_BOOTSTRAP_STAGE=stage_origin_hook
+export MSYS_BOOTSTRAP_STAGE=stage1-rt-hook
 source build-check-bootstrap.sh
 
 sh build-single.sh msys2-runtime
