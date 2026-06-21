@@ -5,12 +5,12 @@ if [[ "$MSYS_IN_PKGBUILD" == "enabled" ]]; then
         # Then gcc-libs linkage to cygwin msys2-runtime and libiconv
         # the msys2-runtime-bootstrap and libiconv-bootstrap are built by stage0, so they can not be pre-installed.
         # msys2-runtime
-        tar xf ./dist/init/msys2-runtime-$MSYS_RUNTIME_PKGVER-$MSYS2_BOOTSTRAP_VER-x86_64.pkg.tar.zst -C / usr/bin/cygwin1.dll
-        tar xf ./dist/init/msys2-runtime-devel-$MSYS_RUNTIME_PKGVER-$MSYS2_BOOTSTRAP_VER-x86_64.pkg.tar.zst -C / usr/lib
+        tar xf ./dist/init/msys2-runtime-$MSYS_RUNTIME_PKGVER-$MSYS_RUNTIME_BOOTSTRAP_PKGREL-x86_64.pkg.tar.zst -C / usr/bin/cygwin1.dll
+        tar xf ./dist/init/msys2-runtime-devel-$MSYS_RUNTIME_PKGVER-$MSYS_RUNTIME_BOOTSTRAP_PKGREL-x86_64.pkg.tar.zst -C / usr/lib
 
         # libiconv
-        tar xf ./dist/init/libiconv-$LIBICONV_PKGVER-$MSYS2_BOOTSTRAP_VER-x86_64.pkg.tar.zst -C /
-        tar xf ./dist/init/libiconv-devel-$LIBICONV_PKGVER-$MSYS2_BOOTSTRAP_VER-x86_64.pkg.tar.zst -C / usr/lib
+        tar xf ./dist/init/libiconv-$LIBICONV_PKGVER-$MSYS_RUNTIME_BOOTSTRAP_PKGREL-x86_64.pkg.tar.zst -C /
+        tar xf ./dist/init/libiconv-devel-$LIBICONV_PKGVER-$MSYS_RUNTIME_BOOTSTRAP_PKGREL-x86_64.pkg.tar.zst -C / usr/lib
         popd
     elif [[ "$MSYS_BOOTSTRAP_STAGE" == "stage1" ]]; then
         # Combine gcc-libs into stage1 byproduct, as it's not able
@@ -18,8 +18,8 @@ if [[ "$MSYS_IN_PKGBUILD" == "enabled" ]]; then
         rm -rf ${srcdir}/dest
         mkdir -p ${srcdir}/dest
         pushd ${pkg_root_dir}
-        tar xf ./dist/init/gcc-$GCC_PKGVER-$MSYS2_BOOTSTRAP_VER-x86_64.pkg.tar.zst -C ${srcdir}/dest
-        tar xf ./dist/init/gcc-libs-$GCC_PKGVER-$MSYS2_BOOTSTRAP_VER-x86_64.pkg.tar.zst -C ${srcdir}/dest
+        tar xf ./dist/init/gcc-$GCC_PKGVER-$MSYS_RUNTIME_BOOTSTRAP_PKGREL-x86_64.pkg.tar.zst -C ${srcdir}/dest
+        tar xf ./dist/init/gcc-libs-$GCC_PKGVER-$MSYS_RUNTIME_BOOTSTRAP_PKGREL-x86_64.pkg.tar.zst -C ${srcdir}/dest
         popd
 
         pushd ${srcdir}/dest
