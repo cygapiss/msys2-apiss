@@ -2,4 +2,4 @@
 echo "Install 'tcl' with tcl.sh for ${new_dir}"
 
 tar xf ${new_dir}-tmp-full.tar -C /
-tar xf ${pkg_root_dir}/dist-pkg/tcl-8.6.12-3-x86_64.pkg.tar.zst -C /
+tar xf ${pkg_root_dir}/dist-pkg/tcl-$TCL_PKGVER-$TCL_PKGREL-x86_64.pkg.tar.zst -C /
