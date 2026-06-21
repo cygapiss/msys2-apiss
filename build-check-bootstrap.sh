@@ -8,7 +8,7 @@ msys_runtime_pkgver_command_str="export MSYS_BOOTSTRAP_STAGE=;source ${currnent_
 export MSYS_RUNTIME_PKGVER=`sh -c "$msys_runtime_pkgver_command_str"`
 msys_runtime_pkgrel_command_str="export MSYS_BOOTSTRAP_STAGE=;source ${currnent_script_dir}/ports/msys2-runtime/PKGBUILD; echo \$pkgrel"
 export MSYS_RUNTIME_PKGREL=`sh -c "$msys_runtime_pkgrel_command_str"`
-export MSYS2_BOOTSTRAP_VER=6
+export MSYS_RUNTIME_BOOTSTRAP_PKGREL=6
 
 libiconv_pkgver_command_str="export MSYS_BOOTSTRAP_STAGE=;source ${currnent_script_dir}/ports/libiconv/PKGBUILD; echo \$pkgver"
 export LIBICONV_PKGVER=`sh -c "$libiconv_pkgver_command_str"`
