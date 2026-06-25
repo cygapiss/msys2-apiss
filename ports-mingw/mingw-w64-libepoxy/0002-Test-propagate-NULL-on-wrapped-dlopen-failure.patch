@@ -1,0 +1,29 @@
+From a83ae428eb267a0076a977696d2c410c65985d5d Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Thu, 18 Jun 2026 00:26:20 +0800
+Subject: [PATCH 02/10] Test: propagate NULL on wrapped dlopen failure
+
+- Return NULL when a wrapped library fails to load.
+- Avoid keeping a synthetic wrapper handle for an unopened libEGL.
+- Prevent follow-up EGL symbol lookup aborts in GLX-only test paths.
+---
+ test/dlwrap.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/test/dlwrap.c b/test/dlwrap.c
+index 68bfa00..4b40d22 100644
+--- a/test/dlwrap.c
++++ b/test/dlwrap.c
+@@ -119,6 +119,9 @@ dlopen(const char *filename, int flag)
+     wrap->handle = ret;
+ 
+     /* We use wrapped_libs as our handles to libraries. */
++    if (!ret)
++        return ret;
++
+     return wrap;
+ }
+ 
+-- 
+2.52.0.windows.1
+

@@ -1,0 +1,55 @@
+From 126951e7f3098d065dea6130ec03d492f192f3cf Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Thu, 18 Jun 2026 07:56:58 +0800
+Subject: [PATCH 07/10] EGL: gate core providers on conservative version
+
+- Failure was seen in the libepoxy:glx_gles2 test:
+
+  result: killed by signal 6 SIGABRT
+  command: build_nSOgjR/test/glx_gles2
+  stderr:
+  eglGetCurrentDisplay() not found:
+  /home/runner/work/libepoxy/libepoxy/build_nSOgjR/test/glx_gles2:
+  undefined symbol: eglGetCurrentDisplay
+
+- Stop treating EGL 1.0 providers as unconditionally available.
+- Use epoxy_conservative_egl_version() for all EGL core versions.
+- Return 0 when no current EGL display is available.
+- Avoid hard dlsym of EGL 1.0 symbols during GLX-only probing.
+---
+ src/dispatch_egl.c  | 2 +-
+ src/gen_dispatch.py | 5 +----
+ 2 files changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/src/dispatch_egl.c b/src/dispatch_egl.c
+index 3f0c789..4978dea 100644
+--- a/src/dispatch_egl.c
++++ b/src/dispatch_egl.c
+@@ -33,7 +33,7 @@ epoxy_conservative_egl_version(void)
+     EGLDisplay dpy = eglGetCurrentDisplay();
+ 
+     if (!dpy)
+-        return 14;
++        return 0;
+ 
+     return epoxy_egl_version(dpy);
+ }
+diff --git a/src/gen_dispatch.py b/src/gen_dispatch.py
+index 3daad84..c9b0aaf 100755
+--- a/src/gen_dispatch.py
++++ b/src/gen_dispatch.py
+@@ -365,10 +365,7 @@ class Generator(object):
+                     loader = 'epoxy_glx_dlsym({0})'
+             elif api == 'egl':
+                 human_name = 'EGL {0}'.format(version)
+-                if version > 10:
+-                    condition = 'epoxy_conservative_egl_version() >= {0}'.format(version)
+-                else:
+-                    condition = 'true'
++                condition = 'epoxy_conservative_egl_version() >= {0}'.format(version)
+                 # All EGL core entrypoints must be dlsym()ed out --
+                 # eglGetProcAdddress() will return NULL.
+                 loader = 'epoxy_egl_dlsym({0})'
+-- 
+2.52.0.windows.1
+
