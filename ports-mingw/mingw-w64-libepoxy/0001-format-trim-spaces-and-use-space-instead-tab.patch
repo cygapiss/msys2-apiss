@@ -1,0 +1,86 @@
+From 4a3c26b982a64ebb9b4c6a504bc1ce26da6b87a6 Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Tue, 10 Sep 2024 23:55:15 +0800
+Subject: [PATCH 01/10] format: trim spaces and use space instead tab
+
+---
+ include/epoxy/common.h |  2 +-
+ src/dispatch_common.c  | 16 ++++++++--------
+ 2 files changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/include/epoxy/common.h b/include/epoxy/common.h
+index cf58ab2..41fc5ee 100644
+--- a/include/epoxy/common.h
++++ b/include/epoxy/common.h
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright 2017  Emmanuele Bassi 
++ * Copyright 2017  Emmanuele Bassi
+  *
+  * Permission is hereby granted, free of charge, to any person obtaining a
+  * copy of this software and associated documentation files (the "Software"),
+diff --git a/src/dispatch_common.c b/src/dispatch_common.c
+index 3ba9b0f..6300b01 100644
+--- a/src/dispatch_common.c
++++ b/src/dispatch_common.c
+@@ -114,7 +114,7 @@
+  *      3.6. To perform the dynamic query, libGL also must export an entry
+  *           point called
+  *
+- *           void (*glXGetProcAddressARB(const GLubyte *))(); 
++ *           void (*glXGetProcAddressARB(const GLubyte *))();
+  *
+  *      The full specification of this function is available separately. It
+  *      takes the string name of a GL or GLX entry point and returns a pointer
+@@ -269,7 +269,7 @@ static struct api api = {
+ #ifndef _WIN32
+     .mutex = PTHREAD_MUTEX_INITIALIZER,
+ #else
+-	0,
++    0,
+ #endif
+ };
+ 
+@@ -551,7 +551,7 @@ epoxy_load_glx(bool exit_if_fails, bool load)
+ # ifdef GLVND_GLX_LIB
+     /* prefer the glvnd library if it exists */
+     if (!api.glx_handle)
+-	get_dlopen_handle(&api.glx_handle, GLVND_GLX_LIB, false, load);
++        get_dlopen_handle(&api.glx_handle, GLVND_GLX_LIB, false, load);
+ # endif
+     if (!api.glx_handle)
+         get_dlopen_handle(&api.glx_handle, GLX_LIB, exit_if_fails, load);
+@@ -665,7 +665,7 @@ static void
+ epoxy_load_gl(void)
+ {
+     if (api.gl_handle)
+-	return;
++        return;
+ 
+ #if defined(_WIN32) || defined(__APPLE__)
+     get_dlopen_handle(&api.gl_handle, OPENGL_LIB, true, true);
+@@ -788,9 +788,9 @@ epoxy_egl_get_current_gl_context_api(void)
+         return EGL_NONE;
+ 
+     if (eglQueryContext(eglGetCurrentDisplay(), eglGetCurrentContext(),
+-			EGL_CONTEXT_CLIENT_TYPE, &curapi) == EGL_FALSE) {
+-	(void)eglGetError();
+-	return EGL_NONE;
++                        EGL_CONTEXT_CLIENT_TYPE, &curapi) == EGL_FALSE) {
++                        (void)eglGetError();
++        return EGL_NONE;
+     }
+ 
+     return (EGLenum) curapi;
+@@ -924,7 +924,7 @@ epoxy_set_resolver_failure_handler(epoxy_resolver_failure_handler_t handler)
+ {
+ #ifdef _WIN32
+     return InterlockedExchangePointer((void**)&epoxy_resolver_failure_handler,
+-				      handler);
++                                      handler);
+ #else
+     epoxy_resolver_failure_handler_t old;
+     pthread_mutex_lock(&api.mutex);
+-- 
+2.52.0.windows.1
+

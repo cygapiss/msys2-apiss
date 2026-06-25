@@ -4,7 +4,7 @@ _realname=libepoxy
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
 pkgver=1.5.10
-pkgrel=7
+pkgrel=8
 pkgdesc="A library for handling OpenGL function pointer management for you (mingw-w64)"
 arch=('any')
 mingw_arch=('mingw64' 'ucrt64' 'clang64' 'clangarm64')
@@ -17,24 +17,42 @@ depends=("${MINGW_PACKAGE_PREFIX}-cc-libs"
 makedepends=("${MINGW_PACKAGE_PREFIX}-cc"
              "${MINGW_PACKAGE_PREFIX}-meson"
              "${MINGW_PACKAGE_PREFIX}-pkgconf"
-             "${MINGW_PACKAGE_PREFIX}-python")
-source=("https://github.com/anholt/libepoxy/archive/${pkgver}/${_realname}-${pkgver}.tar.gz"
-        "001-egl-missing-prototype.patch"
-        "https://github.com/anholt/libepoxy/pull/285.patch"
-        "https://github.com/anholt/libepoxy/pull/294.patch"
-        "0001-Ensure-dispatch-table-initialization.patch")
-sha256sums=('a7ced37f4102b745ac86d6a70a9da399cc139ff168ba6b8002b4d8d43c900c15'
-            '5fb6b63e93cb92052f25c0ac230f3b4d89054a28e02dc37a42eb9f866cd0cbc1'
-            'e86994609738190e9fb84ea96184639a1282ee4eee5a5ae0272d9a2d83a802ce'
-            '3ef53c2126e3a27bc090f40bbc423ae70e08edbc6291a74f22a0bebcd00da8a8'
-            'd035fc71735ce8364cb2e8c4783c9e0396bc84bff29221de48f152bd36e60b9f')
+             "${MINGW_PACKAGE_PREFIX}-python"
+             "git")
+_commit=d1f952c4565c389d82fd1657153e84e050f35b27
+_patches=(
+  0001-format-trim-spaces-and-use-space-instead-tab.patch
+  0002-Test-propagate-NULL-on-wrapped-dlopen-failure.patch
+  0003-egl-gl-win32-On-windows-the-mesa-with-EGL-can-suppor.patch
+  0004-EGL-has-the-highest-priority.patch
+  0005-Add-EGL-support-on-MINGW.patch
+  0006-Do-not-try-get_dlopen_handle-in-epoxy_get_bootstrap_.patch
+  0007-EGL-gate-core-providers-on-conservative-version.patch
+  0008-EGL-track-make-current-for-win32-dispatch-tables.patch
+  0009-Ensure-dispatch-table-initialization.patch
+  0010-Add-epoxy-apis-for-overriding-default-loading-GL-dll.patch
+)
+source=("${_realname}"::"git+https://github.com/anholt/libepoxy.git#commit=${_commit}"
+        "${_patches[@]}")
+sha256sums=('SKIP'
+            'd8dd425d55de1242ff9e56b68c7f090c07e51fd7ca1f840195d096caa48aef55'
+            '197a2cd35e0188e28a3617ae187d200ba1f9db2c2a42992b3cf911376dc757ee'
+            '4159aa196925f4a55351b87cc0adec856b70be2db2e624b89935af24cb58aa7d'
+            '758e14650ed520b6891841ced5ee7acb2667c69d10585ecef189a71792e5d831'
+            '5b19259efab4d64d845a39eaa877e127be775a94595b01bb7a02e1a3cee5ada7'
+            'bc189c018e77a1676cd4ed070709e1b3cf865c589c9803a93394e01505cae9cf'
+            '71a6fdd431a9efeea2eb4c1c3178eb5d9ad1a70f9c9652cf7cf42c59a250f206'
+            '41f7a00a41126a3c44e04f2b97055ed9ccc25d987a796d64ff81435a590d1c71'
+            '6cd139f2730fd3f233544a1c3bf77a1c0b840f73c6c233bcdda8759688e09bc8'
+            'fb90dd91b0defa538e364db4fcde46ffcd7e0edf072b7091de20fb8740a6669f')
 
 prepare() {
-  cd ${_realname}-${pkgver}
-  patch -p1 -i ${srcdir}/001-egl-missing-prototype.patch
-  patch -p1 -i ${srcdir}/285.patch
-  patch -p1 -i ${srcdir}/294.patch
-  patch -p1 -i ${srcdir}/0001-Ensure-dispatch-table-initialization.patch
+  cd ${_realname}
+
+  for patch in "${_patches[@]}"; do
+    msg2 "Patching with ${patch}"
+    patch -Nbp1 -i "${srcdir}/${patch}"
+  done
 }
 
 build() {
@@ -46,7 +64,7 @@ build() {
     --buildtype plain \
     -Ddefault_library=both \
     -Degl=yes \
-    ../${_realname}-${pkgver}
+    ../${_realname}
 
   ${MINGW_PREFIX}/bin/meson.exe compile
 }
@@ -55,6 +73,6 @@ package() {
   cd "${srcdir}/build-${MSYSTEM}"
   DESTDIR="${pkgdir}" ${MINGW_PREFIX}/bin/meson.exe install
 
-  install -Dm644 "${srcdir}"/${_realname}-${pkgver}/COPYING \
+  install -Dm644 "${srcdir}"/${_realname}/COPYING \
     "${pkgdir}"${MINGW_PREFIX}/share/licenses/${_realname}/COPYING
 }

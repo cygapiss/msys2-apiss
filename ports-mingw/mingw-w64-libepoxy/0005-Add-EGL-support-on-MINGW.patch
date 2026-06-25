@@ -1,0 +1,168 @@
+From 335dc3bd441a0cb1cd76aa84c2859871869479a0 Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Wed, 1 Dec 2021 01:00:05 +0800
+Subject: [PATCH 05/10] Add EGL support on MINGW Check
+ epoxy_current_context_is_gl properly
+
+---
+ meson.build           |  2 +-
+ src/dispatch_common.c | 49 ++++++++++++++++++++++++-------------------
+ src/meson.build       |  3 +++
+ 3 files changed, 32 insertions(+), 22 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index 9fa9225..4799b29 100644
+--- a/meson.build
++++ b/meson.build
+@@ -43,7 +43,7 @@ endif
+ 
+ enable_egl = get_option('egl')
+ if enable_egl == 'auto'
+-  build_egl = not ['windows', 'darwin'].contains(host_system)
++  build_egl = not ['darwin'].contains(host_system)
+ else
+   build_egl = enable_egl == 'yes'
+ endif
+diff --git a/src/dispatch_common.c b/src/dispatch_common.c
+index d8a8b93..065ea01 100644
+--- a/src/dispatch_common.c
++++ b/src/dispatch_common.c
+@@ -275,7 +275,7 @@ static struct api api = {
+ 
+ static bool library_initialized;
+ 
+-static bool epoxy_current_context_is_glx(void);
++static bool epoxy_current_context_is_gl(void);
+ 
+ #if PLATFORM_HAS_EGL
+ static EGLenum
+@@ -366,7 +366,7 @@ epoxy_is_desktop_gl(void)
+      * OpenGL ES, we must also check the context type through EGL (we
+      * can do that as PowerVR is only usable through EGL).
+      */
+-    if (!epoxy_current_context_is_glx()) {
++    if (!epoxy_current_context_is_gl()) {
+         switch (epoxy_egl_get_current_gl_context_api()) {
+         case EGL_OPENGL_API:     return true;
+         case EGL_OPENGL_ES_API:  return false;
+@@ -570,37 +570,44 @@ epoxy_conservative_glx_dlsym(const char *name, bool exit_if_fails)
+ }
+ 
+ /**
+- * Tests whether the currently bound context is EGL or GLX, trying to
++ * Tests whether the currently bound context is EGL or GLX|WGL, trying to
+  * avoid loading libraries unless necessary.
+  */
+ static bool
+-epoxy_current_context_is_glx(void)
++epoxy_current_context_is_gl(void)
+ {
+-#if !PLATFORM_HAS_GLX
+-    return false;
+-#else
+     void *sym;
+ 
+-    sym = epoxy_conservative_glx_dlsym("glXGetCurrentContext", false);
+-    if (sym) {
+-        if (glXGetCurrentContext())
+-            return true;
+-    } else {
+-        (void)dlerror();
+-    }
+-
+ #if PLATFORM_HAS_EGL
+     sym = epoxy_conservative_egl_dlsym("eglGetCurrentContext", false);
+     if (sym) {
+         if (epoxy_egl_get_current_gl_context_api() != EGL_NONE)
+             return false;
+     } else {
++#if !defined(_WIN32)
+         (void)dlerror();
++#endif
+     }
+ #endif /* PLATFORM_HAS_EGL */
+ 
+-    return false;
++#if PLATFORM_HAS_GLX
++    sym = epoxy_conservative_glx_dlsym("glXGetCurrentContext", false);
++    if (sym) {
++        if (glXGetCurrentContext())
++            return true;
++    } else {
++        (void)dlerror();
++    }
+ #endif /* PLATFORM_HAS_GLX */
++
++#if PLATFORM_HAS_WGL
++    if (wglGetCurrentContext()) {
++        return true;
++    }
++#endif /* PLATFORM_HAS_WGL */
++
++    (void)sym;
++    return false;
+ }
+ 
+ /**
+@@ -706,7 +713,7 @@ epoxy_gl_dlsym(const char *name)
+ void *
+ epoxy_gles1_dlsym(const char *name)
+ {
+-    if (epoxy_current_context_is_glx()) {
++    if (epoxy_current_context_is_gl()) {
+         return epoxy_get_proc_address(name);
+     } else {
+         get_dlopen_handle(&api.gles1_handle, GLES1_LIB, true, true);
+@@ -717,7 +724,7 @@ epoxy_gles1_dlsym(const char *name)
+ void *
+ epoxy_gles2_dlsym(const char *name)
+ {
+-    if (epoxy_current_context_is_glx()) {
++    if (epoxy_current_context_is_gl()) {
+         return epoxy_get_proc_address(name);
+     } else {
+         get_dlopen_handle(&api.gles2_handle, GLES2_LIB, true, true);
+@@ -738,7 +745,7 @@ epoxy_gles2_dlsym(const char *name)
+ void *
+ epoxy_gles3_dlsym(const char *name)
+ {
+-    if (epoxy_current_context_is_glx()) {
++    if (epoxy_current_context_is_gl()) {
+         return epoxy_get_proc_address(name);
+     } else {
+         if (get_dlopen_handle(&api.gles2_handle, GLES2_LIB, false, true)) {
+@@ -863,7 +870,7 @@ epoxy_get_proc_address(const char *name)
+ #if PLATFORM_HAS_EGL
+     GLenum egl_api = EGL_NONE;
+ 
+-    if (!epoxy_current_context_is_glx())
++    if (!epoxy_current_context_is_gl())
+       egl_api = epoxy_egl_get_current_gl_context_api();
+ 
+     switch (egl_api) {
+@@ -880,7 +887,7 @@ epoxy_get_proc_address(const char *name)
+ #elif defined(__APPLE__)
+     return epoxy_gl_dlsym(name);
+ #elif PLATFORM_HAS_GLX
+-    if (epoxy_current_context_is_glx())
++    if (epoxy_current_context_is_gl())
+         return glXGetProcAddressARB((const GLubyte *)name);
+     assert(0 && "Couldn't find current GLX or EGL context.\n");
+ #endif
+diff --git a/src/meson.build b/src/meson.build
+index 3b9eda1..5ef9356 100644
+--- a/src/meson.build
++++ b/src/meson.build
+@@ -65,6 +65,9 @@ endif
+ if build_egl
+   epoxy_deps += [ elg_headers_dep, ]
+ endif
++if egl_dep.found()
++  epoxy_deps += [ egl_dep ]
++endif
+ 
+ libepoxy = library(
+   'epoxy',
+-- 
+2.52.0.windows.1
+
