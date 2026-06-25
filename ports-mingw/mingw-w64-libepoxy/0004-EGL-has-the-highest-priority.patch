@@ -1,0 +1,46 @@
+From 3335c1ea8f3286df491d3c493ef9be61847e4c42 Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Mon, 11 Apr 2022 15:53:32 +0800
+Subject: [PATCH 04/10] EGL has the highest priority
+
+---
+ src/dispatch_common.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/src/dispatch_common.c b/src/dispatch_common.c
+index 6e4508a..d8a8b93 100644
+--- a/src/dispatch_common.c
++++ b/src/dispatch_common.c
+@@ -815,14 +815,6 @@ epoxy_egl_get_current_gl_context_api(void)
+ void *
+ epoxy_get_bootstrap_proc_address(const char *name)
+ {
+-    /* If we already have a library that links to libglapi loaded,
+-     * use that.
+-     */
+-#if PLATFORM_HAS_GLX
+-    if (api.glx_handle && glXGetCurrentContext())
+-        return epoxy_gl_dlsym(name);
+-#endif
+-
+     /* If epoxy hasn't loaded any API-specific library yet, try to
+      * figure out what API the context is using and use that library,
+      * since future calls will also use that API (this prevents a
+@@ -853,6 +845,14 @@ epoxy_get_bootstrap_proc_address(const char *name)
+     }
+ #endif /* PLATFORM_HAS_EGL */
+ 
++    /* If we already have a library that links to libglapi loaded,
++     * use that.
++     */
++#if PLATFORM_HAS_GLX
++    if (api.glx_handle && glXGetCurrentContext())
++        return epoxy_gl_dlsym(name);
++#endif
++
+     /* Fall back to GLX */
+     return epoxy_gl_dlsym(name);
+ }
+-- 
+2.52.0.windows.1
+
