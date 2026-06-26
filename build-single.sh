@@ -121,12 +121,30 @@ do_build() {
   if [[ "$stage_name" == "stage1" ]]; then
     rm -rf tmp
     mkdir -p tmp
+    local any_package_paths=""
+    local non_any_package_count=0
     IFS=' ' read -r -a current_package_list <<< "$current_packages"
     for package_name in "${current_package_list[@]}"; do
+      [[ -z "$package_name" ]] && continue
       package_path="$package_cache_dir/$package_name"
+      if [[ "$package_name" == *-any.pkg.tar.zst ]]; then
+        any_package_paths="${any_package_paths} ${package_path}"
+        continue
+      fi
       echo "Extract '$package_path' into $pkg_current_dir/tmp"
-      tar -xf $package_path -C tmp
+      tar -xf "$package_path" -C tmp
+      non_any_package_count=$((non_any_package_count + 1))
     done
+
+    if [[ "$any_package_paths" != "" ]]; then
+      echo "Install any packages with pacman:${any_package_paths}"
+      pacman -U --noconfirm --overwrite \* $any_package_paths
+    fi
+
+    if [[ "$non_any_package_count" == "0" ]]; then
+      return
+    fi
+
     pushd tmp
     rm .BUILDINFO .MTREE .PKGINFO
     popd
