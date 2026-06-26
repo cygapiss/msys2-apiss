@@ -3,7 +3,6 @@ mkdir -p build-cache/stage1
 export MSYS_BOOTSTRAP_STAGE=stage1
 # export MSYS_CLEAN_TYPE=enabled
 # export MSYS_CLEAN_TYPE=only
-export MSYS_BOOTSTRAP_EXIT_ON_ERROR=enabled
 
 source build-check-bootstrap.sh
 

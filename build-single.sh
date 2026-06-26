@@ -96,9 +96,7 @@ do_build() {
 
   if [ $retVal -ne 0 ]; then
     echo "Error for pkgbase: ${new_dir} with retcode:$retVal"
-    if [ -n "$MSYS_BOOTSTRAP_EXIT_ON_ERROR" ]; then
-      exit $retVal
-    fi
+    exit $retVal
   elif [[ "$need_makepkg" == "0" ]]; then
     echo "The packages in '$package_cache_dir' already present, no need cache it."
   else
