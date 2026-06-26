@@ -73,17 +73,20 @@ do_build() {
     echo "There is no need build for '${new_dir}'"
     retVal=0
   else
-    echo "Building with makepkg for '${new_dir}'"
     rm -rf *.pkg.tar.zst
+    makepkg_common_flags="--force --noconfirm --nocheck --skippgpcheck"
+    if [[ "$stage_name" == "stage1-rt-origin" || "$stage_name" == "stage3" ]]; then
+      makepkg_common_flags="$makepkg_common_flags --syncdeps"
+    fi
+    echo "Building with makepkg for '${new_dir}' with flags: '$makepkg_common_flags'"
     if [[ "$MSYS_BUILD_NO_EXTRACT" == "enabled" ]]; then
       # Do not extract source
       echo "Building '${new_dir}' without extract."
-      makepkg --noextract --force --noconfirm --nocheck --skippgpcheck
-      # makepkg --nobuild --cleanbuild
+      makepkg --noextract $makepkg_common_flags
     else
       # Extract source
       echo "Building '${new_dir}' with extract at $PWD."
-      makepkg --cleanbuild --syncdeps --force --noconfirm --nocheck --skippgpcheck
+      makepkg --cleanbuild $makepkg_common_flags
     fi
     retVal=$?
   fi
