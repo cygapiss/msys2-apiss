@@ -18,6 +18,19 @@ if [[ -z "$MSYS_BOOTSTRAP_STAGE" ]]; then
   exit -1
 fi
 
+record_packages_to_install() {
+  local install_list="${pkg_root_dir}/scripts/generated/${MSYS_BOOTSTRAP_STAGE}-install.txt"
+  mkdir -p "${pkg_root_dir}/scripts/generated"
+  IFS=' ' read -r -a current_package_list <<< "$current_packages"
+  for package_name in "${current_package_list[@]}"; do
+    [[ -z "$package_name" ]] && continue
+    if ! grep -qxF "$package_name" "$install_list" 2>/dev/null; then
+      echo "$package_name" >> "$install_list"
+    fi
+  done
+  return 0
+}
+
 do_build() {
   pkg_current_dir=$PWD
   stage_name="$MSYS_BOOTSTRAP_STAGE"
@@ -121,6 +134,7 @@ do_build() {
   popd
 
   echo "Install packages for stage:'$stage_name'"
+  record_packages_to_install
   if [[ "$stage_name" == "stage1" ]]; then
     rm -rf tmp
     mkdir -p tmp
