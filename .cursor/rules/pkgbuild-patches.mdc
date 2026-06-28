@@ -1,0 +1,57 @@
+---
+description: PKGBUILD patch layout using _patches array (no duplicate filenames)
+globs: "**/PKGBUILD"
+alwaysApply: true
+---
+
+# PKGBUILD patches: use `_patches`
+
+When adding or updating patches in a PKGBUILD, define patch filenames once in
+`_patches` and reuse that array in `source` and `prepare()`. Do not list the
+same patch file in multiple places.
+
+Reference: `make` commit 3e12c4917 (`make: Fixes building with gcc 15`).
+
+## Pattern
+
+```bash
+_patches=(
+  0001-fixes-building-with-gcc-15.patch
+)
+
+source=("https://ftp.gnu.org/gnu/make/${pkgname}-${pkgver}.tar.gz"{,.sig}
+        ${_patches[@]})
+sha256sums=('dd16fb1d67bfab79a72f5e8390735c49e3e8e70b4945a15ab1f81ddb78658fb3'
+            'SKIP'
+            '3bedb8aeef4316f4b909e42a3255fd2da4207a1594cc546538d83761efe59ffe')
+
+prepare() {
+  cd ${srcdir}/${pkgname}-${pkgver}
+
+  for patch in "${_patches[@]}"; do
+    msg2 "Patching with ${patch}"
+    patch -Nbp1 -i "${srcdir}/${patch}"
+  done
+}
+```
+
+## Rules
+
+- Name the array `_patches`, not `patches`.
+- Put `_patches` before `source=`.
+- Append `${_patches[@]}` to `source`; never repeat patch filenames there.
+- Add one `sha256sums` entry per patch (same order as `_patches`). Run
+  `updpkgsums` in the package directory after adding patches.
+- Apply patches in `prepare()` by looping over `"${_patches[@]}"`.
+- Use `0001-`, `0002-`, ... prefixes for new patches; keep comments for
+  upstream/Fedora origin when helpful (see `zsh/PKGBUILD`).
+- Patches not in `_patches` (e.g. one-off `Makefile.in.patch`) stay listed
+  separately in `source` and applied on their own in `prepare()`.
+
+## When refactoring an existing PKGBUILD
+
+1. Move all patch filenames from `source=` into `_patches`.
+2. Replace the inline list with `${_patches[@]}`.
+3. Replace individual `patch -i ...` calls with the loop (unless a patch needs
+   a different strip level or flags).
+4. Verify `sha256sums` count still matches `source` entries.

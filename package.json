@@ -1,0 +1,29 @@
+{
+  "name": "msys2-apiss",
+  "version": "1.0.0",
+  "description": "Early-phase MSYS2 and MinGW packages for Windows API Set schema on Windows 11+ and compatibility DLLs on Windows 10 and older (not working yet)",
+  "homepage": "https://github.com/msys2-apiss/msys2-apiss#readme",
+  "bugs": {
+    "url": "https://github.com/msys2-apiss/msys2-apiss/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/msys2-apiss/msys2-apiss.git"
+  },
+  "license": "MIT",
+  "author": "Yonggang Luo <luoyonggang@gmail.com>",
+  "type": "module",
+  "packageManager": "yarn@4.17.0",
+  "main": "scripts/start.ts",
+  "scripts": {
+    "test": "yarn check && node --experimental-test-module-mocks --test --test-global-setup=./test/global-setup.ts test/*.test.ts",
+    "check": "tsc --noEmit",
+    "build": "vite build",
+    "lint": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^26.0.0",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.16"
+  }
+}

@@ -1,0 +1,26 @@
+---
+description: Use the project MSYS2 Cygwin stage shells for POSIX commands
+alwaysApply: true
+---
+
+# Project Shell
+
+Four Cygwin stage trees (see `scripts/build-config.ts`, default under
+`D:/CI-Tools`):
+
+- `msys64-stage1`, `msys64-stage2`, `msys64-stage3`, `msys64-stage3-mingw`
+
+For bash, makepkg, pacman, and other POSIX/MSYS work, use the bash for the
+stage you are on:
+
+`<stage-dir>/msys64/usr/bin/bash.exe --login -i`
+
+Set `MSYS=winsymlinks:native`, `MSYSTEM=CYGWIN`, `CHERE_INVOKING=1`, and prepend
+`<stage-dir>` and `<stage-dir>/msys64/usr/bin` to `PATH`.
+
+Use the matching `MSYS2-CYGWIN-STAGE*` profile from `.vscode/settings.json`
+when possible. Do not use bare `bash` or `sh` from Windows `PATH` (may resolve
+to WSL).
+
+Do not run bare `cmd` or `cmd /c` when MSYS `usr/bin` is on `PATH`; use
+`cmd.exe` or `%COMSPEC%` if Command Prompt is needed.
