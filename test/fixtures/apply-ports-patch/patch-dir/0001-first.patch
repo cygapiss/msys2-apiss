@@ -1,0 +1,13 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Test Author <test@example.com>
+Date: Thu, 1 Jan 2026 00:00:00 +0000
+Subject: [PATCH 1/2] first patch
+
+---
+diff --git a/pkg-a/PKGBUILD b/pkg-a/PKGBUILD
+index 1111111..2222222 100644
+--- a/pkg-a/PKGBUILD
++++ b/pkg-a/PKGBUILD
+@@ -1 +1 @@
+-old
++new
