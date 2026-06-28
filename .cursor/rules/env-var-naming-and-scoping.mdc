@@ -1,0 +1,52 @@
+---
+description: Avoid leaking or conflicting environment variables in build scripts
+alwaysApply: true
+---
+
+# Environment Variable Naming and Scoping
+
+Windows `set` and shell `export` values are inherited by child processes,
+including MSYS/Cygwin bash, `makepkg`, and autotools `configure`. Do not
+introduce env vars that collide with well-known names or leak past their scope.
+
+## Do not use generic or toolchain names
+
+Avoid names that autotools, GCC, Make, or common tools already use, for
+example:
+
+- `INSTALL`, `INSTALL_SCRIPT`, `INSTALL_PROGRAM`, `INSTALL_DATA`
+- `CC`, `CXX`, `CFLAGS`, `LDFLAGS`, `MAKE`, `SHELL`, `PATH`, `DESTDIR`
+
+Use a project-specific prefix instead, e.g. `NODE_INSTALL_SCRIPT`, not
+`INSTALL_SCRIPT`.
+
+## Scope temporary variables
+
+- In Windows batch subroutines (`:label`), wrap with `setlocal` / `endlocal`.
+- In bash functions or sourced scripts, `unset` temporary exports before
+  returning, or keep them local to a subshell.
+- Before spawning MSYS/bash from batch, do not leave batch-only helper vars in
+  the Windows environment.
+
+## Example from this repo
+
+```bat
+:: BAD - leaks INSTALL_SCRIPT into gcc configure
+:run_node_install
+set "INSTALL_SCRIPT=%~1"
+node %INSTALL_SCRIPT%
+
+:: GOOD - prefixed name, scoped to subroutine
+:run_node_install
+setlocal
+set "NODE_INSTALL_SCRIPT=%~1"
+node %NODE_INSTALL_SCRIPT%
+endlocal
+exit /B 0
+```
+
+## When adding a new env var
+
+1. Search the repo and toolchain docs for the name.
+2. Prefix with the script purpose (`MSYS_`, `NODE_`, `CI_`, etc.).
+3. Confirm child build steps do not inherit it unintentionally.
