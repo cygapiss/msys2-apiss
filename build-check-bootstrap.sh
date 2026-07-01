@@ -2,37 +2,42 @@ pkg_root_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 if [ -z "$pkg_root_dir" ]; then
   pkg_root_dir=$PWD
 fi
-source "${pkg_root_dir}/ports/msys2-runtime/check-bootstrap.sh"
+_load_bootstrap_versions() {
+  source "${pkg_root_dir}/ports/msys2-runtime/check-bootstrap.sh"
 
-msys_runtime_pkgver_command_str="export MSYS_BOOTSTRAP_STAGE=;source ${pkg_root_dir}/ports/msys2-runtime/PKGBUILD; echo \$pkgver"
-export MSYS_RUNTIME_PKGVER=`sh -c "$msys_runtime_pkgver_command_str"`
-msys_runtime_pkgrel_command_str="export MSYS_BOOTSTRAP_STAGE=;source ${pkg_root_dir}/ports/msys2-runtime/PKGBUILD; echo \$pkgrel"
-export MSYS_RUNTIME_PKGREL=`sh -c "$msys_runtime_pkgrel_command_str"`
-export MSYS_RUNTIME_BOOTSTRAP_PKGREL=6
+  msys_runtime_pkgver_command_str="export MSYS_BOOTSTRAP_STAGE=;source ${pkg_root_dir}/ports/msys2-runtime/PKGBUILD; echo \$pkgver"
+  export MSYS_RUNTIME_PKGVER=`sh -c "$msys_runtime_pkgver_command_str"`
+  msys_runtime_pkgrel_command_str="export MSYS_BOOTSTRAP_STAGE=;source ${pkg_root_dir}/ports/msys2-runtime/PKGBUILD; echo \$pkgrel"
+  export MSYS_RUNTIME_PKGREL=`sh -c "$msys_runtime_pkgrel_command_str"`
+  export MSYS_RUNTIME_BOOTSTRAP_PKGREL=6
 
-libiconv_pkgver_command_str="export MSYS_BOOTSTRAP_STAGE=;source ${pkg_root_dir}/ports/libiconv/PKGBUILD; echo \$pkgver"
-export LIBICONV_PKGVER=`sh -c "$libiconv_pkgver_command_str"`
+  libiconv_pkgver_command_str="export MSYS_BOOTSTRAP_STAGE=;source ${pkg_root_dir}/ports/libiconv/PKGBUILD; echo \$pkgver"
+  export LIBICONV_PKGVER=`sh -c "$libiconv_pkgver_command_str"`
 
-libtool_pkgver_command_str="export MSYS_BOOTSTRAP_STAGE=;source ${pkg_root_dir}/ports/libtool/PKGBUILD; echo \$pkgver"
-export LIBTOOL_PKGVER=`sh -c "$libtool_pkgver_command_str"`
-export LIBTOOL_PKGREL=4
+  libtool_pkgver_command_str="export MSYS_BOOTSTRAP_STAGE=;source ${pkg_root_dir}/ports/libtool/PKGBUILD; echo \$pkgver"
+  export LIBTOOL_PKGVER=`sh -c "$libtool_pkgver_command_str"`
+  export LIBTOOL_PKGREL=4
 
-meson_pkgver_command_str="export MSYS_BOOTSTRAP_STAGE=;source ${pkg_root_dir}/ports/meson/PKGBUILD; echo \$pkgver"
-export MESON_PKGVER=`sh -c "$meson_pkgver_command_str"`
+  meson_pkgver_command_str="export MSYS_BOOTSTRAP_STAGE=;source ${pkg_root_dir}/ports/meson/PKGBUILD; echo \$pkgver"
+  export MESON_PKGVER=`sh -c "$meson_pkgver_command_str"`
 
-cmake_pkgver_command_str="export MSYS_BOOTSTRAP_STAGE=;source ${pkg_root_dir}/ports/cmake/PKGBUILD; echo \$pkgver"
-export CMAKE_PKGVER=`sh -c "$cmake_pkgver_command_str"`
+  cmake_pkgver_command_str="export MSYS_BOOTSTRAP_STAGE=;source ${pkg_root_dir}/ports/cmake/PKGBUILD; echo \$pkgver"
+  export CMAKE_PKGVER=`sh -c "$cmake_pkgver_command_str"`
 
-scons_pkgver_command_str="export MSYS_BOOTSTRAP_STAGE=;source ${pkg_root_dir}/ports/scons/PKGBUILD; echo \$pkgver"
-export SCONS_PKGVER=`sh -c "$scons_pkgver_command_str"`
+  scons_pkgver_command_str="export MSYS_BOOTSTRAP_STAGE=;source ${pkg_root_dir}/ports/scons/PKGBUILD; echo \$pkgver"
+  export SCONS_PKGVER=`sh -c "$scons_pkgver_command_str"`
 
-gcc_pkgver_command_str="export MSYS_BOOTSTRAP_STAGE=;source ${pkg_root_dir}/ports/gcc/PKGBUILD; echo \$pkgver"
-export GCC_PKGVER=`sh -c "$gcc_pkgver_command_str"`
+  gcc_pkgver_command_str="export MSYS_BOOTSTRAP_STAGE=;source ${pkg_root_dir}/ports/gcc/PKGBUILD; echo \$pkgver"
+  export GCC_PKGVER=`sh -c "$gcc_pkgver_command_str"`
 
-binutils_pkgver_command_str="export MSYS_BOOTSTRAP_STAGE=;source ${pkg_root_dir}/ports/binutils/PKGBUILD; echo \$pkgver"
-export BINUTILS_PKGVER=`sh -c "$binutils_pkgver_command_str"`
+  binutils_pkgver_command_str="export MSYS_BOOTSTRAP_STAGE=;source ${pkg_root_dir}/ports/binutils/PKGBUILD; echo \$pkgver"
+  export BINUTILS_PKGVER=`sh -c "$binutils_pkgver_command_str"`
 
-perl_pkgver_command_str="export MSYS_BOOTSTRAP_STAGE=;source ${pkg_root_dir}/ports/perl/PKGBUILD; echo \$pkgver"
-export PERL_PKGVER=`sh -c "$perl_pkgver_command_str"`
-perl_pkgrel_command_str="export MSYS_BOOTSTRAP_STAGE=;source ${pkg_root_dir}/ports/perl/PKGBUILD; echo \$pkgrel"
-export PERL_PKGREL=`sh -c "$perl_pkgrel_command_str"`
+  perl_pkgver_command_str="export MSYS_BOOTSTRAP_STAGE=;source ${pkg_root_dir}/ports/perl/PKGBUILD; echo \$pkgver"
+  export PERL_PKGVER=`sh -c "$perl_pkgver_command_str"`
+  perl_pkgrel_command_str="export MSYS_BOOTSTRAP_STAGE=;source ${pkg_root_dir}/ports/perl/PKGBUILD; echo \$pkgrel"
+  export PERL_PKGREL=`sh -c "$perl_pkgrel_command_str"`
+}
+
+_load_bootstrap_versions
+unset -f _load_bootstrap_versions
