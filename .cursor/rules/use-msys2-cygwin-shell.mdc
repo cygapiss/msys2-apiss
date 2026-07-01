@@ -8,7 +8,7 @@ alwaysApply: true
 Four Cygwin stage trees (see `scripts/build-config.ts`, default under
 `D:/CI-Tools`):
 
-- `msys64-stage1`, `msys64-stage2`, `msys64-stage3`, `msys64-stage3-mingw`
+- `msys64-stage1`, `msys64-stage2`, `msys64-stage3`, `msys64-stage3-mingw64`
 
 For bash, makepkg, pacman, and other POSIX/MSYS work, use the bash for the
 stage you are on:
