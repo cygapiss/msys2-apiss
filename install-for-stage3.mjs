@@ -7,7 +7,7 @@ import {
   installMsys2ExtractScript,
   executePacmanInstall,
   ci_tools_msys64_stage3,
-} from "./utils.mjs";
+} from "./scripts/install-msys2-base.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
