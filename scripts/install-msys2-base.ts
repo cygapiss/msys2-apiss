@@ -1,6 +1,12 @@
-import { spawn } from "child_process";
+import { spawn, type SpawnOptions } from "child_process";
 import * as fs from "fs/promises";
 import * as path from "path";
+
+type SpawnCaptureResult = {
+  stdout: string;
+  stderr: string;
+  code: number;
+};
 
 export const black_list = new Set([
   // "ca-certificates",
@@ -69,8 +75,12 @@ export const bash_bootstrap_core_upgrade = [
   `pacman -S --noconfirm --needed bash filesystem mintty msys2-runtime pacman pacman-mirrors`,
 ].join("; ");
 
-export function spawnProcessAsyncCapture(command, args = [], options = {}) {
-  return new Promise((resolve, reject) => {
+export function spawnProcessAsyncCapture(
+  command: string,
+  args: string[] = [],
+  options: SpawnOptions = {},
+) {
+  return new Promise<SpawnCaptureResult>((resolve, reject) => {
     // Collect stdout and stderr data
     let stdoutOutput = "";
     let stderrOutput = "";
@@ -78,12 +88,12 @@ export function spawnProcessAsyncCapture(command, args = [], options = {}) {
     const child = spawn(command, args, options);
 
     // Capture stdout data chunks
-    child.stdout.on("data", (data) => {
+    child.stdout!.on("data", (data) => {
       stdoutOutput += data.toString();
     });
 
     // Capture stderr data chunks
-    child.stderr.on("data", (data) => {
+    child.stderr!.on("data", (data) => {
       stderrOutput += data.toString();
     });
 
@@ -99,24 +109,28 @@ export function spawnProcessAsyncCapture(command, args = [], options = {}) {
         reject(new Error(`Process exited with code ${code}: ${stderrOutput}`));
       } else {
         // Resolve the promise with the captured output
-        resolve({ stdout: stdoutOutput, stderr: stderrOutput, code });
+        resolve({ stdout: stdoutOutput, stderr: stderrOutput, code: code ?? 0 });
       }
     });
   });
 }
 
-export function spawnProcessAsync(command, args = [], options = {}) {
+export function spawnProcessAsync(
+  command: string,
+  args: string[] = [],
+  options: SpawnOptions = {},
+) {
   let p = spawn(command, args, options);
-  return new Promise((resolve) => {
-    p.stdout.pipe(process.stdout);
-    p.stderr.pipe(process.stderr);
+  return new Promise<number | null>((resolve) => {
+    p.stdout!.pipe(process.stdout);
+    p.stderr!.pipe(process.stderr);
     p.on("exit", (code) => {
       resolve(code);
     });
   });
 }
 
-export async function removeDirectory(folder_dir) {
+export async function removeDirectory(folder_dir: string) {
   console.log(`Remove existing ${folder_dir}`);
   try {
     await fs.rm(folder_dir, { recursive: true, force: true });
@@ -130,7 +144,7 @@ export async function removeDirectory(folder_dir) {
   );
 }
 
-export function getYYYYMMDD(date) {
+export function getYYYYMMDD(date: Date) {
   const year = date.getFullYear();
   let month = (date.getMonth() + 1).toString(); // getMonth() is zero-based
   let day = date.getDate().toString();
@@ -142,7 +156,7 @@ export function getYYYYMMDD(date) {
   return year + month + day;
 }
 
-async function runMsysBash(msys_root, script) {
+async function runMsysBash(msys_root: string, script: string) {
   await spawnProcessAsync(
     `${msys_root}/usr/bin/bash.exe`,
     ["--login", "-c", script],
@@ -159,7 +173,7 @@ async function runMsysBash(msys_root, script) {
 // Merge tree-local pkg/ into msys64-caches. With bootstrap true, leave an empty
 // local pkg/ for the next pacman run (core self-upgrade). Otherwise symlink pkg/
 // to the shared cache so pacman reads and writes there.
-export async function linkPacmanCache(msys_root, bootstrap = false) {
+export async function linkPacmanCache(msys_root: string, bootstrap = false) {
   const tail = bootstrap
     ? `mkdir -p /var/cache/pacman/pkg
 touch /var/cache/pacman/pkg/gitignore`
@@ -173,9 +187,9 @@ ${tail}`.trim();
 }
 
 export async function archiveFull(
-  ci_tools_msys64_parent,
-  msys_root,
-  msys2_base_filename
+  ci_tools_msys64_parent: string,
+  msys_root: string,
+  msys2_base_filename?: string,
 ) {
   const ci_tools_msys64_parent_cygwin = (
     await spawnProcessAsyncCapture(`${msys_root}/usr/bin/cygpath.exe`, [
@@ -235,7 +249,7 @@ export async function archiveFull(
   return msys2_base_filename;
 }
 
-async function clear_msys64(msys_root) {
+async function clear_msys64(msys_root: string) {
   console.log(`Remove existing ${msys_root}`);
   if (!(await fsExistsAsync(msys_root))) {
     return;
@@ -261,9 +275,9 @@ async function clear_msys64(msys_root) {
 //
 // After: merge new downloads into msys64-caches and symlink pkg/ there.
 export async function executePacmanInstall(
-  msys_root,
-  install_command,
-  cwd,
+  msys_root: string,
+  install_command: string,
+  cwd: string,
   bootstrap = false,
 ) {
   console.log(`===Execute: "${install_command}" at ${msys_root} at ${cwd}`);
@@ -283,7 +297,7 @@ export async function executePacmanInstall(
   await linkPacmanCache(msys_root);
 }
 
-export async function fsExistsAsync(p) {
+export async function fsExistsAsync(p: string) {
   try {
     await fs.access(p);
     return true;
@@ -292,9 +306,9 @@ export async function fsExistsAsync(p) {
 }
 
 export async function installMsys2BasePackages(
-  ci_tools_msys64_parent,
-  msys_root,
-  enable_clear_msys64,
+  ci_tools_msys64_parent: string,
+  msys_root: string,
+  enable_clear_msys64: boolean,
 ) {
   if (enable_clear_msys64) {
     await clear_msys64(msys_root);
@@ -334,9 +348,9 @@ export async function installMsys2BasePackages(
 }
 
 export async function installMsys2AllPackages(
-  ci_tools_msys64_parent,
-  pkg_root,
-  enable_clear_msys64,
+  ci_tools_msys64_parent: string,
+  pkg_root: string,
+  enable_clear_msys64: boolean,
 ) {
   const msys_root = path.join(ci_tools_msys64_parent, "msys64");
   const has_msys64 = await installMsys2BasePackages(
@@ -355,11 +369,11 @@ export async function installMsys2AllPackages(
     ["-Sl", "msys"],
   );
   const msys_list_content = msys_list_capture.stdout.trim();
-  const packages = [];
+  const packages: string[] = [];
 
   for (let pkg of msys_list_content.split("\n")) {
     const pkg_name = pkg.split(" ")[1];
-    if (black_list.has(pkg_name)) continue;
+    if (!pkg_name || black_list.has(pkg_name)) continue;
     packages.push(pkg_name);
   }
   const msys_txt_path = path.join(pkg_root, "msys.txt");
@@ -387,9 +401,9 @@ export async function installMsys2AllPackages(
 }
 
 export async function installMsys2ExtractScript(
-  ci_tools_msys64_parent,
-  msys2_base_filename,
-  bat_filename,
+  ci_tools_msys64_parent: string,
+  msys2_base_filename: string,
+  bat_filename?: string,
 ) {
   const pacman_cache_pash = "msys64\\var\\cache\\pacman\\pkg";
   const msys_64_home = `msys64\\home`;
