@@ -154,7 +154,7 @@ echo "Preparing msys64 for stage3 by install packages built by stage1 and stage2
 call :init_msys64_stage3
 node install-for-stage3.mjs > install-for-stage3.txt 2>&1
 call :extract_msys64
-node install-mingw-for-stage3.mjs > install-mingw-for-stage3.mjs.txt 2>&1
+node install-for-stage3-mingw64.mjs > install-for-stage3-mingw64.mjs.txt 2>&1
 
 goto :build_finished
 
