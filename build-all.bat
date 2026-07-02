@@ -42,8 +42,8 @@ goto :build_stage2
 goto :build_stage3
 
 :build_stage_all_with_prepare
-echo "Preparing msys64 for stage0 by install all packages msys repo"
-node install-for-stage0.mjs > install-for-stage0.txt 2>&1
+echo "Preparing msys64 for stage1 by install all packages msys repo"
+node install-for-stage1.mjs > install-for-stage1.txt 2>&1
 goto :build_stage_all_with_extract_direct
 
 :build_stage_all_with_extract
