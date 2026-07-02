@@ -2,8 +2,7 @@ import * as path from "path";
 import { fileURLToPath } from "url";
 import process from "node:process";
 import {
-  ci_tools_msys64_stage0,
-  spawnProcessAsyncCapture,
+  ci_tools_msys64_stage0 as ci_tools_msys64_stage1,
   archiveFull,
   installMsys2AllPackages,
   installMsys2ExtractScript,
@@ -18,24 +17,24 @@ process.on("SIGINT", function () {
 });
 
 async function main() {
-  const msys_root = path.join(ci_tools_msys64_stage0, "msys64");
+  const msys_root = path.join(ci_tools_msys64_stage1, "msys64");
   const pkg_root = __dirname;
 
   const has_msys64 = await installMsys2AllPackages(
-    ci_tools_msys64_stage0,
+    ci_tools_msys64_stage1,
     pkg_root,
     true,
   );
 
   const msys2_base_filename = await archiveFull(
-    ci_tools_msys64_stage0,
+    ci_tools_msys64_stage1,
     msys_root,
   );
   console.log(
-    `===stage0: Archive finished as: ${msys2_base_filename} with has_msys64:${has_msys64}`,
+    `===stage1: Archive finished as: ${msys2_base_filename} with has_msys64:${has_msys64}`,
   );
-  await installMsys2ExtractScript(ci_tools_msys64_stage0, msys2_base_filename);
-  console.log(`===stage0: Install extract script finished`);
+  await installMsys2ExtractScript(ci_tools_msys64_stage1, msys2_base_filename);
+  console.log(`===stage1: Install extract script finished`);
 }
 
 main();
