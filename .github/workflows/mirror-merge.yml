@@ -1,0 +1,85 @@
+name: Mirror merge
+
+# Install on destination repo branch msys2-apiss-mirror-merge (workflows live here, not on upstream*).
+# Layout: docs/mirror-init.md#tooling-branch-layout
+# Copy this file to: msys2-apiss-mirror-merge/.github/workflows/mirror-merge.yml
+#   (from config/mirror-template/mirror-merge.yml in msys2-apiss-sync; applied by yarn mirror-init)
+#
+# Replay branches (upstream, upstream-ports, upstream-ports-mingw) stay workflow-free.
+# mirror-merge CLI: mirror-merge.mjs and config downloaded at runtime from msys2-apiss-sync.
+#
+# Triggers (mirror-poll -> mirror-sync and mirror-sync -> mirror-merge both use workflow_dispatch API):
+#   mirror-sync -> mirror-merge: gh workflow run mirror-merge.yml on ref msys2-apiss-mirror-merge
+#     with inputs.event_type=workflow_dispatch_mirror_merge (mirror-sync Notify step).
+#   mirror-poll -> mirror-sync: gh workflow run mirror-sync.yml on ref msys2-apiss-mirror-sync
+#     with inputs.event_type=workflow_dispatch_mirror_sync.
+#   Manual: workflow_dispatch below (inputs.clean).
+
+on:
+  workflow_dispatch:
+    inputs:
+      event_type:
+        description: 'mirror-sync dispatch label'
+        required: false
+        default: workflow_dispatch_mirror_merge
+        type: string
+      clean:
+        description: 'Reset sync branches before replay'
+        required: false
+        default: false
+        type: boolean
+
+concurrency:
+  group: mirror-merge
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - name: Log trigger
+        run: |
+          echo "event=${{ github.event_name }}"
+          echo "event_type=${{ inputs.event_type }}"
+          echo "repository=${{ github.repository }}"
+          echo "ref=${{ github.ref }}"
+
+      - name: Checkout destination repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: '26'
+
+      - name: Configure git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global i18n.logOutputEncoding utf-8
+          git config --global i18n.commitEncoding utf-8
+
+      - name: Download mirror-merge CLI
+        run: |
+          set -euo pipefail
+          mkdir -p .github/toolings/config
+          curl -fsSL -o .github/toolings/mirror-merge.mjs \
+            "https://raw.githubusercontent.com/cygapiss/msys2-apiss-sync/main/config/mirror-template/toolings/mirror-merge.mjs"
+          curl -fsSL -o .github/toolings/config/mirror-merge.json \
+            "https://raw.githubusercontent.com/cygapiss/msys2-apiss-sync/main/config/mirror-merge.json"
+
+      - name: Run mirror merge
+        run: |
+          set -euo pipefail
+          args=(--destination-path "$GITHUB_WORKSPACE" --push)
+          if [ "${{ inputs.clean }}" = "true" ]; then
+            args+=(--clean)
+          fi
+          node .github/toolings/mirror-merge.mjs "${args[@]}"
