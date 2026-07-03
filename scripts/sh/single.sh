@@ -5,13 +5,22 @@ if [ -z "$new_dir" ]; then
   exit -1
 fi
 
-currnent_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
+currnent_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]:-$0}")" && pwd)
 if [ -z "$currnent_script_dir" ]; then
   currnent_script_dir=$PWD
 fi
-source "${currnent_script_dir}/ports/msys2-runtime/check-bootstrap.sh"
+source "${currnent_script_dir}/check-bootstrap.sh"
 
-export pkg_root_dir=$currnent_script_dir
+echo "The pkg_root_dir:${pkg_root_dir} new_dir:${new_dir} currnent_script_dir:${currnent_script_dir}"
+
+if [ -d "${pkg_root_dir}/ports/${new_dir}" ]; then
+  pkg_source_dir="${pkg_root_dir}/ports/${new_dir}"
+elif [ -d "${pkg_root_dir}/ports-mingw/${new_dir}" ]; then
+  pkg_source_dir="${pkg_root_dir}/ports-mingw/${new_dir}"
+else
+  echo "Unknown package: ${new_dir}"
+  exit -1
+fi
 
 if [[ -z "$MSYS_BOOTSTRAP_STAGE" ]]; then
   echo "Unknown MSYS_BOOTSTRAP_STAGE: $MSYS_BOOTSTRAP_STAGE"
@@ -122,15 +131,14 @@ do_build() {
     mkdir -p $package_cache_dir
     mv $current_packages "$package_cache_dir/"
   fi
-  echo "Building '${new_dir}' as '$current_packages' finished"
-
-  echo "Copy packages for stage:'$stage_name'"
+  if [[ -z "$current_packages" ]]; then
+    echo "Error: no packages built for '${new_dir}'"
+    exit -1
+  fi
+  echo "Copying for '${new_dir}' at stage:${stage_name} packages:'$current_packages' to '$pkg_root_dir/dist/$MSYS_BOOTSTRAP_STAGE/'"
   pushd $package_cache_dir
   mkdir -p $pkg_root_dir/dist/$MSYS_BOOTSTRAP_STAGE
-  if [ -z "$MSYS_BOOTSTRAP_DISABLE_COPY_PACKAGES" ]; then
-    echo "Copying packages:'$current_packages' to '$pkg_root_dir/dist/$MSYS_BOOTSTRAP_STAGE/'"
-    cp -af $current_packages $pkg_root_dir/dist/$MSYS_BOOTSTRAP_STAGE/
-  fi
+  cp -af $current_packages $pkg_root_dir/dist/$MSYS_BOOTSTRAP_STAGE/
   popd
 
   echo "Install packages for stage:'$stage_name'"
@@ -197,7 +205,7 @@ do_build() {
       # Dereference the symlink during Extraction
       tar -xhf ${new_dir}-tmp.tar -C /
     fi
-  elif [[ "$stage_name" == "stage2" ]]; then
+  elif [[ "$MSYS_BOOTSTRAP_PACMAN_INSTALL" == "enabled" ]]; then
     pushd $package_cache_dir
     pacman -U --noconfirm --overwrite \* $current_packages
     popd
@@ -209,6 +217,6 @@ do_build() {
   echo ""
 }
 
-pushd ./ports/${new_dir}
+pushd "$pkg_source_dir"
 do_build
 popd

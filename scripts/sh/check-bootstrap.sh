@@ -1,7 +1,17 @@
-pkg_root_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 if [ -z "$pkg_root_dir" ]; then
-  pkg_root_dir=$PWD
+  _detect_pkg_root_dir() {
+    local bootstrap_script_dir
+    bootstrap_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]:-$0}")" && pwd)
+    pkg_root_dir=$(cd -- "${bootstrap_script_dir}/../.." && pwd)
+    if [ -z "$pkg_root_dir" ]; then
+      pkg_root_dir=$PWD
+    fi
+    export pkg_root_dir
+  }
+  _detect_pkg_root_dir
+  unset -f _detect_pkg_root_dir
 fi
+
 _load_bootstrap_versions() {
   source "${pkg_root_dir}/ports/msys2-runtime/check-bootstrap.sh"
 
