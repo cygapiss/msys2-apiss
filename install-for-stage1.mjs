@@ -1,40 +1,47 @@
 import * as path from "path";
 import { fileURLToPath } from "url";
-import process from "node:process";
 import {
-  ci_tools_msys64_stage0 as ci_tools_msys64_stage1,
   archiveFull,
-  installMsys2AllPackages,
-  installMsys2ExtractScript,
+  executePacmanInstall,
+  installMsys2Base,
+  msys64FullArchiveFilename,
 } from "./scripts/install-msys2-base.ts";
+import { cygpathUnix, initMsys2Stage } from "./scripts/utils.ts";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+export async function runInstallForStage1(step) {
+  const stage1 = initMsys2Stage(step, "stage1");
 
-process.on("SIGINT", function () {
-  console.log("Caught interrupt signal");
-  process.exit(-1);
-});
+  await installMsys2Base(step, stage1, true);
 
-async function main() {
-  const msys_root = path.join(ci_tools_msys64_stage1, "msys64");
-  const pkg_root = __dirname;
-
-  const has_msys64 = await installMsys2AllPackages(
-    ci_tools_msys64_stage1,
-    pkg_root,
-    true,
+  const msys_txt_cygwin = await cygpathUnix(
+    step,
+    stage1,
+    stage1.baseInstalledMsysTxt,
   );
 
-  const msys2_base_filename = await archiveFull(
-    ci_tools_msys64_stage1,
-    msys_root,
+  step.log(`===Installing all packages`);
+
+  const bash_commands_for_install_all = [
+    `sed -i 's/^SigLevel.*$/SigLevel=Never/g' /etc/pacman.conf`,
+    `cat /etc/pacman.conf | grep ^SigLevel`,
+    `pacman -S --noconfirm --needed $(cat ${msys_txt_cygwin})`,
+  ];
+
+  await executePacmanInstall(
+    step,
+    stage1,
+    bash_commands_for_install_all,
+    stage1.msys2Root,
   );
-  console.log(
-    `===stage1: Archive finished as: ${msys2_base_filename} with has_msys64:${has_msys64}`,
+
+  step.log(
+    `===Installing all packages finished at ${stage1.stageRoot}`,
   );
-  await installMsys2ExtractScript(ci_tools_msys64_stage1, msys2_base_filename);
-  console.log(`===stage1: Install extract script finished`);
+
+  const msys2_base_filename = msys64FullArchiveFilename();
+  await archiveFull(
+    step,
+    stage1,
+    path.join(stage1.stageRoot, msys2_base_filename),
+  );
 }
-
-main();

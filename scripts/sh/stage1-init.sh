@@ -1,3 +1,9 @@
+#!/bin/bash
+mkdir -p build-cache/stage1
+
+echo MSYS_BOOTSTRAP_STAGE:: $MSYS_BOOTSTRAP_STAGE
+
+source scripts/sh/check-bootstrap.sh
 
 echo "Install new cmake meson scons and libtool"
 pacman -U --noconfirm --overwrite \* ./dist/stage1-core/libltdl-$LIBTOOL_PKGVER-$LIBTOOL_PKGREL-x86_64.pkg.tar.zst
@@ -31,3 +37,11 @@ tar xf ./dist/stage1-core/gcc-$GCC_PKGVER-$GCC_PKGREL-x86_64.pkg.tar.zst -C /
 rm -rf /usr/lib/gcc/x86_64-pc-cygwin/$GCC_PKGVER/msys-lto_plugin.dll
 
 echo "Install new gcc and binutils finished"
+
+echo "Create symlinks for perl packages"
+
+pushd build-install
+sh perl-create-syms-for-pkg.sh
+popd
+
+echo "stage1 initialization finished"

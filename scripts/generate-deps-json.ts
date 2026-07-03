@@ -1,25 +1,21 @@
 import * as fs from "fs/promises";
 import * as fsSync from "fs";
 import * as path from "path";
-import { fileURLToPath } from "url";
-import process from "node:process";
 import {
-  black_list,
-  ci_tools_msys64_stage0,
-  spawnProcessAsyncCapture,
-} from "./scripts/install-msys2-base.ts";
+  type RunContext,
+} from "./run-context.ts";
+import {
+  GENERATED_DEPS_JSON,
+  GENERATED_PKG_INFO_SH,
+} from "./build-config.ts";
+import {
+  type Msys2Stage,
+  stageRepoPath,
+  runMsys2ScriptPath,
+} from "./utils.ts";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-let need_exit = false;
-process.on("SIGINT", function () {
-  console.log("Caught interrupt signal");
-  need_exit = true;
-});
-
-async function main() {
-  const portsDir = path.join(__dirname, "ports");
+export async function runGenerateDepsJson(step: RunContext, stage: Msys2Stage) {
+  const portsDir = stageRepoPath(stage, "ports");
   const packages_list = await fs.readdir(portsDir);
   let script = "";
   for (let pkg_name of packages_list) {
@@ -36,40 +32,32 @@ async function main() {
     script += `makedepends=()\n`;
     script += `source ./ports/${pkg_name}/PKGBUILD; echo "{\\\"makedepends\\\": \\\"\${makedepends[*]}\\\", \\\"pkgrel\\\": \\\"\${pkgrel}\\\", \\\"pkgver\\\": \\\"\${pkgver}\\\", \\\"dir\\\": \\\"${pkg_name}\\\", \\\"pkgname\\\": \\\"\${pkgname[*]}\\\", \\\"pkgbase\\\": \\\"\${pkgbase}\\\"}"\n`;
   }
-  await fs.writeFile("pkg_info.sh", script);
-  const pkg_info = await spawnProcessAsyncCapture(
-    `${ci_tools_msys64_stage0}/msys64/usr/bin/bash.exe`,
-    ["--login", "-c", "source pkg_info.sh"],
-    {
-      env: {
-        CHERE_INVOKING: 1,
-      },
-    },
-  );
-  console.log(`All path checked`);
-  console.log(pkg_info.stdout);
+  const pkg_info_sh_path = stageRepoPath(stage, GENERATED_PKG_INFO_SH);
+  await fs.writeFile(pkg_info_sh_path, script);
+  const pkg_info = await runMsys2ScriptPath(step, stage, {
+    script: GENERATED_PKG_INFO_SH,
+    capture: true,
+  });
+  step.logFile(`All path checked`);
+  step.logFile(pkg_info.stdout);
 
-  const msys_packages = path.join(__dirname, "msys.txt");
-  const packages = await fs.readFile(msys_packages, "utf-8");
+  const packages = await fs.readFile(stage.baseInstalledMsysTxt, "utf-8");
 
-  const deps_map = {};
+  const deps_map: Record<string, string[]> = {};
   for (let pkg_name of packages.trim().split("\n")) {
-    if (black_list.has(pkg_name)) continue;
     if (pkg_name == undefined) {
       continue;
     }
-    if (need_exit) {
-      break;
-    }
-    const deps = await spawnProcessAsyncCapture(
-      `${ci_tools_msys64_stage0}/msys64/usr/bin/pactree.exe`,
+    const deps = await step.run(
+      stage.pactree,
       [pkg_name, "-u", "-d", "1"],
+      { env: stage.env, capture: true },
     );
-    console.log(`Deps for ${pkg_name} is :[\n${deps.stdout}\n]`);
+    step.logFile(`Deps for ${pkg_name} is :[\n${deps.stdout}\n]`);
     deps_map[pkg_name] = deps.stdout.trim().split("\n").slice(1);
   }
   await fs.writeFile(
-    "deps.json",
+    stageRepoPath(stage, GENERATED_DEPS_JSON),
     JSON.stringify(
       {
         pkg_info: JSON.parse(
@@ -82,5 +70,3 @@ async function main() {
     ),
   );
 }
-
-main();
