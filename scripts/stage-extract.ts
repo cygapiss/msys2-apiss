@@ -95,6 +95,7 @@ export async function extractMsys2FromStageArchive(
     `===${logLabel}: ${hostTarPath()} -xf ${archive_path} (cwd ${targetStage.stageRoot})`,
   );
   await removeTreeWithKillRetry(step, msys2Root, [targetStage.stageRoot]);
+  step.log(`===${logLabel}: tar -xf ${archive_name} begin`);
   await step.run(hostTarPath(), ["-xf", archive_path], {
     cwd: targetStage.stageRoot,
   });
