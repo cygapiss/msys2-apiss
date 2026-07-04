@@ -28,6 +28,7 @@ import {
   stageRepoPath,
   type Msys2Stage,
 } from "./utils.ts";
+import { linkMsys2Cache } from "./msys2-cache.ts";
 
 const cmdExe = process.env.COMSPEC || "C:\\Windows\\System32\\cmd.exe";
 
@@ -198,12 +199,14 @@ export async function installStage3(step: RunContext) {
 }
 
 export async function extractMsys2Stage3MingwFromArchive(step: RunContext) {
+  const stage3_mingw64 = initMsys2Stage(step, "stage3-mingw64");
   await extractMsys2FromStageArchive(
     step,
     initMsys2Stage(step, "stage3"),
-    initMsys2Stage(step, "stage3-mingw64"),
+    stage3_mingw64,
     "stage3-mingw64",
   );
+  await linkMsys2Cache(step, stage3_mingw64);
 }
 
 export async function installMingwPacmanPackagesStage3(step: RunContext) {
