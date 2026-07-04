@@ -43,7 +43,7 @@ async function installPackages(
   try {
     const installListContent = await fs.readFile(installListPath, "utf-8");
     if (installListContent.trim() === "") {
-      step.logFile(
+      step.log(
         `===installPackages at ${stage.msys2Root}: empty ${installListRel}, nothing to install`,
       );
       return;
@@ -60,7 +60,7 @@ async function installPackages(
     stage,
     installListPath,
   );
-  step.logFile(
+  step.log(
     `===installPackages at ${stage.msys2Root}: all entries from ${installListRel} in ${distDir}`,
   );
   // cwd must be distDir: install.txt lists .tar.* basenames resolved from here.
