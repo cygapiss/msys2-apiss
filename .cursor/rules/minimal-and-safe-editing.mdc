@@ -1,9 +1,13 @@
 ---
-description: Minimal and safe editing
+description: Minimal and safe editing (mase)
 alwaysApply: true
 ---
 
 # Minimal and Safe Editing
+
+Also known as **mase**. `mase.mdc` is a shortcut for this rule
+(`minimal-and-safe-editing.mdc`). When the user says "mase", "@mase",
+"mase.mdc", or "sync mase rule", they mean this rule.
 
 Apply this every time you edit code, reply, commit, or open a PR. It covers
 scope, style, interfaces, contracts, encoding, and text fidelity.
@@ -121,6 +125,48 @@ Applies to all text you write or edit: code, comments, docs, chat, commits, PRs.
   follow-ups, or optional improvements unless asked or scope is unclear.
 - Do not start long builds, installs, or full test suites unless asked, or to
   run a minimal check that verifies your requested change.
+
+## Plans and docs
+
+When writing or editing plans, architecture docs, or operator guides:
+
+- Do not use numbered phase IDs or step IDs (`Phase 1`, `Phase 2`, `Step 1`,
+  `Step 2`, and so on). Numbered labels churn when order changes and do not
+  name what the piece does.
+- Name stages, workflows, and plan files with descriptive slugs (kebab-case
+  words that say what the piece does).
+- Prefer one slug-named doc per major stage when detail warrants it, plus a
+  README or index that links them.
+- In prose, refer to stages by slug name (`widget-init`, not "phase 1"). Use
+  tables and cross-links between slug-named docs instead of a single numbered
+  checklist.
+
+Example (good):
+
+```markdown
+# Widget pipeline
+
+**Start here.** Index and architecture. Edit this file first when stages or
+operator flows change.
+
+| Doc | Role |
+|-----|------|
+| `README.md` | Index and pipeline overview |
+| `widget-init.md` | Bootstrap local checkouts |
+| `widget-sync.md` | Fast-forward content from upstream |
+| `widget-merge.md` | Replay into destination |
+
+**Pipeline:** config -> **widget-init** -> **widget-sync** -> **widget-merge**.
+
+## Operator flows
+
+| Scenario | widget-init / widget-sync | widget-merge |
+|----------|---------------------------|--------------|
+| Local init only | `yarn widget-init` | -- |
+| Full refresh | `yarn widget-init --push` -> widget-sync | widget-merge CI or `yarn widget-merge` |
+```
+
+Example (bad): `Phase 1: init`, `Step 2: sync`, `docs/plan-phase-3.md`.
 
 ## Git working tree safety
 
