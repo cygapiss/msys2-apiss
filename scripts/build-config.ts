@@ -295,6 +295,7 @@ export const stage1_core_packages = [
 /** ports-mingw directory names for stage3-mingw64-list.txt (one per line). */
 export const stage3_mingw64_build_packages = [
   "mingw-w64-libepoxy",
+  "mingw-w64-mesa",
 ];
 
 export const EXTRACT_BAT_FILENAME = "extract.bat";
