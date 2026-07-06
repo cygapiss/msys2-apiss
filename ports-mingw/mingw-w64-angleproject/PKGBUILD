@@ -48,6 +48,8 @@ source=("${_realname}::git+https://chromium.googlesource.com/angle/angle.git#com
         006-spirv-updates.patch
         007-vulkan-loader-updates.patch
         008-arm64-mingw-intrinsic.patch
+        009-swiftshader-windows-h.patch
+        010-angle-dispatcherqueue-lowercase.patch
         jpeg.gn
         jsoncpp.gn
         png.gn
@@ -74,10 +76,12 @@ sha256sums=('8b51860cdeedda205ab6dc641c50943afd39018212701451f9a91d0b5f5be2cd'
             'cb5358e80a45f54e15a69bbe12ecb07eae405b491451ee38aea01ce4579b492b'
             'b69a6ff976df8192b776673f94fd494ba4c62e798708f753d9f8390f4fc0341e'
             '6d5c3d7888a671059d378e955c86d297dede5e6eee0d6aa0aeb12eb84c9e8ca1'
+            '1a26d41e69543cd35098388d2f4308acc920302051735c4ae10fb50c04d942ff'
             'bf878de3203a62e2a7f81bd4cd79237adc74804b4b692d9277da005ed56d4f2a'
             '86013781c2700219d4f64d7ac34ad16c40fcca9a641371385f67f642e23c643b'
+            '72920ce97f78ec87d038c92d8a7ef8bd4251b2995ef81ea78f7a677b547f2ff1'
             'f0fb05348bf2de599eff35e2d35e3336b9720b6bd2799af9d186c05ff45d34f0'
-            '044afff420a1c8ad896f79fb8ae03878f6063bdb0a25dab0b8e4bff092e3d3ac'
+            '0318d93569f0d3a8f9f2c3dc9995055e5b3e403979bbcb7e73718dc66c44dcd1'
             '4dc3baf79ba7c95b52cbbafce81b26e6d165d4ae7e0dcc2eabe0250466edf178'
             'a9f0b7c82d8ce614df8940508d3f098cca9596d1150c654559aac21749ca170b')
 noextract=("swiftshader.zip")
@@ -119,7 +123,8 @@ prepare() {
   cd "${srcdir}"/SwiftShader
   apply_patch_with_msg \
     004-swiftshader-updates.patch \
-    008-arm64-mingw-intrinsic.patch
+    008-arm64-mingw-intrinsic.patch \
+    009-swiftshader-windows-h.patch
   cp -rf "${srcdir}"/SwiftShader "${srcdir}"/${_realname}/third_party
 
   echo ":: Patching vulkan_memory_allocator directory"
@@ -157,7 +162,8 @@ prepare() {
   cd "${srcdir}"/${_realname}
   apply_patch_with_msg \
     002-buildflags-fixes.patch \
-    003-angle-src-fixes.patch
+    003-angle-src-fixes.patch \
+    010-angle-dispatcherqueue-lowercase.patch
 
   echo ":: Generating angle_commit.h"
   python src/commit_id.py gen src/common/angle_commit.h

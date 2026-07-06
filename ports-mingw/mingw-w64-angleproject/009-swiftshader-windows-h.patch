@@ -1,0 +1,66 @@
+--- SwiftShader/src/Reactor/ExecutableMemory.cpp	2025-07-10 04:07:18.000000000 +0800
++++ SwiftShader/src/Reactor/ExecutableMemory.cpp	2026-07-06 18:33:46.075836000 +0800
+@@ -20,7 +20,7 @@
+ #	ifndef WIN32_LEAN_AND_MEAN
+ #		define WIN32_LEAN_AND_MEAN
+ #	endif
+-#	include <Windows.h>
++#	include <windows.h>
+ #	include <intrin.h>
+ #elif defined(__Fuchsia__)
+ #	include <unistd.h>
+--- SwiftShader/src/Reactor/SubzeroReactor.cpp	2026-07-06 18:33:35.564110400 +0800
++++ SwiftShader/src/Reactor/SubzeroReactor.cpp	2026-07-06 18:33:46.092099000 +0800
+@@ -48,7 +48,7 @@
+ #	ifndef NOMINMAX
+ #		define NOMINMAX
+ #	endif  // !NOMINMAX
+-#	include <Windows.h>
++#	include <windows.h>
+ #endif
+ 
+ #include <array>
+--- SwiftShader/src/System/SharedLibrary.hpp	2025-07-10 04:07:18.000000000 +0800
++++ SwiftShader/src/System/SharedLibrary.hpp	2026-07-06 18:33:46.093761200 +0800
+@@ -16,7 +16,7 @@
+ #define SharedLibrary_hpp
+ 
+ #if defined(_WIN32)
+-#	include <Windows.h>
++#	include <windows.h>
+ #else
+ #	include <dlfcn.h>
+ #endif
+--- SwiftShader/src/WSI/Win32SurfaceKHR.hpp	2025-07-10 04:07:18.000000000 +0800
++++ SwiftShader/src/WSI/Win32SurfaceKHR.hpp	2026-07-06 18:33:46.095104700 +0800
+@@ -22,7 +22,7 @@
+ #if !defined(WIN32_LEAN_AND_MEAN)
+ #	define WIN32_LEAN_AND_MEAN
+ #endif  // !defined(WIN32_LEAN_AND_MEAN)
+-#include <Windows.h>
++#include <windows.h>
+ #include <vulkan/vulkan_win32.h>
+ 
+ namespace vk {
+--- SwiftShader/third_party/marl/src/memory.cpp	2025-07-10 04:07:18.000000000 +0800
++++ SwiftShader/third_party/marl/src/memory.cpp	2026-07-06 18:33:46.097418900 +0800
+@@ -94,7 +94,7 @@
+ }  // anonymous namespace
+ #elif defined(_WIN32)
+ #define WIN32_LEAN_AND_MEAN 1
+-#include <Windows.h>
++#include <windows.h>
+ namespace {
+ inline size_t pageSize() {
+   static auto size = [] {
+--- SwiftShader/third_party/marl/src/osfiber_windows.h	2025-07-10 04:07:18.000000000 +0800
++++ SwiftShader/third_party/marl/src/osfiber_windows.h	2026-07-06 18:33:46.099126000 +0800
+@@ -19,7 +19,7 @@
+ #include <memory>
+ 
+ #define WIN32_LEAN_AND_MEAN 1
+-#include <Windows.h>
++#include <windows.h>
+ 
+ namespace marl {
+ 

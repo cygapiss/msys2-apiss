@@ -1,7 +1,7 @@
 import("//build/config/linux/pkg_config.gni")
 
 pkg_config("system_rapidjson") {
-  packages = [ "rapidjson" ]
+  packages = [ "RapidJSON" ]
 }
 
 config("rapidjson_config") {
