@@ -60,12 +60,15 @@ export function mingwInstallPackages(MINGW_PACKAGE_PREFIX: string) {
     `${MINGW_PACKAGE_PREFIX}-libelf`,
 
     // depends
-    `${MINGW_PACKAGE_PREFIX}-llvm`,
     `${MINGW_PACKAGE_PREFIX}-clang`,
+    `${MINGW_PACKAGE_PREFIX}-directx-headers`,
     `${MINGW_PACKAGE_PREFIX}-libclc`,
     `${MINGW_PACKAGE_PREFIX}-libva`,
-    `${MINGW_PACKAGE_PREFIX}-spirv-tools`,
+    `${MINGW_PACKAGE_PREFIX}-llvm`,
+    `${MINGW_PACKAGE_PREFIX}-polly`,
+    `${MINGW_PACKAGE_PREFIX}-python-yaml`,
     `${MINGW_PACKAGE_PREFIX}-spirv-llvm-translator`,
+    `${MINGW_PACKAGE_PREFIX}-spirv-tools`,
     `${MINGW_PACKAGE_PREFIX}-vulkan-loader`,
     `${MINGW_PACKAGE_PREFIX}-zlib`,
     `${MINGW_PACKAGE_PREFIX}-zstd`,
