@@ -9,6 +9,11 @@ import type { RunOptions } from "../scripts/run-context.ts";
 import { makeMsys2Stage } from "./make-msys2-stage.ts";
 import { makeRunLogger } from "./make-run-logger.ts";
 
+function cygpathCommand(format: "unix" | "windows", inputPath: string) {
+  const flag = format === "unix" ? "-u" : "-w";
+  return `cygpath ${flag} ${JSON.stringify(inputPath)}`;
+}
+
 const writeFileMock = mock.fn(
   async (...args: unknown[]) =>
     realFs.writeFile(...(args as Parameters<typeof realFs.writeFile>)),
@@ -86,7 +91,7 @@ async function loadInstallMsys2Base(t: TestContext) {
             }
             const { stdout, code } = await step.run(
               stage.bash,
-              ["--login", "-c", "cygpath -w /"],
+              ["--login", "-c", cygpathCommand("windows", "/")],
               {
                 cwd: stage.repoRoot,
                 env: stage.env,
@@ -99,7 +104,13 @@ async function loadInstallMsys2Base(t: TestContext) {
                 `msys64 cygpath check failed at ${stage.bash} (code ${code}); run ${prepStepId} first`,
               );
             }
-            const cygpath_msys_root = path.win32.normalize(stdout.trim());
+            const cygpath_msys_root = path.win32.normalize(
+              stdout
+                .trim()
+                .split(/\r?\n/)
+                .filter(Boolean)
+                .at(-1) ?? "",
+            );
             const expected_msys_root = path.win32.normalize(stage.msys2Root);
             if (
               path.resolve(cygpath_msys_root) !==
@@ -236,11 +247,14 @@ test("installMsys2Base", async (t) => {
         command === stage.bash &&
         args[0] === "--login" &&
         args[1] === "-c" &&
-        args[2] === "cygpath -w /"
+        args[2] === cygpathCommand("windows", "/")
       ) {
         return processResult(`${stage.msys2Root}\n`);
       }
-      if (command === stage.cygpath && args[0] === "-u" && args[1] === cache_path) {
+      if (
+        command === stage.bash &&
+        args[2] === cygpathCommand("unix", cache_path)
+      ) {
         return processResult(`${cache_path}\n`);
       }
       return processResult();
@@ -263,7 +277,7 @@ test("installMsys2Base", async (t) => {
       runProcessCalls: [
         {
           command: stage.bash,
-          args: ["--login", "-c", "cygpath -w /"],
+          args: ["--login", "-c", cygpathCommand("windows", "/")],
           cwd: stage.repoRoot,
           env: stage.env,
         },
@@ -300,10 +314,10 @@ test("installMsys2Base", async (t) => {
           env: undefined,
         },
         {
-          command: stage.cygpath,
-          args: ["-u", cache_path],
-          cwd: undefined,
-          env: undefined,
+          command: stage.bash,
+          args: ["--login", "-c", cygpathCommand("unix", cache_path)],
+          cwd: stage.repoRoot,
+          env: stage.env,
         },
         {
           command: stage.tar,
@@ -341,7 +355,10 @@ test("installMsys2Base extracts from cached upstream tarball", async (t) => {
   const step = makeRunLogger({
     run: mock.fn(async (command: string, args: string[], options: RunOptions) => {
       spawns.push({ command, args, options });
-      if (command === stage.cygpath && args[0] === "-u" && args[1] === installed_cache) {
+      if (
+        command === stage.bash &&
+        args[2] === cygpathCommand("unix", installed_cache)
+      ) {
         return processResult(`${installed_cache}\n`);
       }
       return processResult();
@@ -520,7 +537,10 @@ test("archiveFull", async (t) => {
   const spawns: SpawnRecord[] = [];
   const step = makeRunLogger({
     run: mock.fn(async (command: string, args: string[], options: RunOptions) => {
-      if (command === stage.cygpath && args[1] === target_msys_tar_path) {
+      if (
+        command === stage.bash &&
+        args[2] === cygpathCommand("unix", target_msys_tar_path)
+      ) {
         return processResult(`${target_msys_tar_path_cygwin}\n`);
       }
       spawns.push({ command, args, options });
@@ -581,7 +601,10 @@ test("archiveFull finalizes stage archive", async (t) => {
     log: (...args: unknown[]) => logs.push(String(args[0])),
     logFile: (...args: unknown[]) => logFiles.push(String(args[0])),
     run: mock.fn(async (command: string, args: string[], options: RunOptions) => {
-      if (command === stage.cygpath && args[1] === target_msys_tar_path) {
+      if (
+        command === stage.bash &&
+        args[2] === cygpathCommand("unix", target_msys_tar_path)
+      ) {
         return processResult(`${target_msys_tar_path_cygwin}\n`);
       }
       spawns.push({ command, args, options });
@@ -596,6 +619,7 @@ test("archiveFull finalizes stage archive", async (t) => {
   assert.deepEqual(linkMsys2CacheMock.mock.calls[0]?.arguments, [step, stage]);
   assert.deepEqual(logs, [
     `===Compress msys64 into ${target_msys_tar_path}`,
+    `===stage1: Archive to ${target_msys_tar_path}`,
     `===stage1: Archive finished as: ${archive_name}`,
     "===stage1: Wrote extract.bat and delete-msys64.bat",
   ]);

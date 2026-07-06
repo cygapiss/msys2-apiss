@@ -14,7 +14,7 @@ import type { RunLogger } from "./run-context.ts";
 import { writeStageExtractBats } from "./stage-extract.ts";
 import {
   assertMsys2Root,
-  cygpathUnix,
+  cygpath,
   fsExistsAsync,
   hostTarPath,
   type Msys2Stage,
@@ -81,7 +81,7 @@ export async function archiveFull(
   target_msys_tar_path: string,
   stage_label?: string,
 ) {
-  const target_msys_tar_path_cygwin = await cygpathUnix(
+  const target_msys_tar_path_cygwin = await cygpath(
     step,
     stage,
     target_msys_tar_path,

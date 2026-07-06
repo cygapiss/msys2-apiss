@@ -78,6 +78,14 @@ export function mingwInstallPackages(MINGW_PACKAGE_PREFIX: string) {
     `${MINGW_PACKAGE_PREFIX}-vulkan-validation-layers`,
   ];
 
+  const packages_angle = [
+    // makedepends
+    `${MINGW_PACKAGE_PREFIX}-gn`,
+
+    // depends
+    `${MINGW_PACKAGE_PREFIX}-rapidjson`,
+  ];
+
   const packages_tss = [
     `${MINGW_PACKAGE_PREFIX}-toolchain`,
     `${MINGW_PACKAGE_PREFIX}-pkgconf`,
@@ -144,6 +152,7 @@ export function mingwInstallPackages(MINGW_PACKAGE_PREFIX: string) {
       ...packages_extra,
       ...packages_gegl,
       ...packages_mesa,
+      ...packages_angle,
       ...packages_tss,
       ...packages_scade,
       ...packages_qemu,

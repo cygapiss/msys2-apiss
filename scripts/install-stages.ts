@@ -22,7 +22,7 @@ import {
 import { killProcessesWithExecutableUnder } from "./kill-tree-processes.ts";
 import { type RunContext, type RunOptions } from "./run-context.ts";
 import {
-  cygpathUnix,
+  cygpath,
   generatedTxtPath,
   initMsys2Stage,
   stageRepoPath,
@@ -56,7 +56,7 @@ async function installPackages(
     throw err;
   }
   const distDir = stageRepoPath(stage, "dist", stageListId);
-  const installList_cygwin = await cygpathUnix(
+  const installList_cygwin = await cygpath(
     step,
     stage,
     installListPath,
@@ -79,7 +79,7 @@ export async function installMsys2AllPackages(
   step: RunContext,
   stage: Msys2Stage,
 ) {
-  const msys_txt_cygwin = await cygpathUnix(
+  const msys_txt_cygwin = await cygpath(
     step,
     stage,
     stage.baseInstalledMsysTxt,
@@ -215,7 +215,7 @@ export async function installMingwPacmanPackagesStage3(step: RunContext) {
   const mingw64_txt_path = stageRepoPath(msys_stage, GENERATED_MSYS_MINGW64_TXT);
   await fs.mkdir(path.dirname(mingw64_txt_path), { recursive: true });
   await fs.writeFile(mingw64_txt_path, packages.join("\n") + "\n", "utf-8");
-  const mingw_txt_cygwin = await cygpathUnix(
+  const mingw_txt_cygwin = await cygpath(
     step,
     msys_stage,
     mingw64_txt_path,

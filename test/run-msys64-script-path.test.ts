@@ -158,7 +158,7 @@ test("assertMsys2Root runs cygpath -w / via bash login", async () => {
   await assertMsys2Root(step, stage, "prep-step");
   assert.equal(runs.length, 1);
   assert.equal(runs[0].command, stage.bash);
-  assert.deepEqual(runs[0].args, ["--login", "-c", "cygpath -w /"]);
+  assert.deepEqual(runs[0].args, ["--login", "-c", `cygpath -w ${JSON.stringify("/")}`]);
   assert.equal(runs[0].cwd, stage.repoRoot);
   assert.equal(runs[0].env, stage.env);
 });
@@ -189,4 +189,22 @@ test("assertMsys2Root rejects cygpath root mismatch", async () => {
     () => assertMsys2Root(step, stage, "prep-step"),
     /cygpath -w \/ returned/,
   );
+});
+
+test("assertMsys2Root uses last stdout line after login setup noise", async () => {
+  const { msys2Root, bash } = await makeAssertMsys2StageRoot();
+  const stage = { ...makeMsys2Stage("stage1"), msys2Root, bash };
+  const step = makeRunLogger({
+    run: mock.fn(async () => ({
+      stdout: [
+        "Copying skeleton files.",
+        "These files are for the users to personalise their msys2 experience.",
+        "",
+        `${stage.msys2Root}\\`,
+      ].join("\n"),
+      stderr: "",
+      code: 0,
+    })),
+  });
+  await assertMsys2Root(step, stage, "prep-step");
 });

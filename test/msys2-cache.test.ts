@@ -132,9 +132,17 @@ test("unlinkMsys2Cache merges to shared and restores local home and pacmanPkg", 
     path.resolve(shared_home),
     path.resolve(stage.home),
   );
+  await realFs.mkdir(stage.msys2Root, { recursive: true });
+  await realFs.mkdir(path.dirname(stage.bash), { recursive: true });
+  await writeFile(stage.bash, "");
   const logFiles: string[] = [];
   const step = makeRunLogger({
     logFile: (...args: unknown[]) => logFiles.push(String(args[0])),
+    run: mock.fn(async () => ({
+      stdout: `${stage.msys2Root}\n`,
+      stderr: "",
+      code: 0,
+    })),
   });
   const { linkMsys2Cache, unlinkMsys2Cache } = await import("../scripts/msys2-cache.ts");
 

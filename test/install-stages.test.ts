@@ -109,7 +109,10 @@ test("installMsys2AllPackages", async (t) => {
   const spawns: SpawnRecord[] = [];
   const step = makeRunLogger({
     run: mock.fn(async (command: string, args: string[], options: RunOptions) => {
-      if (command === stage.cygpath && args[1] === stage.baseInstalledMsysTxt) {
+      if (
+        command === stage.bash &&
+        args[2] === `cygpath -u ${JSON.stringify(stage.baseInstalledMsysTxt)}`
+      ) {
         return processResult(`${msys_txt_cygwin}\n`);
       }
       spawns.push({ command, args, options });

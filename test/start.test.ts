@@ -3,7 +3,10 @@ import { Writable } from "node:stream";
 import { mock, test } from "node:test";
 import { resetPipelineSigintStateForTest } from "../scripts/pipeline.ts";
 import { RunContext } from "../scripts/run-context.ts";
-import { handleStartSigint } from "../scripts/start.ts";
+import {
+  handleStartSigint,
+  resetStartSigintStateForTest,
+} from "../scripts/start.ts";
 
 class EndTrackingStream extends Writable {
   chunks: string[] = [];
@@ -43,8 +46,9 @@ async function flushAsyncWork() {
   await new Promise<void>((resolve) => setImmediate(resolve));
 }
 
-test("handleStartSigint closes active log stream and ignores a second interrupt", async () => {
+test("handleStartSigint closes active log stream on first interrupt and forces exit on second", async () => {
   resetPipelineSigintStateForTest();
+  resetStartSigintStateForTest();
   const logStream = new EndTrackingStream();
   const context = new RunContext(null, {}, logStream);
   context.logFile("partial log");
@@ -63,20 +67,23 @@ test("handleStartSigint closes active log stream and ignores a second interrupt"
         exitCount += 1;
       },
     });
+    assert.equal(exitCount, 0);
+    assert.equal(logStream.endCalled, true);
+
     handleStartSigint({
       getActiveRunContext: () => context,
       exit: () => {
         exitCount += 1;
       },
     });
+    assert.equal(exitCount, 1);
 
     await flushAsyncWork();
 
-    assert.equal(logStream.endCalled, true);
     assert.equal(context.logStream, null);
     assert.equal(logStream.contents(), "partial log\n");
-    assert.equal(exitCount, 1);
     assert.match(stdoutLines.join(""), /Caught interrupt signal/);
+    assert.match(stdoutLines.join(""), /forcing exit/);
   } finally {
     mock.restoreAll();
   }
@@ -84,6 +91,7 @@ test("handleStartSigint closes active log stream and ignores a second interrupt"
 
 test("handleStartSigint exits 130 when no pipeline run is active", () => {
   resetPipelineSigintStateForTest();
+  resetStartSigintStateForTest();
   let exitCode: number | undefined;
 
   mock.method(process.stdout, "write", () => true);

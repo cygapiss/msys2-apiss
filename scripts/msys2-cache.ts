@@ -6,6 +6,7 @@ import {
 } from "./build-config.ts";
 import type { RunLogger } from "./run-context.ts";
 import {
+  assertMsys2Root,
   fsExistsAsync,
   hostCurlPath,
   symlinkDirectory,
@@ -68,6 +69,7 @@ export async function unlinkMsys2Cache(
   await unlinkDirectory(local_home);
   await unlinkDirectory(local_pkg);
   await fs.mkdir(local_home, { recursive: true });
+  await assertMsys2Root(step, stage, "installMsys2Base");
   await fs.mkdir(local_pkg, { recursive: true });
   await fs.writeFile(path.join(local_pkg, ".gitignore"), "");
 }

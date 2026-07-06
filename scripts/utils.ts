@@ -147,20 +147,38 @@ export function initMsys2Stage(
   return stagePaths;
 }
 
-export async function cygpathUnix(
+export type CygpathFormat = "unix" | "windows";
+
+/** Run cygpath -u/-w via bash --login; returns last stdout line. */
+export async function cygpath(
   step: RunLogger,
-  stage: Pick<Msys2Stage, "cygpath">,
-  winPath: string,
+  stage: Pick<Msys2Stage, "bash" | "env" | "repoRoot">,
+  inputPath: string,
+  format: CygpathFormat = "unix",
 ) {
+  const flag = format === "unix" ? "-u" : "-w";
   const { stdout, code } = await step.run(
-    stage.cygpath,
-    ["-u", winPath],
-    { capture: true, exitOnFailure: false },
+    stage.bash,
+    ["--login", "-c", `cygpath ${flag} ${JSON.stringify(inputPath)}`],
+    {
+      cwd: stage.repoRoot,
+      env: stage.env,
+      capture: true,
+      exitOnFailure: false,
+    },
   );
   if (code !== 0) {
-    throw new Error(`cygpath failed (${code}) for ${winPath}`);
+    throw new Error(`cygpath ${flag} failed (${code}) for ${inputPath}`);
   }
-  return stdout.trim();
+  const result = stdout
+    .trim()
+    .split(/\r?\n/)
+    .filter(Boolean)
+    .at(-1) ?? "";
+  if (format === "windows") {
+    return path.win32.normalize(result);
+  }
+  return result;
 }
 
 export async function assertMsys2Root(
@@ -176,22 +194,17 @@ export async function assertMsys2Root(
       `msys64 not found at ${stage.msys2Root}; run ${prepStepId} first`,
     );
   }
-  const { stdout, code } = await step.run(
-    stage.bash,
-    ["--login", "-c", "cygpath -w /"],
-    {
-      cwd: stage.repoRoot,
-      env: stage.env,
-      capture: true,
-      exitOnFailure: false,
-    },
-  );
-  if (code !== 0) {
+  let cygpath_msys_root: string;
+  try {
+    cygpath_msys_root = await cygpath(step, stage, "/", "windows");
+  } catch (err) {
+    const codeMatch =
+      err instanceof Error ? err.message.match(/\((\d+)\)/) : null;
+    const codeSuffix = codeMatch ? ` (code ${codeMatch[1]})` : "";
     throw new Error(
-      `msys64 cygpath check failed at ${stage.bash} (code ${code}); run ${prepStepId} first`,
+      `msys64 cygpath check failed at ${stage.bash}${codeSuffix}; run ${prepStepId} first`,
     );
   }
-  const cygpath_msys_root = path.win32.normalize(stdout.trim());
   const expected_msys_root = path.win32.normalize(stage.msys2Root);
   if (path.resolve(cygpath_msys_root) !== path.resolve(expected_msys_root)) {
     throw new Error(
