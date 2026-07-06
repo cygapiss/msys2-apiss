@@ -94,6 +94,7 @@ export async function archiveFull(
   }
 
   await unlinkMsys2Cache(step, stage);
+  step.log(`===${stage_label}: Archive to ${target_msys_tar_path}`);
   await step.run(
     stage.tar,
     ["cf", target_msys_tar_path_cygwin, MSYS64_DIR_NAME],
