@@ -294,8 +294,8 @@ export const stage1_core_packages = [
 
 /** ports-mingw directory names for stage3-mingw64-list.txt (one per line). */
 export const stage3_mingw64_build_packages = [
-  "mingw-w64-libepoxy",
-  // "mingw-w64-mesa",
+  // "mingw-w64-libepoxy",
+  "mingw-w64-mesa",
   // angleproject do not support for opengl, so use mesa zink/d3d12 is a better choice.
   // "mingw-w64-angleproject",
 ];
