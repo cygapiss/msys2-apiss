@@ -1,7 +1,182 @@
 import assert from "node:assert/strict";
 import { Writable } from "node:stream";
 import { mock, test } from "node:test";
-import { RunContext } from "../scripts/run-context.ts";
+import {
+  handleSigint,
+  runContextSigintState,
+  RunContext,
+} from "../scripts/run-context.ts";
+
+function resetSigintState(
+  active: { finalize: () => Promise<void> } | null = null,
+) {
+  runContextSigintState.active = active;
+  runContextSigintState.count = 0;
+}
+
+async function flushAsyncWork() {
+  await new Promise<void>((resolve) => setImmediate(resolve));
+}
+
+test("handleSigint finalizes active run on first interrupt and forces exit on second", async () => {
+  const finalize = mock.fn(async () => {});
+  resetSigintState({ finalize });
+  const exit = mock.method(process, "exit", (() => undefined) as typeof process.exit);
+  const log = mock.method(console, "log", () => {});
+
+  try {
+    handleSigint(130);
+    assert.equal(exit.mock.callCount(), 0);
+    assert.equal(finalize.mock.callCount(), 1);
+    assert.deepEqual(log.mock.calls[0]?.arguments, [
+      "Caught interrupt signal",
+    ]);
+
+    handleSigint(130);
+    assert.equal(exit.mock.callCount(), 1);
+    assert.deepEqual(exit.mock.calls[0]?.arguments, [130]);
+    assert.deepEqual(log.mock.calls[1]?.arguments, [
+      "Caught interrupt signal again, forcing exit",
+    ]);
+
+    await flushAsyncWork();
+
+    assert.equal(exit.mock.callCount(), 1);
+  } finally {
+    mock.restoreAll();
+    resetSigintState();
+  }
+});
+
+test("handleSigint exits 130 when no run context is active", () => {
+  resetSigintState();
+  const exit = mock.method(process, "exit", (() => undefined) as typeof process.exit);
+  const log = mock.method(console, "log", () => {});
+
+  try {
+    handleSigint(130);
+
+    assert.equal(exit.mock.callCount(), 1);
+    assert.deepEqual(exit.mock.calls[0]?.arguments, [130]);
+    assert.deepEqual(log.mock.calls[0]?.arguments, [
+      "Caught interrupt signal",
+    ]);
+  } finally {
+    mock.restoreAll();
+    resetSigintState();
+  }
+});
+
+test("handleSigint uses active RunContext registered by step", async () => {
+  resetSigintState();
+  const context = new RunContext(null);
+  const finalize = mock.method(context, "finalize", async () => {});
+  const exit = mock.method(process, "exit", (() => undefined) as typeof process.exit);
+  const log = mock.method(console, "log", () => {});
+
+  let release!: () => void;
+  const hold = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  const running = context.step(async () => {
+    await hold;
+  });
+
+  try {
+    await flushAsyncWork();
+    assert.equal(runContextSigintState.active, context);
+
+    handleSigint(130);
+    assert.equal(finalize.mock.callCount(), 1);
+    assert.equal(exit.mock.callCount(), 0);
+
+    await flushAsyncWork();
+    assert.equal(exit.mock.callCount(), 1);
+    assert.deepEqual(exit.mock.calls[0]?.arguments, [130]);
+  } finally {
+    release();
+    await running;
+    mock.restoreAll();
+    resetSigintState();
+  }
+});
+
+test("RunContext.step rejects re-entry while another step is active", async () => {
+  resetSigintState();
+  const outer = new RunContext(null);
+  const inner = new RunContext(null);
+
+  let release!: () => void;
+  const hold = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  const running = outer.step(async () => {
+    await hold;
+  });
+
+  try {
+    await flushAsyncWork();
+    await assert.rejects(
+      () => inner.step(async () => {}),
+      /RunContext\.step re-entry is not allowed/,
+    );
+    await assert.rejects(
+      () => outer.step(async () => {}),
+      /RunContext\.step re-entry is not allowed/,
+    );
+  } finally {
+    release();
+    await running;
+    resetSigintState();
+  }
+});
+
+test("handleSigint kills active child before exit", async () => {
+  resetSigintState();
+  const context = new RunContext(null, { exitOnFailure: false });
+  const exit = mock.method(process, "exit", (() => undefined) as typeof process.exit);
+  mock.method(console, "log", () => {});
+
+  let release!: () => void;
+  const hold = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  let runPromise: Promise<{ code: number }> | undefined;
+  const running = context.step(async (step) => {
+    runPromise = step.run(process.execPath, [
+      "-e",
+      "setInterval(() => {}, 1000)",
+    ]);
+    await hold;
+  });
+
+  try {
+    const timeout = Date.now() + 2000;
+    while (context.children.size === 0) {
+      if (Date.now() > timeout) {
+        assert.fail("Timed out waiting for child process");
+      }
+      await flushAsyncWork();
+    }
+    assert.equal(context.children.size, 1);
+    const child = [...context.children][0]!;
+
+    handleSigint(130);
+    await waitForExit(() => exit.mock.callCount() > 0);
+
+    assert.equal(exit.mock.callCount(), 1);
+    assert.deepEqual(exit.mock.calls[0]?.arguments, [130]);
+    assert.equal(context.children.size, 0);
+    assert.ok(child.exitCode !== null || child.signalCode !== null);
+    assert.ok(runPromise);
+    await runPromise;
+  } finally {
+    release();
+    await running;
+    mock.restoreAll();
+    resetSigintState();
+  }
+});
 
 class EndTrackingStream extends Writable {
   chunks: string[] = [];

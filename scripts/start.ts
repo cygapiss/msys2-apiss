@@ -7,35 +7,14 @@ import {
   findPipelineStepIndex,
   formatPipelineGroupsHelp,
   formatPipelineStepsHelp,
-  handlePipelineSigint,
-  type HandlePipelineSigintDeps,
   parseFromArg,
   pipelineMaxGroup,
   pipelines,
   resolvePipelineNextIndex,
   runPipelineStep,
 } from "./pipeline.ts";
+import { handleSigint, RunContext } from "./run-context.ts";
 import { initMsys2Stage } from "./utils.ts";
-import { RunContext } from "./run-context.ts";
-
-let startSigintCount = 0;
-
-/** Reset SIGINT guard; for tests only. */
-export function resetStartSigintStateForTest() {
-  startSigintCount = 0;
-}
-
-export function handleStartSigint(deps: HandlePipelineSigintDeps = {}) {
-  startSigintCount += 1;
-  if (startSigintCount >= 2) {
-    console.log("Caught interrupt signal again, forcing exit");
-    const exit = deps.exit ?? ((code: number) => process.exit(code));
-    exit(130);
-    return;
-  }
-  console.log("Caught interrupt signal");
-  handlePipelineSigint(deps);
-}
 
 function printHelp() {
   const maxGroup = pipelineMaxGroup();
@@ -165,7 +144,7 @@ function isMainModule() {
 
 if (isMainModule()) {
   process.on("SIGINT", () => {
-    handleStartSigint();
+    handleSigint(130);
   });
   main().catch((error) => {
     console.error(error);

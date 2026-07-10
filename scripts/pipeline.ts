@@ -73,57 +73,17 @@ export function pipelineLogName(id: string) {
   return `${id}.txt`;
 }
 
-let activePipelineRunContext: RunContext | null = null;
-let pipelineSigintExitPending = false;
-
-export function getActivePipelineRunContext() {
-  return activePipelineRunContext;
-}
-
-/** Reset SIGINT guard; for tests only. */
-export function resetPipelineSigintStateForTest() {
-  pipelineSigintExitPending = false;
-}
-
-export type HandlePipelineSigintDeps = {
-  getActiveRunContext?: () => RunContext | null;
-  exit?: (code: number) => void;
-};
-
-export function handlePipelineSigint(deps: HandlePipelineSigintDeps = {}) {
-  if (pipelineSigintExitPending) {
-    return;
-  }
-  pipelineSigintExitPending = true;
-  const getActiveRunContext =
-    deps.getActiveRunContext ?? getActivePipelineRunContext;
-  const exit = deps.exit ?? ((code: number) => process.exit(code));
-  const activeRunContext = getActiveRunContext();
-  if (activeRunContext) {
-    void activeRunContext.closeLogStream().finally(() => exit(130));
-    return;
-  }
-  exit(130);
-}
-
 export async function runPipelineStep(
   item: PipelineStep,
   options: RunPackageListOptions,
 ) {
   const logPath = repoPath("scripts", "logs", pipelineLogName(item.id));
   const runner = new RunContext(logPath);
-  activePipelineRunContext = runner;
-  try {
-    await runner.step(async (step) => {
-      runner.log(item.label);
-      runner.log(`Log: ${logPath}`);
-      await item.step(step, options);
-    });
-  } finally {
-    if (activePipelineRunContext === runner) {
-      activePipelineRunContext = null;
-    }
-  }
+  await runner.step(async (step) => {
+    runner.log(item.label);
+    runner.log(`Log: ${logPath}`);
+    await item.step(step, options);
+  });
 }
 
 export const pipelines: PipelineStep[] = [
