@@ -6,11 +6,11 @@ pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}")
 # Sadly, upstream currently suggests bundling a binaryen version for the time being:
 # https://github.com/emscripten-core/emscripten/issues/12252
 # I'm obviously unhappy about that but it appears to be the only practical solution for the time being.
-pkgver=6.0.11
+pkgver=6.0.12
 # NOTE: You need to run ./get-compatible-versions.sh after changing the pkgver!
-_binaryen_revision=f3ab99600941a36e5b03636fd6941d269a9f0de8
-_llvm_project_revision=f718ebe873411a562ef6e5c27da36d75b7aaec98
-pkgrel=2
+_binaryen_revision=64722e141b9796f2778b9cccfbfa6405eb5bcc7f
+_llvm_project_revision=55ea1f4ebea23d0355d5cdb075f1e12f28ab82d0
+pkgrel=1
 pkgdesc="Compile C and C++ into highly-optimizable JavaScript for the web (mingw-w64)"
 arch=('any')
 mingw_arch=('ucrt64' 'clang64' 'clangarm64')
@@ -35,9 +35,9 @@ install="emscripten-${MSYSTEM}.install"
 source=("git+$msys2_repository_url#tag=$pkgver"
         "llvm-project-$_llvm_project_revision.tar.gz::https://github.com/llvm/llvm-project/archive/$_llvm_project_revision.tar.gz"
         "binaryen-$_binaryen_revision.tar.gz::https://github.com/WebAssembly/binaryen/archive/$_binaryen_revision.tar.gz")
-sha256sums=('ffa7c0b2880917147a12b85f093986abacb1627c6454ace34a63c82b6b70fb97'
-            '3d2dbd4011d5a2e56ad8555742b251863e7341ef784defb641f9010f4c96fcf2'
-            'de694136e744be3f841afa5e449a93d2f503b2dc2a9c0ad0c96a36db403c3656')
+sha256sums=('8b65c6360ea6d7a89c700477af81b59942547b1e263a6fb05881f1bedbaed695'
+            'a9fa76919d17994079fd2280f652ee42cd069d8d76cd71aa424c882a999dd981'
+            '208c67edaab39c9b86410e8151f8e9767342f732a5c05da7b6650dfdf54d052e')
 noextract=("llvm-project-$_llvm_project_revision.tar.gz")
 
 prepare() {
